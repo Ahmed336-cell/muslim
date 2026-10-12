@@ -27,8 +27,9 @@ class PrayerReminder {
 
 const reminderPrayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
-/// Today's remaining reminders for [prayers]. Times are wall-clock in the
-/// city, so they're converted with the city's UTC offset when known.
+/// Remaining reminders for [prayers] today and on the following days the
+/// [day] knows. Times are wall-clock in the city, so they're converted with
+/// the city's UTC offset when known.
 List<PrayerReminder> remindersFor(
   PrayerDay day,
   Set<String> prayers,
@@ -36,21 +37,29 @@ List<PrayerReminder> remindersFor(
 ) {
   final cityNow = day.cityNow(now);
   return [
-    for (final (i, p) in day.prayers.indexed)
-      if (prayers.contains(p.name))
-        if (_instant(day, cityNow, p.hour, p.minute) case final at
-            when at.isAfter(now.toUtc()))
-          PrayerReminder(id: i + 1, prayer: p.name, at: at),
+    for (final (d, times) in [day.prayers, ...day.following].indexed)
+      for (final (i, p) in times.indexed)
+        if (prayers.contains(p.name))
+          if (cityInstant(day, cityNow, d, p.hour, p.minute) case final at
+              when at.isAfter(now.toUtc()))
+            PrayerReminder(id: d * 6 + i + 1, prayer: p.name, at: at),
   ];
 }
 
-DateTime _instant(PrayerDay day, DateTime cityNow, int hour, int minute) {
+/// UTC instant of [hour]:[minute] in the city, [days] after [cityNow].
+DateTime cityInstant(
+  PrayerDay day,
+  DateTime cityNow,
+  int days,
+  int hour,
+  int minute,
+) {
   final offset = day.utcOffset;
   if (offset == null) {
     return DateTime(
       cityNow.year,
       cityNow.month,
-      cityNow.day,
+      cityNow.day + days,
       hour,
       minute,
     ).toUtc();
@@ -58,7 +67,7 @@ DateTime _instant(PrayerDay day, DateTime cityNow, int hour, int minute) {
   return DateTime.utc(
     cityNow.year,
     cityNow.month,
-    cityNow.day,
+    cityNow.day + days,
     hour,
     minute,
   ).subtract(offset);
@@ -110,6 +119,28 @@ List<AzkarReminder> azkarRemindersFor(
 
 /// Prayer reminders use ids below this; adhkar reminders from it upwards.
 const azkarIdBase = 100;
+
+/// Daily ayah, Friday and suhoor reminders use ids from here up.
+const extraIdBase = 200;
+
+/// A one-off notification with its text already in the app language.
+class ExtraReminder {
+  const ExtraReminder({
+    required this.id,
+    required this.at,
+    required this.title,
+    required this.body,
+    this.payload,
+  });
+
+  final int id;
+
+  /// UTC instant.
+  final DateTime at;
+  final String title;
+  final String body;
+  final String? payload;
+}
 
 /// Local notifications at prayer times; replaced by a fake in tests.
 class PrayerNotifier {
@@ -232,7 +263,7 @@ class PrayerNotifier {
     required String body,
   }) async {
     await _init();
-    await _cancelWhere((id) => id >= azkarIdBase);
+    await _cancelWhere((id) => id >= azkarIdBase && id < extraIdBase);
     const details = NotificationDetails(
       android: AndroidNotificationDetails(
         'azkar',
@@ -249,6 +280,33 @@ class PrayerNotifier {
         scheduledDate: tz.TZDateTime.from(r.at, tz.UTC),
         title: title(r.session),
         body: body,
+        payload: r.payload,
+        notificationDetails: details,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      );
+    }
+  }
+
+  /// Replaces every pending [ExtraReminder].
+  Future<void> scheduleExtras(List<ExtraReminder> reminders) async {
+    await _init();
+    await _cancelWhere((id) => id >= extraIdBase);
+    const details = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'daily',
+        'Daily ayah, Friday & Ramadan',
+        channelDescription: 'Ayah of the day, Friday and suhoor reminders',
+        importance: Importance.high,
+        priority: Priority.high,
+      ),
+      iOS: DarwinNotificationDetails(presentSound: true),
+    );
+    for (final r in reminders) {
+      await _plugin.zonedSchedule(
+        id: r.id,
+        scheduledDate: tz.TZDateTime.from(r.at, tz.UTC),
+        title: r.title,
+        body: r.body,
         payload: r.payload,
         notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,

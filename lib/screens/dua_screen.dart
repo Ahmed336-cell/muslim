@@ -189,7 +189,7 @@ class _NoteTile extends StatelessWidget {
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(top: BorderSide(color: Palette.rule, width: .7)),
         ),
         child: ExpansionTile(
@@ -229,7 +229,7 @@ class _NoteTile extends StatelessWidget {
                               '${context.n(i + 1)}.',
                               style: Fonts.mono(12, color: Palette.clay),
                             )
-                          : const Padding(
+                          : Padding(
                               padding: EdgeInsets.only(top: 7),
                               child: StarMark(size: 6, color: Palette.clay),
                             ),

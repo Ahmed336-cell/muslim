@@ -2,37 +2,34 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../services/clock.dart';
 import '../../services/islamic_api.dart';
+import '../../services/prayer_calc.dart';
 
 part 'prayer_times_event.dart';
 part 'prayer_times_state.dart';
 
+/// Prayer times are computed on the device, so they work offline.
 class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
-  PrayerTimesBloc({required this._repository, this._place = cairo})
-    : super(const PrayerTimesState()) {
+  PrayerTimesBloc({
+    this._calculator = const PrayerCalculator(),
+    this._place = cairo,
+    DateTime Function()? clock,
+  }) : _clock = clock ?? appNow,
+       super(const PrayerTimesState()) {
     on<PrayerTimesEvent>(_onLoad, transformer: restartable());
   }
 
-  final IslamicApi _repository;
+  final PrayerCalculator _calculator;
+  final DateTime Function() _clock;
   Place _place;
 
-  Future<void> _onLoad(
-    PrayerTimesEvent event,
-    Emitter<PrayerTimesState> emit,
-  ) async {
+  void _onLoad(PrayerTimesEvent event, Emitter<PrayerTimesState> emit) {
     final place = event is PrayerTimesRequested ? event.place : null;
-    if (place != null && place != _place) {
-      _place = place;
-      // Old times belong to another city; don't show them.
-      emit(const PrayerTimesState(status: PrayerTimesStatus.loading));
-    } else {
-      emit(state.copyWith(status: PrayerTimesStatus.loading));
-    }
+    if (place != null) _place = place;
     try {
-      final day = await _repository.fetchToday(_place);
-      emit(state.copyWith(status: PrayerTimesStatus.success, day: day));
-    } on ApiException catch (e) {
-      emit(state.copyWith(status: PrayerTimesStatus.failure, error: e.message));
+      final day = _calculator.today(_place, _clock());
+      emit(PrayerTimesState(status: PrayerTimesStatus.success, day: day));
     } catch (_) {
       emit(
         state.copyWith(

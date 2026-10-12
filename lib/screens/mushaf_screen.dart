@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../bloc/quran/mushaf_cubit.dart';
 import '../bloc/quran/quran_prefs_cubit.dart';
+import '../bloc/quran/khatmah_cubit.dart';
 import '../bloc/quran/recent_surahs_cubit.dart';
 import '../bloc/quran/recitation_cubit.dart';
 import '../bloc/quran/tafsir_cubit.dart';
@@ -19,6 +20,7 @@ import '../services/mushaf_pages.dart';
 import '../services/quran.dart';
 import '../services/recitation.dart';
 import '../theme.dart';
+import '../widgets/ayah_share.dart';
 import '../widgets/common.dart';
 import '../widgets/shimmer.dart';
 import '../widgets/mini_player.dart';
@@ -44,6 +46,9 @@ class MushafScreen extends StatelessWidget {
           highlight: highlight ? (surah, ayah) : null,
         ),
       );
+
+  static Route<void> routeToPage(int page) =>
+      MaterialPageRoute(builder: (_) => MushafScreen(page: page));
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +78,14 @@ class _ReaderState extends State<_Reader> {
   late AyahRef? _selected = widget.highlight;
   final _taps = <AyahRef, TapGestureRecognizer>{};
   Timer? _unhighlight;
+  Timer? _dwell;
   bool _chrome = true;
 
   @override
   void initState() {
     super.initState();
     _recordVisit(_page);
+    _startDwell();
     if (_selected != null) {
       _unhighlight = Timer(const Duration(seconds: 3), () {
         if (mounted) setState(() => _selected = null);
@@ -97,12 +104,22 @@ class _ReaderState extends State<_Reader> {
       t.dispose();
     }
     _unhighlight?.cancel();
+    _dwell?.cancel();
     _pages.dispose();
     super.dispose();
   }
 
   void _recordVisit(int page) =>
       context.read<RecentSurahsCubit>().visit(pageStarts[page - 1].$1, page);
+
+  /// A page counts towards the khatmah once it's been open a while.
+  void _startDwell() {
+    _dwell?.cancel();
+    final page = _page;
+    _dwell = Timer(const Duration(seconds: 20), () {
+      if (mounted) context.read<KhatmahCubit>().markRead(page);
+    });
+  }
 
   TapGestureRecognizer _tap(AyahRef ref) =>
       _taps[ref] ??= TapGestureRecognizer()..onTap = () => _open(ref);
@@ -166,7 +183,9 @@ class _ReaderState extends State<_Reader> {
         ),
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
+        value: Palette.dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
         child: Scaffold(
           bottomNavigationBar: const MiniPlayer(canOpenReader: false),
           body: Stack(
@@ -178,12 +197,17 @@ class _ReaderState extends State<_Reader> {
                   reverse: ltr,
                   itemCount: pageCount,
                   onPageChanged: (i) {
+                    // Turning to the next page means this one was read.
+                    if (i == _page) {
+                      context.read<KhatmahCubit>().markRead(_page);
+                    }
                     setState(() {
                       _page = i + 1;
                       _chrome = false;
                     });
                     context.read<MushafCubit>().visit(i + 1);
                     _recordVisit(i + 1);
+                    _startDwell();
                   },
                   itemBuilder: (context, i) => GestureDetector(
                     behavior: HitTestBehavior.opaque,
@@ -446,20 +470,22 @@ class _PageBody extends StatelessWidget {
       ),
       const TextSpan(text: '\u00A0'),
       if (a.sajda)
-        const TextSpan(
+        TextSpan(
           text: '۩\u00A0',
           style: TextStyle(color: Palette.clay),
         ),
       WidgetSpan(
         alignment: PlaceholderAlignment.middle,
-        child: GestureDetector(
-          onTap: () => onMarkerTap?.call((a.surah, a.number)),
-          child: AyahMarker(
-            a.number,
-            size: fs * 1.25,
-            color: bookmark?.surah == a.surah && bookmark?.ayah == a.number
-                ? Palette.clay
-                : Palette.brass,
+        child: ExcludeSemantics(
+          child: GestureDetector(
+            onTap: () => onMarkerTap?.call((a.surah, a.number)),
+            child: AyahMarker(
+              a.number,
+              size: fs * 1.25,
+              color: bookmark?.surah == a.surah && bookmark?.ayah == a.number
+                  ? Palette.clay
+                  : Palette.brass,
+            ),
           ),
         ),
       ),
@@ -924,6 +950,19 @@ class _TafsirSheetState extends State<_TafsirSheet> {
                   ),
                   label: Text(_copied ? l.copied : l.copy),
                 ),
+                const SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () =>
+                      showAyahShare(context, surah: s.surah, ayah: s.ayah),
+                  style: _actionStyle.copyWith(
+                    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                    minimumSize: const WidgetStatePropertyAll(Size(46, 46)),
+                  ),
+                  child: Tooltip(
+                    message: l.shareImage,
+                    child: const Icon(Icons.ios_share_rounded, size: 20),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -961,7 +1000,7 @@ class _TafsirSheetState extends State<_TafsirSheet> {
 
   static final _actionStyle = OutlinedButton.styleFrom(
     foregroundColor: Palette.green,
-    side: const BorderSide(color: Palette.rule),
+    side: BorderSide(color: Palette.rule),
     minimumSize: const Size(0, 46),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
   );

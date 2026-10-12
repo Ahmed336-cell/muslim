@@ -57,7 +57,7 @@ Future<void> showCityPicker(BuildContext context) async {
                     ),
                   ),
                   trailing: selected
-                      ? const Icon(Icons.check_rounded, color: Palette.green)
+                      ? Icon(Icons.check_rounded, color: Palette.green)
                       : null,
                 );
               },
@@ -135,7 +135,7 @@ class _MyLocationTile extends StatelessWidget {
             style: Fonts.body(12.5, color: subtitleColor),
           ),
           trailing: active && !locate.locating && locate.error == null
-              ? const Icon(Icons.check_rounded, color: Palette.green)
+              ? Icon(Icons.check_rounded, color: Palette.green)
               : null,
         ),
         if (locate.error == LocationException.blocked ||
@@ -158,12 +158,13 @@ class _MyLocationTile extends StatelessWidget {
 
 /// Tappable city name with a pin, for app bars and headers.
 class CityChip extends StatelessWidget {
-  const CityChip({super.key, this.color = Palette.ink});
+  const CityChip({super.key, this.color});
 
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final color = this.color ?? Palette.ink;
     final settings = context.watch<SettingsCubit>().state;
     return InkWell(
       borderRadius: BorderRadius.circular(20),

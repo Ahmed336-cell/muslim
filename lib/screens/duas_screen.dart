@@ -62,7 +62,7 @@ class _DuasScreenState extends State<DuasScreen> {
                   ),
                   if (state.status == DuaLibraryStatus.loading &&
                       library != null)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 6),
                       child: LinearProgressIndicator(
                         minHeight: 2,
@@ -164,11 +164,11 @@ class _CategoryRow extends StatelessWidget {
       leading: Container(
         width: 38,
         height: 38,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: Palette.greenSoft,
           shape: BoxShape.circle,
         ),
-        child: const Center(child: StarMark(size: 14, color: Palette.green)),
+        child: Center(child: StarMark(size: 14, color: Palette.green)),
       ),
       title: Text(
         category.name,
@@ -183,7 +183,7 @@ class _CategoryRow extends StatelessWidget {
         ),
         style: Fonts.body(12.5, color: Palette.inkSoft),
       ),
-      trailing: const Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
+      trailing: Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
     );
   }
 }
@@ -210,7 +210,7 @@ class DuaCategoryScreen extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 6),
                       child: StarMark(size: 8, color: Palette.clay),
                     ),
@@ -290,7 +290,7 @@ class DuaTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
+            Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
           ],
         ),
       ),

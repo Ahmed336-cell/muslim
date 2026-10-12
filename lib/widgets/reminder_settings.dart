@@ -25,7 +25,7 @@ class ReminderSettings extends StatelessWidget {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           value: r.enabled,
-          activeThumbColor: Palette.paper,
+          activeThumbColor: Palette.cream,
           activeTrackColor: Palette.green,
           onChanged: (on) => on ? cubit.enable() : cubit.disable(),
           secondary: Icon(
@@ -57,7 +57,7 @@ class ReminderSettings extends StatelessWidget {
                 checkmarkColor: Palette.green,
                 selectedColor: Palette.greenSoft,
                 backgroundColor: Palette.card,
-                side: const BorderSide(color: Palette.rule),
+                side: BorderSide(color: Palette.rule),
                 labelStyle: Fonts.body(13.5),
               ),
           ],
@@ -67,16 +67,13 @@ class ReminderSettings extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           enabled: r.enabled,
           onTap: () => showAdhanVoices(context),
-          leading: const Icon(Icons.mosque_outlined, color: Palette.green),
+          leading: Icon(Icons.mosque_outlined, color: Palette.green),
           title: Text(l.adhanVoice, style: Fonts.body(15)),
           subtitle: Text(
             r.voice?.label(context.lang) ?? l.adhanPlainSound,
             style: Fonts.body(12.5, color: Palette.inkSoft),
           ),
-          trailing: const Icon(
-            Icons.chevron_right_rounded,
-            color: Palette.inkSoft,
-          ),
+          trailing: Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
         ),
       ],
     );

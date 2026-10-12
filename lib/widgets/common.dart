@@ -11,25 +11,25 @@ class AppCard extends StatelessWidget {
     this.onTap,
     this.padding = const EdgeInsets.all(16),
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
-    this.color = Palette.card,
+    this.color,
   });
 
   final Widget child;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry margin;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: margin,
       child: Material(
-        color: color,
+        color: color ?? Palette.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: color == Palette.card
-              ? const BorderSide(color: Palette.rule, width: .7)
+              ? BorderSide(color: Palette.rule, width: .7)
               : BorderSide.none,
         ),
         clipBehavior: Clip.antiAlias,
@@ -57,7 +57,7 @@ class SectionHeader extends StatelessWidget {
         height: 40,
         child: Row(
           children: [
-            const StarMark(size: 9, color: Palette.clay),
+            StarMark(size: 9, color: Palette.clay),
             const SizedBox(width: 8),
             Expanded(child: Text(title, style: Fonts.display(20))),
             if (action != null)
@@ -81,10 +81,10 @@ class SectionHeader extends StatelessWidget {
 
 /// Small uppercase caption used inside cards.
 class Caption extends StatelessWidget {
-  const Caption(this.text, {super.key, this.color = Palette.inkSoft});
+  const Caption(this.text, {super.key, this.color});
 
   final String text;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +104,7 @@ class Spinner extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox(
     width: size,
     height: size,
-    child: const CircularProgressIndicator(
-      strokeWidth: 1.8,
-      color: Palette.green,
-    ),
+    child: CircularProgressIndicator(strokeWidth: 1.8, color: Palette.green),
   );
 }
 
@@ -125,7 +122,7 @@ class ErrorState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.cloud_off_rounded, size: 32, color: Palette.inkSoft),
+          Icon(Icons.cloud_off_rounded, size: 32, color: Palette.inkSoft),
           const SizedBox(height: 10),
           Text(
             context.error(error),
@@ -169,7 +166,7 @@ class NumberBadge extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const StarMark(size: 40, color: Palette.rule, filled: false),
+          StarMark(size: 40, color: Palette.rule, filled: false),
           Text(
             context.n(number),
             style: Fonts.mono(12, color: Palette.inkSoft),
@@ -244,11 +241,7 @@ class CardLink extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(
-              Icons.arrow_forward_rounded,
-              size: 18,
-              color: Palette.green,
-            ),
+            Icon(Icons.arrow_forward_rounded, size: 18, color: Palette.green),
           ],
         ),
       ),

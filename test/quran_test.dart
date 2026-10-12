@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:muslim/bloc/quran/mushaf_cubit.dart';
 import 'package:muslim/bloc/quran/quran_prefs_cubit.dart';
 import 'package:muslim/bloc/quran/ambient_cubit.dart';
+import 'package:muslim/bloc/quran/khatmah_cubit.dart';
 import 'package:muslim/bloc/quran/recent_surahs_cubit.dart';
 import 'package:muslim/bloc/quran/recitation_cubit.dart';
 import 'package:muslim/bloc/quran/tafsir_cubit.dart';
@@ -281,6 +282,7 @@ void main() {
               BlocProvider(create: (_) => QuranPrefsCubit()),
               BlocProvider(create: (_) => QuranBookmarkCubit()),
               BlocProvider(create: (_) => RecentSurahsCubit()),
+              BlocProvider(create: (_) => KhatmahCubit()),
               BlocProvider(
                 create: (_) => RecitationCubit(engine: FakeEngine()),
               ),

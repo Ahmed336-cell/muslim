@@ -77,7 +77,7 @@ class _SessionRow extends StatelessWidget {
     return SwitchListTile(
       contentPadding: EdgeInsets.zero,
       value: on,
-      activeThumbColor: Palette.paper,
+      activeThumbColor: Palette.cream,
       activeTrackColor: Palette.green,
       onChanged: (v) =>
           context.read<AzkarRemindersCubit>().setEnabled(session, v),

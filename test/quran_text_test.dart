@@ -69,4 +69,26 @@ void main() {
     expect(cubit.state.pages[9]?.page, isNotNull);
     await cubit.close();
   });
+
+  test('search ignores diacritics and spelling variants', () async {
+    final kursi = await text.search(
+      'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ',
+    );
+    expect(
+      kursi.matches.map((m) => '${m.ayah.surah}:${m.ayah.number}'),
+      containsAll(['2:255', '3:2']),
+    );
+    final m = kursi.matches.first;
+    expect(
+      m.ayah.text.substring(m.start, m.start + m.length),
+      startsWith('الله'),
+    );
+
+    final rahman = await text.search('الرحمن');
+    expect(rahman.total, greaterThan(40));
+    expect(rahman.matches.length, lessThanOrEqualTo(100));
+
+    expect((await text.search('ا')).total, 0);
+    expect((await text.search('zzzz')).total, 0);
+  });
 }

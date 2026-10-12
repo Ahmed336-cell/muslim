@@ -128,7 +128,7 @@ class _ReciteTab extends StatelessWidget {
                             playing
                                 ? Icons.stop_circle_rounded
                                 : Icons.play_circle_fill_rounded,
-                            color: Palette.paper,
+                            color: Palette.cream,
                             size: 28,
                           ),
                           const SizedBox(width: 12),
@@ -137,7 +137,7 @@ class _ReciteTab extends StatelessWidget {
                               playing ? l.playing : l.listenFull,
                               style: Fonts.body(
                                 15,
-                                color: Palette.paper,
+                                color: Palette.cream,
                                 weight: FontWeight.w500,
                               ),
                             ),
@@ -240,7 +240,7 @@ class _EntryCardState extends State<_EntryCard> {
                   width: 28,
                   height: 28,
                   alignment: Alignment.center,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Palette.greenSoft,
                     shape: BoxShape.circle,
                   ),
@@ -365,7 +365,7 @@ class _LearnTab extends StatelessWidget {
                 context.n(t.count),
                 style: Fonts.mono(12, color: Palette.inkSoft),
               ),
-              const Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
+              Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
             ],
           ),
         );
@@ -438,7 +438,7 @@ class _RuqyahTopicScreenState extends State<RuqyahTopicScreen> {
                           style: Fonts.body(12.5, color: Palette.inkSoft),
                         )
                       : null,
-                  trailing: const Icon(
+                  trailing: Icon(
                     Icons.chevron_right_rounded,
                     color: Palette.inkSoft,
                   ),

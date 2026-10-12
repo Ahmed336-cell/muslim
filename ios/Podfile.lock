@@ -20,9 +20,15 @@ PODS:
     - FlutterMacOS
   - package_info_plus (0.4.5):
     - Flutter
+  - record_ios (2.0.0):
+    - Flutter
+  - share_plus (0.0.1):
+    - Flutter
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
+  - whisper_ggml (1.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - audio_service (from `.symlinks/plugins/audio_service/darwin`)
@@ -34,7 +40,10 @@ DEPENDENCIES:
   - home_widget (from `.symlinks/plugins/home_widget/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/darwin`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
+  - record_ios (from `.symlinks/plugins/record_ios/ios`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
+  - whisper_ggml (from `.symlinks/plugins/whisper_ggml/ios`)
 
 EXTERNAL SOURCES:
   audio_service:
@@ -55,8 +64,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/just_audio/darwin"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
+  record_ios:
+    :path: ".symlinks/plugins/record_ios/ios"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
   sqflite_darwin:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
+  whisper_ggml:
+    :path: ".symlinks/plugins/whisper_ggml/ios"
 
 SPEC CHECKSUMS:
   audio_service: aa99a6ba2ae7565996015322b0bb024e1d25c6fd
@@ -68,8 +83,11 @@ SPEC CHECKSUMS:
   home_widget: 54b4f6b36ed8d64cfee594a476225c35c3e45091
   just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
+  record_ios: 390a30c7caaf8b5d0fb1cb1d2fd5064b48b4520c
+  share_plus: eccd7beb7cea61271aeed1800e8ccb2b952c0c7f
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
+  whisper_ggml: e49d353bd4736293ca18f7a1e90accec56d9b57d
 
-PODFILE CHECKSUM: 6dba02d5294d87e39432a100a42309fb7e8547a4
+PODFILE CHECKSUM: 187556c577288362f623f90c161df5a849f9cb01
 
 COCOAPODS: 1.16.2

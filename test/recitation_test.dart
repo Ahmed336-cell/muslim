@@ -135,6 +135,29 @@ void main() {
       expect(c.state.ayah, (2, 1));
     });
 
+    test('hifz repeats each ayah and the range, without running on', () async {
+      final engine = FakeEngine();
+      final c = RecitationCubit(engine: engine);
+      await c.playHifz(
+        1,
+        6,
+        7,
+        AyahReciter.husary,
+        'en',
+        ayahRepeat: 2,
+        rangeRepeat: 2,
+      );
+      await _settle();
+      expect(engine.queue.map((t) => t.ayah), [
+        (1, 6), (1, 6), (1, 7), (1, 7), //
+        (1, 6), (1, 6), (1, 7), (1, 7),
+      ]);
+      expect(engine.queue.map((t) => t.id).toSet(), hasLength(8));
+      await engine.skipTo(7);
+      await _settle();
+      expect(engine.queue.length, 8);
+    });
+
     test('pause, resume, skip and stop', () async {
       final engine = FakeEngine();
       final c = RecitationCubit(engine: engine);

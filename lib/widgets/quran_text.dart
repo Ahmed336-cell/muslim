@@ -55,19 +55,15 @@ List<InlineSpan> ayahSpans(
 
 /// End-of-ayah rosette with the ayah number.
 class AyahMarker extends StatelessWidget {
-  const AyahMarker(
-    this.number, {
-    super.key,
-    required this.size,
-    this.color = Palette.brass,
-  });
+  const AyahMarker(this.number, {super.key, required this.size, this.color});
 
   final int number;
   final double size;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final color = this.color ?? Palette.brass;
     return SizedBox.square(
       dimension: size,
       child: Stack(

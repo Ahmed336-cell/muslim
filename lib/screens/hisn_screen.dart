@@ -160,7 +160,7 @@ class _ChapterRow extends StatelessWidget {
               textDirection: TextDirection.rtl,
               style: Fonts.arabic(14, color: Palette.green),
             ),
-      trailing: const Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
+      trailing: Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
     );
   }
 }

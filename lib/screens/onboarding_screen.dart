@@ -50,7 +50,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeOutCubic,
       ),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
+        value: Palette.dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
         child: Scaffold(
           body: SafeArea(
             child: Column(
@@ -133,7 +135,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           last ? l.obStart : l.obNext,
                           style: Fonts.body(
                             16,
-                            color: Palette.paper,
+                            color: Palette.cream,
                             weight: FontWeight.w600,
                           ),
                         ),
@@ -178,7 +180,7 @@ class _StepLayout extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const StarMark(size: 64, color: Palette.greenSoft),
+                  StarMark(size: 64, color: Palette.greenSoft),
                   Icon(icon, size: 28, color: Palette.green),
                 ],
               ),
@@ -233,7 +235,7 @@ class _WelcomeStep extends StatelessWidget {
                       ),
                       Text(
                         l.appName,
-                        style: Fonts.display(20, color: Palette.paper),
+                        style: Fonts.display(20, color: Palette.cream),
                       ),
                     ],
                   ),
@@ -310,7 +312,7 @@ class _LocationStep extends StatelessWidget {
                   dimension: 18,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Palette.paper,
+                    color: Palette.cream,
                   ),
                 )
               : const Icon(Icons.near_me_rounded),
@@ -318,7 +320,7 @@ class _LocationStep extends StatelessWidget {
             locate.locating ? l.locating : l.useMyLocation,
             style: Fonts.body(
               16,
-              color: Palette.paper,
+              color: Palette.cream,
               weight: FontWeight.w600,
             ),
           ),
@@ -341,7 +343,7 @@ class _LocationStep extends StatelessWidget {
           onPressed: () => showCityPicker(context),
           style: OutlinedButton.styleFrom(
             foregroundColor: Palette.green,
-            side: const BorderSide(color: Palette.rule),
+            side: BorderSide(color: Palette.rule),
             minimumSize: const Size.fromHeight(54),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -440,7 +442,7 @@ class _RemindersStep extends StatelessWidget {
                 ),
                 child: const Icon(
                   Icons.mosque_rounded,
-                  color: Palette.paper,
+                  color: Palette.cream,
                   size: 22,
                 ),
               ),
@@ -479,7 +481,7 @@ class _RemindersStep extends StatelessWidget {
               l.obAllowNotifications,
               style: Fonts.body(
                 16,
-                color: Palette.paper,
+                color: Palette.cream,
                 weight: FontWeight.w600,
               ),
             ),
@@ -523,11 +525,7 @@ class _DoneStep extends StatelessWidget {
       leading: Icon(icon, color: Palette.green),
       title: Text(label, style: Fonts.body(13, color: Palette.inkSoft)),
       subtitle: Text(value, style: Fonts.body(15.5, weight: FontWeight.w600)),
-      trailing: const Icon(
-        Icons.edit_outlined,
-        size: 18,
-        color: Palette.inkSoft,
-      ),
+      trailing: Icon(Icons.edit_outlined, size: 18, color: Palette.inkSoft),
     );
 
     return _StepLayout(
@@ -603,7 +601,7 @@ class _ChoiceCard extends StatelessWidget {
             children: [
               Expanded(child: child),
               if (selected)
-                const Icon(Icons.check_circle_rounded, color: Palette.green),
+                Icon(Icons.check_circle_rounded, color: Palette.green),
             ],
           ),
         ),

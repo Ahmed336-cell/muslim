@@ -146,6 +146,52 @@ class RecitationCubit extends Cubit<RecitationState> {
     await _load(tracks, 0);
   }
 
+  /// For memorising: each ayah of [surah] [from]–[to] is heard [ayahRepeat]
+  /// times, and the whole range [rangeRepeat] times. Doesn't run on into the
+  /// next surah.
+  Future<void> playHifz(
+    int surah,
+    int from,
+    int to,
+    AyahReciter reciter,
+    String language, {
+    int ayahRepeat = 1,
+    int rangeRepeat = 1,
+  }) async {
+    _reciter = null;
+    _language = language;
+    final ayahs = _ayahTracks(
+      surah,
+      from,
+      reciter,
+      language,
+    ).take(to - from + 1).toList();
+    final tracks = [
+      for (var r = 0; r < rangeRepeat; r++)
+        for (final t in ayahs)
+          for (var i = 0; i < ayahRepeat; i++)
+            Track(
+              id: 'hifz:$r:$i:${t.id}',
+              uri: t.uri,
+              title: t.title,
+              artist: t.artist,
+              surah: t.surah,
+              ayah: t.ayah,
+              art: t.art,
+            ),
+    ];
+    if (state.repeat) await _engine.setRepeat(false);
+    emit(
+      RecitationState(
+        kind: RecitationKind.ayahs,
+        tracks: tracks,
+        buffering: true,
+        playing: true,
+      ),
+    );
+    await _load(tracks, 0);
+  }
+
   /// Queues every surah of [recording], starting at [surah]. [local] holds
   /// downloaded files that should play instead of streaming.
   Future<void> playSurahs(

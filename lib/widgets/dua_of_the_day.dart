@@ -36,7 +36,7 @@ class DuaOfTheDay extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const StarMark(size: 9, color: Palette.clay),
+                          StarMark(size: 9, color: Palette.clay),
                           const SizedBox(width: 8),
                           Caption(l.duaOfDay),
                         ],

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
@@ -25,6 +26,18 @@ class Track {
 
   /// Set when the track is a single ayah.
   final (int surah, int ayah)? ayah;
+}
+
+/// Media playback session: plays through the speaker even with the silent
+/// switch on. Recording leaves the session in record mode, so it is
+/// restored afterwards.
+Future<void> usePlaybackSession() async {
+  try {
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.music());
+  } catch (_) {
+    // No audio session on this platform.
+  }
 }
 
 class EngineState {

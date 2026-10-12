@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 
 class MushafColors {
-  static const page = Color(0xFFFFFCF3);
-  static const green = Color(0xFF2F6B4F);
-  static const band = Color(0xFFDCEBD3);
-  static const flower = Color(0xFFCF7895);
+  static Color get page =>
+      Palette.dark ? const Color(0xFF0A0A0A) : const Color(0xFFFFFCF3);
+  static Color get green =>
+      Palette.dark ? const Color(0xFF3FA372) : const Color(0xFF2F6B4F);
+  static Color get band =>
+      Palette.dark ? const Color(0xFF0F2219) : const Color(0xFFDCEBD3);
+  static Color get flower =>
+      Palette.dark ? const Color(0xFF2E8B62) : const Color(0xFFCF7895);
 }
 
 /// Small four-petal flower used along the borders.

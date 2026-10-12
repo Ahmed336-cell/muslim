@@ -8,6 +8,7 @@ import 'package:home_widget/home_widget.dart';
 import '../bloc/hisn_cubit.dart';
 import '../bloc/names/names_bloc.dart';
 import '../bloc/prayer_times/prayer_times_bloc.dart';
+import '../bloc/settings_cubit.dart';
 import '../bloc/tab_cubit.dart';
 import '../l10n/l10n.dart';
 import '../screens/hisn_screen.dart';
@@ -84,7 +85,12 @@ class _HomeWidgetSyncState extends State<HomeWidgetSync>
         'empty': l.widgetEmpty,
       },
       if (day != null)
-        WidgetKeys.prayer: prayerWidgetData(day, DateTime.now(), format),
+        WidgetKeys.prayer: prayerWidgetData(
+          day,
+          DateTime.now(),
+          format,
+          city: context.read<SettingsCubit>().state.city.name(context.isAr),
+        ),
       if (hisn != null)
         WidgetKeys.duas: duaWidgetData(hisn, lang: lang, random: _daily(2)),
       if (names != null && names.names.isNotEmpty)

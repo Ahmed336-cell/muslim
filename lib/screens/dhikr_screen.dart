@@ -163,7 +163,7 @@ class DhikrScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.touch_app_outlined,
                     size: 18,
                     color: Palette.inkSoft,

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show compute;
+import 'package:flutter/foundation.dart' show compute, listEquals;
 
 import 'package:http/http.dart' as http;
 
@@ -16,7 +16,17 @@ export 'nisab.dart';
 export 'ruqyah.dart';
 
 class Place {
-  const Place(this.lat, this.lon, {this.method = 5, this.school = 1});
+  const Place(
+    this.lat,
+    this.lon, {
+    this.method = 5,
+    this.school = 1,
+    this.tz,
+    this.offsets = noOffsets,
+    this.hijriShift = 0,
+  });
+
+  static const noOffsets = [0, 0, 0, 0, 0, 0];
 
   final double lat;
   final double lon;
@@ -27,16 +37,36 @@ class Place {
   /// 1 = Shafi, 2 = Hanafi (affects Asr).
   final int school;
 
+  /// IANA timezone, e.g. 'Africa/Cairo'; null = the device's.
+  final String? tz;
+
+  /// Minutes added to Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha.
+  final List<int> offsets;
+
+  /// Days added to the Hijri date for local moon sighting.
+  final int hijriShift;
+
   @override
   bool operator ==(Object other) =>
       other is Place &&
       other.lat == lat &&
       other.lon == lon &&
       other.method == method &&
-      other.school == school;
+      other.school == school &&
+      other.tz == tz &&
+      listEquals(other.offsets, offsets) &&
+      other.hijriShift == hijriShift;
 
   @override
-  int get hashCode => Object.hash(lat, lon, method, school);
+  int get hashCode => Object.hash(
+    lat,
+    lon,
+    method,
+    school,
+    tz,
+    Object.hashAll(offsets),
+    hijriShift,
+  );
 }
 
 const cairo = Place(30.0444, 31.2357);
@@ -44,17 +74,25 @@ const cairo = Place(30.0444, 31.2357);
 class PrayerDay {
   const PrayerDay({
     required this.prayers,
+    this.following = const [],
     required this.city,
     required this.hijriDay,
     required this.hijriMonthAr,
     this.hijriMonthEn = '',
     required this.hijriYear,
+    this.hijriMonth = 0,
     required this.qiblaDegrees,
     required this.qiblaKm,
     this.utcOffset,
   });
 
   final List<Prayer> prayers;
+
+  /// Times for the days after today, when known.
+  final List<List<Prayer>> following;
+
+  /// 1–12; 0 when unknown.
+  final int hijriMonth;
   final String city;
   final int hijriDay;
   final String hijriMonthAr;
@@ -114,6 +152,7 @@ class PrayerDay {
       hijriMonthAr: hijri['month']['ar'] as String,
       hijriMonthEn: (hijri['month']['en'] as String?) ?? '',
       hijriYear: int.parse(hijri['year'] as String),
+      hijriMonth: (hijri['month']['number'] as num?)?.toInt() ?? 0,
       qiblaDegrees: (qibla['direction']['degrees'] as num).toDouble(),
       qiblaKm: (qibla['distance']['value'] as num).toDouble(),
       utcOffset: _parseOffset(data['timezone']?['utc_offset']),

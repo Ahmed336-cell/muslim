@@ -47,7 +47,7 @@ class NameOfTheDay extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(18, 16, 18, 4),
               child: Row(
                 children: [
-                  const StarMark(size: 9, color: Palette.clay),
+                  StarMark(size: 9, color: Palette.clay),
                   const SizedBox(width: 8),
                   Expanded(child: Caption(l.nameOfDay)),
                   Text(

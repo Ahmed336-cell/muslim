@@ -38,10 +38,7 @@ PrayerDay _day({Duration? offset}) => PrayerDay(
   utcOffset: offset,
 );
 
-final PrayerFormat _format = (
-  name: (p, d) => p.name,
-  clock: (p) => p.time,
-);
+final PrayerFormat _format = (name: (p, d) => p.name, clock: (p) => p.time);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -67,7 +64,10 @@ void main() {
       );
       final tomorrowFajr = times[6] as Map;
       expect(
-        DateTime.fromMillisecondsSinceEpoch(tomorrowFajr['t'] as int, isUtc: true),
+        DateTime.fromMillisecondsSinceEpoch(
+          tomorrowFajr['t'] as int,
+          isUtc: true,
+        ),
         DateTime.utc(2026, 10, 13, 2),
       );
     });
@@ -104,7 +104,10 @@ void main() {
     expect(duas, hasLength(48));
     expect(duas.every((d) => !d['t']!.startsWith('(')), isTrue);
     expect(duas.every((d) => !d['t']!.contains('[')), isTrue);
-    expect(duaWidgetData(book, lang: 'ar').every((d) => d['s'] == null), isTrue);
+    expect(
+      duaWidgetData(book, lang: 'ar').every((d) => d['s'] == null),
+      isTrue,
+    );
 
     final names = nameWidgetData(
       const NamesBook(

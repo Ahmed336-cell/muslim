@@ -13,6 +13,8 @@ import '../widgets/city_picker.dart';
 import '../widgets/common.dart';
 import '../widgets/shimmer.dart';
 import '../widgets/fasting_section.dart';
+import 'calendar_screen.dart';
+import 'tracker_screen.dart';
 
 class PrayerScreen extends StatelessWidget {
   const PrayerScreen({super.key});
@@ -41,10 +43,7 @@ class PrayerScreen extends StatelessWidget {
                 : const SingleChildScrollView(
                     padding: EdgeInsets.only(top: 12),
                     child: Column(
-                      children: [
-                        SkeletonCard(lines: 1),
-                        ListSkeleton(rows: 6),
-                      ],
+                      children: [SkeletonCard(lines: 1), ListSkeleton(rows: 6)],
                     ),
                   )
           : RefreshIndicator(
@@ -103,39 +102,61 @@ class _DayCard extends StatelessWidget {
                   context.date(day.cityNow(now), 'EEEE'),
                   style: Fonts.body(
                     13,
-                    color: Palette.paper.withValues(alpha: .7),
+                    color: Palette.cream.withValues(alpha: .7),
                   ),
                 ),
                 Text(
                   context.date(day.cityNow(now), 'd MMMM y'),
-                  style: Fonts.display(22, color: Palette.paper),
+                  style: Fonts.display(22, color: Palette.cream),
                 ),
                 if (hijri.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(hijri, style: Fonts.body(13, color: Palette.brass)),
+                  InkWell(
+                    onTap: () =>
+                        Navigator.of(context).push(CalendarScreen.route()),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          hijri,
+                          style: Fonts.body(13, color: Palette.brass),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.calendar_month_outlined,
+                          size: 14,
+                          color: Palette.brass,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ],
             ),
           ),
-          SizedBox(
-            width: 64,
-            height: 64,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox.expand(
-                  child: CircularProgressIndicator(
-                    value: prayed / 5,
-                    strokeWidth: 4,
-                    backgroundColor: Palette.paper.withValues(alpha: .15),
-                    valueColor: const AlwaysStoppedAnimation(Palette.brass),
+          InkWell(
+            customBorder: const CircleBorder(),
+            onTap: () => Navigator.of(context).push(TrackerScreen.route()),
+            child: SizedBox(
+              width: 64,
+              height: 64,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox.expand(
+                    child: CircularProgressIndicator(
+                      value: prayed / 5,
+                      strokeWidth: 4,
+                      backgroundColor: Palette.cream.withValues(alpha: .15),
+                      valueColor: AlwaysStoppedAnimation(Palette.brass),
+                    ),
                   ),
-                ),
-                Text(
-                  '${context.n(prayed)}/${context.n(5)}',
-                  style: Fonts.mono(15, color: Palette.paper),
-                ),
-              ],
+                  Text(
+                    '${context.n(prayed)}/${context.n(5)}',
+                    style: Fonts.mono(15, color: Palette.cream),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -238,7 +259,7 @@ class _PrayerRow extends StatelessWidget {
               ),
               child: Text(
                 context.l.nextBadge,
-                style: Fonts.body(11, color: Palette.paper),
+                style: Fonts.body(11, color: Palette.cream),
               ),
             ),
           ],
@@ -272,7 +293,7 @@ class _PrayerRow extends StatelessWidget {
                     ? const Icon(
                         Icons.check_rounded,
                         size: 15,
-                        color: Palette.paper,
+                        color: Palette.cream,
                       )
                     : null,
               ),

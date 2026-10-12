@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/clock_cubit.dart';
+import '../bloc/prayer_times/prayer_times_bloc.dart';
 import '../bloc/tab_cubit.dart';
 import '../l10n/l10n.dart';
 import '../screens/azkar_screen.dart';
+import '../screens/calendar_screen.dart';
 import '../screens/duas_screen.dart';
 import '../screens/fasting_screen.dart';
+import '../screens/friday_screen.dart';
+import '../screens/hifz_screen.dart';
 import '../screens/hisn_screen.dart';
+import '../screens/khatmah_screen.dart';
 import '../screens/names_screen.dart';
 import '../screens/quran_screen.dart';
+import '../screens/ramadan_screen.dart';
 import '../screens/reciters_screen.dart';
 import '../screens/ruqyah_screen.dart';
+import '../screens/tracker_screen.dart';
 import '../screens/zakat_screen.dart';
 import '../services/hisn.dart';
+import '../services/prayer_calc.dart';
 import '../theme.dart';
 
 enum Feature {
   prayer(Icons.schedule_rounded),
+  tracker(Icons.insights_rounded),
   quran(Icons.menu_book_rounded),
+  khatmah(Icons.flag_outlined),
+  hifz(Icons.psychology_outlined),
   reciters(Icons.headphones_rounded),
   qibla(Icons.explore_outlined),
   tasbih(Icons.blur_circular_rounded),
@@ -27,7 +39,10 @@ enum Feature {
   names(Icons.auto_awesome_outlined),
   zakat(Icons.savings_outlined),
   ruqyah(Icons.shield_moon_outlined),
-  fasting(Icons.nightlight_round);
+  fasting(Icons.nightlight_round),
+  ramadan(Icons.mosque_outlined),
+  friday(Icons.event_available_rounded),
+  calendar(Icons.calendar_month_outlined);
 
   const Feature(this.icon);
 
@@ -46,6 +61,12 @@ enum Feature {
     zakat => l.featZakat,
     ruqyah => l.featRuqyah,
     fasting => l.featFasting,
+    khatmah => l.featKhatmah,
+    hifz => l.featHifz,
+    calendar => l.featCalendar,
+    tracker => l.featTracker,
+    ramadan => l.featRamadan,
+    friday => l.featFriday,
   };
 
   String subtitle(L10n l) => switch (this) {
@@ -61,6 +82,12 @@ enum Feature {
     zakat => l.featZakatSub,
     ruqyah => l.featRuqyahSub,
     fasting => l.featFastingSub,
+    khatmah => l.featKhatmahSub,
+    hifz => l.featHifzSub,
+    calendar => l.featCalendarSub,
+    tracker => l.featTrackerSub,
+    ramadan => l.featRamadanSub,
+    friday => l.featFridaySub,
   };
 
   void open(BuildContext context) {
@@ -91,12 +118,41 @@ enum Feature {
         route = RuqyahScreen.route();
       case fasting:
         route = FastingScreen.route();
+      case khatmah:
+        route = KhatmahScreen.route();
+      case hifz:
+        route = HifzScreen.route();
+      case calendar:
+        route = CalendarScreen.route();
+      case tracker:
+        route = TrackerScreen.route();
+      case ramadan:
+        route = RamadanScreen.route();
+      case friday:
+        route = FridayScreen.route();
     }
     if (route != null) Navigator.push(context, route);
   }
 }
 
-/// 3-column grid of every feature, used on Home.
+/// Features for today: Ramadan only in Ramadan and Jumu'ah only on
+/// Friday, each first while it's on.
+List<Feature> visibleFeatures(BuildContext context) {
+  final friday = context.select(
+    (ClockCubit c) => c.state.weekday == DateTime.friday,
+  );
+  final month =
+      context.select((PrayerTimesBloc b) => b.state.day?.hijriMonth) ?? 0;
+  final ramadan = (month > 0 ? month : HijriDate.of(DateTime.now()).month) == 9;
+  return [
+    if (ramadan) Feature.ramadan,
+    if (friday) Feature.friday,
+    for (final f in Feature.values)
+      if (f != Feature.ramadan && f != Feature.friday) f,
+  ];
+}
+
+/// 3-column grid of today's features, used on Home.
 class FeatureGrid extends StatelessWidget {
   const FeatureGrid({super.key});
 
@@ -112,7 +168,9 @@ class FeatureGrid extends StatelessWidget {
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
         childAspectRatio: 1.02,
-        children: [for (final f in Feature.values) _FeatureTile(feature: f)],
+        children: [
+          for (final f in visibleFeatures(context)) _FeatureTile(feature: f),
+        ],
       ),
     );
   }
@@ -129,7 +187,7 @@ class _FeatureTile extends StatelessWidget {
       color: Palette.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(color: Palette.rule, width: .7),
+        side: BorderSide(color: Palette.rule, width: .7),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -142,7 +200,7 @@ class _FeatureTile extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Palette.greenSoft,
                   shape: BoxShape.circle,
                 ),
@@ -179,7 +237,7 @@ class FeatureRow extends StatelessWidget {
       leading: Container(
         width: 42,
         height: 42,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: Palette.greenSoft,
           shape: BoxShape.circle,
         ),
@@ -193,7 +251,7 @@ class FeatureRow extends StatelessWidget {
         feature.subtitle(l),
         style: Fonts.body(13, color: Palette.inkSoft),
       ),
-      trailing: const Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
+      trailing: Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
     );
   }
 }

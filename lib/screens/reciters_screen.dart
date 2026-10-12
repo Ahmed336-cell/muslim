@@ -32,7 +32,7 @@ ThemeData _darkTheme(BuildContext context) => Theme.of(context).copyWith(
     titleTextStyle: Fonts.body(18, color: Listen.text, weight: FontWeight.w700),
     systemOverlayStyle: SystemUiOverlayStyle.light,
   ),
-  iconTheme: const IconThemeData(color: Listen.text),
+  iconTheme: IconThemeData(color: Listen.text),
 );
 
 void _openReciter(BuildContext context, Reciter r) => Navigator.of(
@@ -263,7 +263,7 @@ class _Card extends StatelessWidget {
                     : MainAxisAlignment.start,
                 children: [
                   if (playing) ...[
-                    const Icon(
+                    Icon(
                       Icons.graphic_eq_rounded,
                       size: 15,
                       color: Listen.accent,
@@ -627,17 +627,14 @@ class _SurahTrack extends StatelessWidget {
     } else if (saved) {
       download = IconButton(
         tooltip: l.removeDownload,
-        icon: const Icon(Icons.download_done_rounded, color: Listen.accent),
+        icon: Icon(Icons.download_done_rounded, color: Listen.accent),
         onPressed: () =>
             context.read<DownloadsCubit>().delete(recording.id, surah),
       );
     } else {
       download = IconButton(
         tooltip: l.download,
-        icon: const Icon(
-          Icons.arrow_circle_down_rounded,
-          color: Listen.textSoft,
-        ),
+        icon: Icon(Icons.arrow_circle_down_rounded, color: Listen.textSoft),
         onPressed: () => onDownload(surah),
       );
     }
@@ -680,7 +677,7 @@ class _SurahTrack extends StatelessWidget {
                   Row(
                     children: [
                       if (saved) ...[
-                        const Icon(
+                        Icon(
                           Icons.arrow_circle_down_rounded,
                           size: 14,
                           color: Listen.accent,

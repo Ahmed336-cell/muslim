@@ -49,7 +49,7 @@ class NowPlayingScreen extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (context.mounted) Navigator.of(context).maybePop();
       });
-      return const ColoredBox(color: Listen.bg);
+      return ColoredBox(color: Listen.bg);
     }
 
     final (light, _) = coverColors(track.artist);
@@ -240,7 +240,7 @@ class _Controls extends StatelessWidget {
             color: Listen.text,
             shape: const CircleBorder(),
             child: s.buffering && s.playing
-                ? const Padding(
+                ? Padding(
                     padding: EdgeInsets.all(22),
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,

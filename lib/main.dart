@@ -16,8 +16,11 @@ import 'bloc/azkar_reminders_cubit.dart';
 import 'bloc/clock_cubit.dart';
 import 'bloc/duas/dua_library_bloc.dart';
 import 'bloc/duas/dua_of_day_cubit.dart';
+import 'bloc/extra_reminders_cubit.dart';
 import 'bloc/fasting/fasting_bloc.dart';
+import 'bloc/friday_cubit.dart';
 import 'bloc/hisn_cubit.dart';
+import 'bloc/live_activity_cubit.dart';
 import 'bloc/location_cubit.dart';
 import 'bloc/names/names_bloc.dart';
 import 'bloc/onboarding_cubit.dart';
@@ -28,9 +31,12 @@ import 'bloc/quran/ambient_cubit.dart';
 import 'bloc/quran/downloads_cubit.dart';
 import 'bloc/quran/quran_prefs_cubit.dart';
 import 'bloc/quran/recent_reciters_cubit.dart';
+import 'bloc/quran/hifz_cubit.dart';
+import 'bloc/quran/khatmah_cubit.dart';
 import 'bloc/quran/recent_surahs_cubit.dart';
 import 'bloc/quran/recitation_cubit.dart';
 import 'bloc/quran_bookmark_cubit.dart';
+import 'bloc/ramadan_cubit.dart';
 import 'bloc/reminders_cubit.dart';
 import 'bloc/ruqyah/ruqyah_bloc.dart';
 import 'bloc/settings_cubit.dart';
@@ -42,13 +48,16 @@ import 'screens/azkar_screen.dart';
 import 'screens/dhikr_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/more_screen.dart';
+import 'screens/mushaf_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/prayer_screen.dart';
 import 'screens/qibla_screen.dart';
 import 'services/ambient.dart';
+import 'services/clock.dart';
 import 'services/hisn.dart';
 import 'services/home_widgets.dart';
 import 'services/islamic_api.dart';
+import 'services/live_activity.dart';
 import 'services/location.dart';
 import 'services/notifications.dart';
 import 'services/offline_cache.dart';
@@ -56,8 +65,10 @@ import 'services/player.dart';
 import 'services/quran.dart';
 import 'services/quran_text.dart';
 import 'services/recitation.dart';
+import 'services/recite_engine.dart';
 import 'theme.dart';
 import 'widgets/home_widget_sync.dart';
+import 'widgets/live_activity_sync.dart';
 import 'widgets/mini_player.dart';
 
 Future<void> main() async {
@@ -78,6 +89,7 @@ Future<void> main() async {
   } catch (_) {
     // Playback still works in the foreground.
   }
+  await usePlaybackSession();
   runApp(MuslimApp(apiKey: await _loadApiKey()));
 }
 
@@ -106,6 +118,7 @@ class MuslimApp extends StatelessWidget {
     this.audioStore,
     this.hisn,
     this.homeWidgets,
+    this.reciteEngine,
     this.apiKey,
   });
 
@@ -120,6 +133,7 @@ class MuslimApp extends StatelessWidget {
   final AudioStore? audioStore;
   final HisnRepository? hisn;
   final HomeWidgets? homeWidgets;
+  final ReciteEngine? reciteEngine;
   final String? apiKey;
 
   @override
@@ -143,6 +157,7 @@ class MuslimApp extends StatelessWidget {
               ),
         ),
         RepositoryProvider(create: (_) => homeWidgets ?? HomeWidgets()),
+        RepositoryProvider(create: (_) => const LiveActivity()),
         RepositoryProvider(create: (_) => location ?? const LocationService()),
         RepositoryProvider(create: (_) => notifier ?? PrayerNotifier()),
         RepositoryProvider(
@@ -151,6 +166,7 @@ class MuslimApp extends StatelessWidget {
         ),
         RepositoryProvider(create: (_) => audioStore ?? AudioStore()),
         RepositoryProvider(create: (_) => hisn ?? HisnRepository()),
+        RepositoryProvider(create: (_) => reciteEngine ?? ReciteEngine()),
         RepositoryProvider<AudioEngine>(
           create: (_) => audio ?? JustAudioEngine(),
         ),
@@ -194,6 +210,16 @@ class _Blocs extends StatelessWidget {
           create: (c) =>
               HisnCubit(repository: c.read<HisnRepository>())..load(),
         ),
+        BlocProvider(
+          lazy: false,
+          create: (c) => ExtraRemindersCubit(
+            notifier: c.read<PrayerNotifier>(),
+            text: c.read<QuranText>(),
+          )..sync(null, lang),
+        ),
+        BlocProvider(create: (_) => RamadanCubit()),
+        BlocProvider(create: (_) => LiveActivityCubit()),
+        BlocProvider(create: (_) => FridayCubit()),
         BlocProvider(create: (_) => AzkarCubit()),
         BlocProvider(create: (_) => TabCubit()),
         BlocProvider(create: (_) => ClockCubit()),
@@ -206,7 +232,7 @@ class _Blocs extends StatelessWidget {
         ),
         BlocProvider(
           create: (c) =>
-              PrayerTimesBloc(repository: api(c), place: settings.place)
+              PrayerTimesBloc(place: settings.place)
                 ..add(const PrayerTimesRequested()),
         ),
         BlocProvider(
@@ -226,6 +252,8 @@ class _Blocs extends StatelessWidget {
           },
         ),
         BlocProvider(create: (_) => RecentSurahsCubit()),
+        BlocProvider(create: (_) => KhatmahCubit()),
+        BlocProvider(create: (_) => HifzCubit()),
         BlocProvider(
           create: (c) => RecitationCubit(engine: c.read<AudioEngine>()),
         ),
@@ -258,8 +286,7 @@ class _Blocs extends StatelessWidget {
         BlocProvider(
           lazy: false,
           create: (c) =>
-              DuaOfDayCubit(api: api(c))
-                ..load(day: DateTime.now(), language: lang),
+              DuaOfDayCubit(api: api(c))..load(day: appNow(), language: lang),
         ),
       ],
       child: const _SettingsSync(child: _App()),
@@ -298,10 +325,11 @@ class _SettingsSync extends StatelessWidget {
         ),
         BlocListener<PrayerTimesBloc, PrayerTimesState>(
           listenWhen: (a, b) => a.day != b.day && b.day != null,
-          listener: (context, s) => context.read<RemindersCubit>().sync(
-            s.day,
-            context.read<SettingsCubit>().state.language,
-          ),
+          listener: (context, s) {
+            final lang = context.read<SettingsCubit>().state.language;
+            context.read<RemindersCubit>().sync(s.day, lang);
+            context.read<ExtraRemindersCubit>().sync(s.day, lang);
+          },
         ),
         BlocListener<SettingsCubit, Settings>(
           listenWhen: (a, b) => a.language != b.language,
@@ -309,12 +337,10 @@ class _SettingsSync extends StatelessWidget {
             final lang = s.language;
             context.read<RemindersCubit>().sync(null, lang);
             context.read<AzkarRemindersCubit>().sync(lang);
+            context.read<ExtraRemindersCubit>().sync(null, lang);
             context.read<AudioCubit>().stop();
             context.read<NamesBloc>().add(NamesRequested(lang));
-            context.read<DuaOfDayCubit>().load(
-              day: DateTime.now(),
-              language: lang,
-            );
+            context.read<DuaOfDayCubit>().load(day: appNow(), language: lang);
             context.read<RuqyahBloc>().add(RuqyahLanguageChanged(lang));
             final duas = context.read<DuaLibraryBloc>();
             // Only refetch the big library if it was opened before.
@@ -324,6 +350,16 @@ class _SettingsSync extends StatelessWidget {
                   : DuaLibraryRequested(language: lang),
             );
           },
+        ),
+        // A new day in the city needs new times and a new Hijri date.
+        BlocListener<ClockCubit, DateTime>(
+          listenWhen: (a, b) {
+            final day = context.read<PrayerTimesBloc>().state.day;
+            if (day == null) return false;
+            return day.cityNow(a).day != day.cityNow(b).day;
+          },
+          listener: (context, _) =>
+              context.read<PrayerTimesBloc>().add(const PrayerTimesRefreshed()),
         ),
         BlocListener<SettingsCubit, Settings>(
           listenWhen: (a, b) => a.place != b.place,
@@ -352,12 +388,20 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = context.select((SettingsCubit c) => c.state.language);
+    final theme = context.select((SettingsCubit c) => c.state.theme);
+    final dark = switch (theme) {
+      AppTheme.dark => true,
+      AppTheme.light => false,
+      AppTheme.system =>
+        MediaQuery.platformBrightnessOf(context) == Brightness.dark,
+    };
     Fonts.arabicUi = lang == 'ar';
+    Palette.dark = dark;
 
     return MaterialApp(
-      // New key per language so every widget restyles; the tab survives
+      // New key per language and theme so every widget restyles; the tab survives
       // because it lives in TabCubit above.
-      key: ValueKey(lang),
+      key: ValueKey((lang, dark)),
       onGenerateTitle: (context) => context.l.appName,
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
@@ -370,7 +414,9 @@ class _App extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       home: context.select((OnboardingCubit c) => c.state.done)
-          ? const _NotificationTaps(child: HomeWidgetSync(child: Shell()))
+          ? const _NotificationTaps(
+              child: HomeWidgetSync(child: LiveActivitySync(child: Shell())),
+            )
           : const OnboardingScreen(),
     );
   }
@@ -401,6 +447,21 @@ class _NotificationTapsState extends State<_NotificationTaps> {
 
   void _open(String payload) {
     if (!mounted) return;
+    final quran = switch (payload.split(':')) {
+      ['kahf'] => MushafScreen.route(18),
+      ['ayah', final s, final a] => MushafScreen.route(
+        int.tryParse(s) ?? 1,
+        ayah: int.tryParse(a) ?? 1,
+        highlight: true,
+      ),
+      _ => null,
+    };
+    if (quran != null) {
+      Navigator.of(context)
+        ..popUntil((r) => r.isFirst)
+        ..push(quran);
+      return;
+    }
     final session = AzkarSession.values
         .where((s) => payload == 'azkar:${s.name}')
         .firstOrNull;
@@ -442,7 +503,7 @@ class Shell extends StatelessWidget {
         if (!didPop) context.read<TabCubit>().select(AppTab.home);
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: tab == AppTab.home
+        value: tab == AppTab.home || Palette.dark
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark,
         child: Scaffold(
@@ -452,7 +513,7 @@ class Shell extends StatelessWidget {
             children: [
               const MiniPlayer(safeArea: false),
               DecoratedBox(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(color: Palette.rule, width: .7),
                   ),

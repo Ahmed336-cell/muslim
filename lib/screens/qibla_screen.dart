@@ -124,7 +124,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
                 style: Fonts.body(
                   16,
                   weight: FontWeight.w600,
-                  color: aligned ? Palette.paper : Palette.ink,
+                  color: aligned ? Palette.cream : Palette.ink,
                 ),
               ),
             ),

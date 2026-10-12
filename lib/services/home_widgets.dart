@@ -21,7 +21,12 @@ abstract final class WidgetKeys {
   static const labels = 'labels';
 
   /// iOS widget kinds and Android provider classes share these names.
-  static const kinds = ['PrayerWidget', 'AyahWidget', 'DuaWidget', 'NameWidget'];
+  static const kinds = [
+    'PrayerWidget',
+    'AyahWidget',
+    'DuaWidget',
+    'NameWidget',
+  ];
 }
 
 /// How the app formats a prayer for display.
@@ -31,22 +36,24 @@ typedef PrayerFormat = ({
 });
 
 /// Prayer times as absolute instants, so the widgets can count down and roll
-/// over to the next prayer while the app is closed. Later days repeat today's
-/// times; they drift by a minute or two until the app refreshes them.
+/// over to the next prayer while the app is closed. Days beyond what [day]
+/// knows repeat today's times.
 Map<String, Object?> prayerWidgetData(
   PrayerDay day,
   DateTime now,
   PrayerFormat format, {
   int days = 7,
+  String? city,
 }) {
   final offset = day.utcOffset;
   final today = day.cityNow(now);
+  final known = [day.prayers, ...day.following];
   return {
-    'city': day.city,
+    'city': city ?? day.city,
     'perDay': day.prayers.length,
     'times': [
       for (var d = 0; d < days; d++)
-        for (final p in day.prayers)
+        for (final p in d < known.length ? known[d] : day.prayers)
           () {
             final date = DateTime(today.year, today.month, today.day + d);
             final at = offset == null

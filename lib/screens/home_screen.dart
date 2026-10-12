@@ -14,9 +14,13 @@ import '../l10n/l10n.dart';
 import '../services/islamic_api.dart';
 import '../theme.dart';
 import '../widgets/city_picker.dart';
+import 'friday_screen.dart';
+import 'ramadan_screen.dart';
+import 'tracker_screen.dart';
 import '../widgets/azkar_card.dart';
 import '../widgets/common.dart';
 import '../widgets/shimmer.dart';
+import '../widgets/daily_cards.dart';
 import '../widgets/dua_of_the_day.dart';
 import '../widgets/features.dart';
 import '../widgets/name_of_the_day.dart';
@@ -62,13 +66,16 @@ class HomeScreen extends StatelessWidget {
             const _TodayStrip(),
             const SizedBox(height: 12),
             const AzkarNowCard(),
+            const _Occasion(),
             const SizedBox(height: 24),
             SectionHeader(l.explore),
             const FeatureGrid(),
             const SizedBox(height: 24),
             const NameOfTheDay(),
             const DuaOfTheDay(),
-            const _VerseCard(),
+            const DailyAyahCard(),
+            const SizedBox(height: 16),
+            const HadithCard(),
             const SizedBox(height: 28),
           ],
         ),
@@ -87,7 +94,7 @@ class _Header extends StatelessWidget {
     final state = context.watch<PrayerTimesBloc>().state;
     final day = state.day;
     final top = MediaQuery.paddingOf(context).top;
-    final soft = Palette.paper.withValues(alpha: .72);
+    final soft = Palette.cream.withValues(alpha: .72);
 
     final dateLine = [
       context.date(now, 'EEEE d MMMM'),
@@ -116,7 +123,7 @@ class _Header extends StatelessWidget {
                           children: [
                             Text(
                               l.greeting,
-                              style: Fonts.display(22, color: Palette.paper),
+                              style: Fonts.display(22, color: Palette.cream),
                             ),
                             const SizedBox(height: 4),
                             Text(dateLine, style: Fonts.body(13, color: soft)),
@@ -124,7 +131,7 @@ class _Header extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const CityChip(color: Palette.paper),
+                      const CityChip(color: Palette.cream),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -132,10 +139,10 @@ class _Header extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
                     decoration: BoxDecoration(
-                      color: Palette.paper.withValues(alpha: .08),
+                      color: Palette.cream.withValues(alpha: .08),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: Palette.paper.withValues(alpha: .14),
+                        color: Palette.cream.withValues(alpha: .14),
                       ),
                     ),
                     child: day != null
@@ -192,19 +199,19 @@ class _NextPrayer extends StatelessWidget {
             Expanded(
               child: Text(
                 context.prayerName(next.name, day: at),
-                style: Fonts.display(42, color: Palette.paper),
+                style: Fonts.display(42, color: Palette.cream),
               ),
             ),
             Text(
               context.clock(next),
-              style: Fonts.mono(26, color: Palette.paper),
+              style: Fonts.mono(26, color: Palette.cream),
             ),
             const SizedBox(width: 4),
             Text(
               context.period(next),
               style: Fonts.body(
                 13,
-                color: Palette.paper.withValues(alpha: .65),
+                color: Palette.cream.withValues(alpha: .65),
               ),
             ),
           ],
@@ -215,8 +222,8 @@ class _NextPrayer extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 4,
-            backgroundColor: Palette.paper.withValues(alpha: .14),
-            valueColor: const AlwaysStoppedAnimation(Palette.brass),
+            backgroundColor: Palette.cream.withValues(alpha: .14),
+            valueColor: AlwaysStoppedAnimation(Palette.brass),
           ),
         ),
         const SizedBox(height: 10),
@@ -225,12 +232,12 @@ class _NextPrayer extends StatelessWidget {
             const Icon(
               Icons.hourglass_bottom_rounded,
               size: 16,
-              color: Palette.paper,
+              color: Palette.cream,
             ),
             const SizedBox(width: 6),
             Text(
               l.inDuration(context.duration(at.difference(cityNow))),
-              style: Fonts.body(14, color: Palette.paper),
+              style: Fonts.body(14, color: Palette.cream),
             ),
           ],
         ),
@@ -252,7 +259,7 @@ class _HeaderError extends StatelessWidget {
         Text(
           context.error(error),
           textAlign: TextAlign.center,
-          style: Fonts.body(13, color: Palette.paper.withValues(alpha: .8)),
+          style: Fonts.body(13, color: Palette.cream.withValues(alpha: .8)),
         ),
         TextButton(
           onPressed: () =>
@@ -303,12 +310,26 @@ class _TodayStrip extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            prayed.length == prayers.length
-                ? context.l.allPrayed
-                : context.l.prayedCount(context.n(prayed.length)),
-            style: Fonts.body(12, color: Palette.inkSoft),
+          const SizedBox(height: 2),
+          InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => Navigator.of(context).push(TrackerScreen.route()),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    prayed.length == prayers.length
+                        ? context.l.allPrayed
+                        : context.l.prayedCount(context.n(prayed.length)),
+                    style: Fonts.body(12, color: Palette.inkSoft),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(Icons.insights_rounded, size: 15, color: Palette.green),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -373,7 +394,7 @@ class _PrayerCell extends StatelessWidget {
                   ? const Icon(
                       Icons.check_rounded,
                       size: 14,
-                      color: Palette.paper,
+                      color: Palette.cream,
                     )
                   : null,
             ),
@@ -384,46 +405,57 @@ class _PrayerCell extends StatelessWidget {
   }
 }
 
-class _VerseCard extends StatelessWidget {
-  const _VerseCard();
+/// Ramadan countdown, or a Friday reminder on Jumu'ah.
+class _Occasion extends StatelessWidget {
+  const _Occasion();
 
   @override
   Widget build(BuildContext context) {
     final l = context.l;
-    return AppCard(
-      padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const StarMark(size: 9, color: Palette.clay),
-              const SizedBox(width: 8),
-              Caption(l.verseTitle),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا',
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.center,
-            style: Fonts.arabic(26, color: Palette.green),
-          ),
-          if (l.verseTranslation.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              l.verseTranslation,
-              textAlign: TextAlign.center,
-              style: Fonts.quote(17, color: Palette.ink),
+    final now = context.watch<ClockCubit>().state;
+    final day = context.select((PrayerTimesBloc b) => b.state.day);
+    if (day != null && day.hijriMonth == 9) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 12),
+        child: RamadanCard(),
+      );
+    }
+    if (now.weekday != DateTime.friday) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: AppCard(
+        onTap: () => Navigator.of(context).push(FridayScreen.route()),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: Palette.greenSoft,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.mosque_outlined, color: Palette.green),
             ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l.jumuahMubarak,
+                    style: Fonts.body(15, weight: FontWeight.w600),
+                  ),
+                  Text(
+                    l.fridayHomeSub,
+                    style: Fonts.body(12.5, color: Palette.inkSoft),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: Palette.inkSoft),
           ],
-          const SizedBox(height: 10),
-          Text(
-            l.verseRef,
-            textAlign: TextAlign.center,
-            style: Fonts.body(12, color: Palette.inkSoft),
-          ),
-        ],
+        ),
       ),
     );
   }

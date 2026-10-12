@@ -1,3 +1,4 @@
+import ActivityKit
 import SwiftUI
 import WidgetKit
 
@@ -461,6 +462,119 @@ struct NameWidget: Widget {
   }
 }
 
+// MARK: - Live Activity
+
+// Must match the copy in Runner/AppDelegate.swift field for field.
+struct PrayerActivityAttributes: ActivityAttributes {
+  public struct ContentState: Codable, Hashable {
+    var name: String
+    var clock: String
+    var at: Date
+    var since: Date
+  }
+
+  var label: String
+  var now: String
+  var city: String
+  var rtl: Bool
+}
+
+struct PrayerLiveActivity: Widget {
+  var body: some WidgetConfiguration {
+    ActivityConfiguration(for: PrayerActivityAttributes.self) { context in
+      PrayerLockView(context: context)
+        .activityBackgroundTint(Palette.green)
+        .activitySystemActionForegroundColor(Palette.cream)
+        .widgetURL(link("prayer"))
+    } dynamicIsland: { context in
+      let s = context.state
+      let a = context.attributes
+      return DynamicIsland {
+        DynamicIslandExpandedRegion(.leading) {
+          VStack(alignment: .leading, spacing: 2) {
+            caption(a.label, rtl: a.rtl)
+            Text(s.name).font(.system(size: 20, weight: .semibold, design: .serif))
+              .lineLimit(1).minimumScaleFactor(0.6)
+          }
+          .padding(.leading, 4)
+        }
+        DynamicIslandExpandedRegion(.trailing) {
+          VStack(alignment: .trailing, spacing: 2) {
+            Text(s.clock).font(.system(size: 13)).foregroundStyle(.secondary)
+            remaining(s, now: a.now)
+              .font(.system(size: 20, weight: .semibold).monospacedDigit())
+              .foregroundStyle(Palette.brass)
+          }
+          .padding(.trailing, 4)
+        }
+        DynamicIslandExpandedRegion(.bottom) {
+          ProgressView(timerInterval: s.since...max(s.at, s.since), countsDown: false) {
+            EmptyView()
+          } currentValueLabel: {
+            EmptyView()
+          }
+          .tint(Palette.brass)
+          .padding(.horizontal, 4)
+        }
+      } compactLeading: {
+        Image(systemName: "moon.stars.fill").foregroundStyle(Palette.brass)
+      } compactTrailing: {
+        remaining(s, now: a.now)
+          .monospacedDigit()
+          .frame(maxWidth: 56)
+          .foregroundStyle(Palette.brass)
+      } minimal: {
+        Image(systemName: "moon.stars.fill").foregroundStyle(Palette.brass)
+      }
+      .widgetURL(link("prayer"))
+    }
+  }
+}
+
+/// Counts down to the prayer, then says it's due.
+private func remaining(_ s: PrayerActivityAttributes.ContentState, now label: String) -> Text {
+  s.at > Date()
+    ? Text(timerInterval: Date()...s.at, countsDown: true)
+    : Text(label)
+}
+
+struct PrayerLockView: View {
+  let context: ActivityViewContext<PrayerActivityAttributes>
+
+  var body: some View {
+    let s = context.state
+    let a = context.attributes
+    VStack(alignment: .leading, spacing: 10) {
+      HStack(alignment: .center) {
+        VStack(alignment: .leading, spacing: 2) {
+          caption(a.label, rtl: a.rtl)
+          Text(s.name).font(.system(size: 26, weight: .semibold, design: .serif))
+            .foregroundStyle(Palette.cream).lineLimit(1).minimumScaleFactor(0.6)
+          if !a.city.isEmpty {
+            Text(a.city).font(.system(size: 11)).foregroundStyle(Palette.cream.opacity(0.6))
+          }
+        }
+        Spacer(minLength: 8)
+        VStack(alignment: .trailing, spacing: 2) {
+          (context.isStale ? Text(a.now) : remaining(s, now: a.now))
+            .font(.system(size: 26, weight: .semibold).monospacedDigit())
+            .foregroundStyle(Palette.cream)
+            .multilineTextAlignment(.trailing)
+          Text(s.clock).font(.system(size: 13)).foregroundStyle(Palette.cream.opacity(0.75))
+        }
+      }
+      ProgressView(timerInterval: s.since...max(s.at, s.since), countsDown: false) {
+        EmptyView()
+      } currentValueLabel: {
+        EmptyView()
+      }
+      .tint(Palette.brass)
+    }
+    .padding(16)
+    .environment(\.layoutDirection, a.rtl ? .rightToLeft : .leftToRight)
+  }
+}
+
 @main
 struct MuslimWidgets: WidgetBundle {
   var body: some Widget {
@@ -468,5 +582,6 @@ struct MuslimWidgets: WidgetBundle {
     AyahWidget()
     DuaWidget()
     NameWidget()
+    PrayerLiveActivity()
   }
 }

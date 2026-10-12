@@ -478,7 +478,7 @@ class L10nEn extends L10n {
   String get quranTitle => 'Quran';
 
   @override
-  String get quranSearch => 'Surah name, meaning or number';
+  String get quranSearch => 'Surah, number, 2:255 or words of an ayah';
 
   @override
   String ayahCount(int n) {
@@ -818,7 +818,7 @@ class L10nEn extends L10n {
 
   @override
   String get aboutBody =>
-      'Prayer times, fasting, nisab, duas, names and ruqyah come from islamicapi.com; Quran text and tafsir from alquran.cloud and quran.com. Your prayer log, tasbih and settings stay on this device.';
+      'Prayer times and the Hijri date are calculated on this device. The Quran text is bundled; recitations, tafsir and other content are downloaded from the sources in Credits. Your prayer log, tasbih and settings stay on this device.';
 
   @override
   String get obSkip => 'Skip';
@@ -1174,4 +1174,804 @@ class L10nEn extends L10n {
   @override
   String get widgetIosHint =>
       'Long-press the home or lock screen, tap Edit or +, then search for Muslim.';
+
+  @override
+  String get calcMethod => 'Calculation method';
+
+  @override
+  String calcCityDefault(String city) {
+    return 'Recommended for $city';
+  }
+
+  @override
+  String get calcOffline =>
+      'Times are calculated on your device, so they work offline.';
+
+  @override
+  String get adjustTimes => 'Adjust times';
+
+  @override
+  String get adjustTimesSub =>
+      'Add or subtract minutes to match your local mosque.';
+
+  @override
+  String get adjustNone => 'No adjustments';
+
+  @override
+  String get adjustSome => 'Custom adjustments';
+
+  @override
+  String get hijriAdjust => 'Hijri date';
+
+  @override
+  String get hijriAdjustSub =>
+      'Shift by a day if the moon was sighted differently where you live.';
+
+  @override
+  String get credits => 'Credits & licences';
+
+  @override
+  String get creditsSub => 'Sources of the Quran text, audio and data';
+
+  @override
+  String get creditsPhotos => 'Reciter photos';
+
+  @override
+  String get creditsPhotosSub =>
+      'Wikimedia Commons; the author and licence also appear under each photo.';
+
+  @override
+  String get openSourceLicences => 'Open-source licences';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get privacyPolicySub => 'No account, no tracking';
+
+  @override
+  String get privacyNoAccountTitle => 'No account, no tracking';
+
+  @override
+  String get privacyNoAccount =>
+      'The app has no sign-in, ads or analytics. Your prayer log, tasbih counts, bookmarks, Khatmah progress and settings are stored only on this device and are deleted with the app.';
+
+  @override
+  String get privacyLocationTitle => 'Location';
+
+  @override
+  String get privacyLocation =>
+      'If you choose \"my location\", your position is used on the device to calculate prayer times and the qibla. It is rounded to about 100 m and is only sent to islamicapi.com to fetch fasting times. It is never stored on a server by us.';
+
+  @override
+  String get privacyNetworkTitle => 'Online content';
+
+  @override
+  String get privacyNetwork =>
+      'Recitations, tafsir, duas and other content are downloaded from the services listed in Credits. Those services see your IP address like any website. Downloads are cached on the device so they work offline.';
+
+  @override
+  String get privacyNotificationsTitle => 'Notifications and widgets';
+
+  @override
+  String get privacyNotifications =>
+      'Reminders are scheduled locally on the device. Widgets read data the app saves on the device; nothing is sent anywhere.';
+
+  @override
+  String get privacyContactTitle => 'Questions';
+
+  @override
+  String get privacyContact =>
+      'For any privacy question, contact the developer through the app store listing.';
+
+  @override
+  String ayahMatches(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ayahs',
+      one: '1 ayah',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ayahMatchesMore(String shown) {
+    return 'Showing the first $shown. Add a word to narrow it down.';
+  }
+
+  @override
+  String goToAyah(String surah, String ayah) {
+    return 'Go to $surah, ayah $ayah';
+  }
+
+  @override
+  String get searchArabicHint => 'Type Arabic words to search inside ayahs.';
+
+  @override
+  String get khatmah => 'Khatmah';
+
+  @override
+  String get khatmahSub => 'Plan to finish the whole Quran';
+
+  @override
+  String get khatmahIntro =>
+      'Pick how many days you want to finish the Quran in. We\'ll split it into a daily portion and track the pages you read.';
+
+  @override
+  String get khatmahFinishIn => 'Finish in';
+
+  @override
+  String khatmahDays(String n) {
+    return '$n days';
+  }
+
+  @override
+  String khatmahPerDay(String n) {
+    return '≈ $n pages a day';
+  }
+
+  @override
+  String get khatmahStart => 'Start khatmah';
+
+  @override
+  String get khatmahToday => 'Today\'s portion';
+
+  @override
+  String khatmahTodayGoal(String read, String target) {
+    return '$read of $target pages';
+  }
+
+  @override
+  String get khatmahTodayDone => 'Today\'s portion is done. Barak Allahu feek!';
+
+  @override
+  String khatmahPages(String read, String total) {
+    return '$read of $total pages';
+  }
+
+  @override
+  String khatmahDayOf(String day, String days) {
+    return 'Day $day of $days';
+  }
+
+  @override
+  String get khatmahStreak => 'Streak';
+
+  @override
+  String khatmahStreakDays(String n) {
+    return '$n days';
+  }
+
+  @override
+  String get khatmahAhead => 'Ahead of schedule';
+
+  @override
+  String get khatmahOnTrack => 'On track';
+
+  @override
+  String khatmahBehind(String n) {
+    return '$n pages behind';
+  }
+
+  @override
+  String khatmahContinue(String page) {
+    return 'Continue from page $page';
+  }
+
+  @override
+  String get khatmahHint =>
+      'A page counts once you turn past it or keep it open for 20 seconds.';
+
+  @override
+  String get khatmahDone =>
+      'You finished the Quran. May Allah accept it from you!';
+
+  @override
+  String khatmahCompleted(String n) {
+    return 'Khatmahs completed: $n';
+  }
+
+  @override
+  String get khatmahNew => 'Start a new khatmah';
+
+  @override
+  String get khatmahEnd => 'End plan';
+
+  @override
+  String get khatmahEndConfirm =>
+      'End this khatmah? Its progress will be cleared.';
+
+  @override
+  String get khatmahReadUpTo => 'Already read some?';
+
+  @override
+  String khatmahReadUpToSub(String page) {
+    return 'Mark every page up to page $page as read.';
+  }
+
+  @override
+  String get khatmahMark => 'Mark as read';
+
+  @override
+  String get featCalendar => 'Hijri calendar';
+
+  @override
+  String get featCalendarSub => 'Months and Islamic occasions';
+
+  @override
+  String get featKhatmah => 'Khatmah';
+
+  @override
+  String get featKhatmahSub => 'Finish the Quran on a plan';
+
+  @override
+  String get calendarToday => 'Today';
+
+  @override
+  String get calendarUpcoming => 'Upcoming';
+
+  @override
+  String get calendarWhiteDays => 'White days (13–15): recommended fasting';
+
+  @override
+  String calendarInDays(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'In $n days',
+      one: 'Tomorrow',
+      zero: 'Today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get calendarNoEvents => 'No occasions on this day.';
+
+  @override
+  String get calendarShiftNote =>
+      'Dates follow the Umm al-Qura calendar. Adjust by a day in Settings → Adjust times if your country sighted the moon differently.';
+
+  @override
+  String get evNewYear => 'Islamic New Year';
+
+  @override
+  String get evNewYearSub => '1 Muharram';
+
+  @override
+  String get evAshura => 'Day of Ashura';
+
+  @override
+  String get evAshuraSub =>
+      'Fasting it expiates the past year; fast the 9th too.';
+
+  @override
+  String get evRamadan => 'Ramadan begins';
+
+  @override
+  String get evRamadanSub => 'The month of fasting';
+
+  @override
+  String get evLastTen => 'Last ten nights';
+
+  @override
+  String get evLastTenSub => 'Seek Laylat al-Qadr in the odd nights.';
+
+  @override
+  String get evEidFitr => 'Eid al-Fitr';
+
+  @override
+  String get evEidFitrSub => 'Then six days of Shawwal';
+
+  @override
+  String get evDhulHijjah => 'First ten days of Dhul Hijjah';
+
+  @override
+  String get evDhulHijjahSub => 'The best days of the year for good deeds';
+
+  @override
+  String get evArafah => 'Day of Arafah';
+
+  @override
+  String get evArafahSub => 'Fasting it expiates two years.';
+
+  @override
+  String get evEidAdha => 'Eid al-Adha';
+
+  @override
+  String get evEidAdhaSub => 'The day of sacrifice';
+
+  @override
+  String get evTashreeq => 'Days of Tashreeq';
+
+  @override
+  String get evTashreeqSub =>
+      '11–13 Dhul Hijjah: days of eating and remembrance';
+
+  @override
+  String get featHifz => 'Hifz';
+
+  @override
+  String get featHifzSub => 'Memorise with repetition';
+
+  @override
+  String get hifzSurah => 'Surah';
+
+  @override
+  String hifzRange(String from, String to) {
+    return 'Ayahs $from–$to';
+  }
+
+  @override
+  String get hifzAyahRepeat => 'Repeat each ayah';
+
+  @override
+  String get hifzRangeRepeat => 'Repeat the whole range';
+
+  @override
+  String hifzTimes(String n) {
+    return '$n×';
+  }
+
+  @override
+  String get hifzPlay => 'Start listening';
+
+  @override
+  String get hifzStop => 'Stop';
+
+  @override
+  String get hifzShow => 'Show';
+
+  @override
+  String get hifzFirstWords => 'First words';
+
+  @override
+  String get hifzHideAll => 'Hide';
+
+  @override
+  String get hifzTapReveal => 'Tap to reveal';
+
+  @override
+  String hifzMemorized(String n, String total) {
+    return 'Memorised $n of $total ayahs in this surah';
+  }
+
+  @override
+  String get hifzMark => 'Mark as memorised';
+
+  @override
+  String get hifzUnmark => 'Memorised';
+
+  @override
+  String get hifzTestHint =>
+      'Hide the text, recite from memory, then tap an ayah to check yourself.';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get tracker => 'Prayer tracker';
+
+  @override
+  String get featTracker => 'Tracker';
+
+  @override
+  String get featTrackerSub => 'Streaks, history and missed prayers';
+
+  @override
+  String get trackerWeek => 'Last 7 days';
+
+  @override
+  String get trackerByPrayer => 'By prayer · 30 days';
+
+  @override
+  String get trackerStreak => 'Days with all five';
+
+  @override
+  String get trackerLast7 => 'Last 7 days';
+
+  @override
+  String get trackerLast30 => 'Last 30 days';
+
+  @override
+  String get trackerTapHint =>
+      'Tap a circle to log a prayer on an earlier day.';
+
+  @override
+  String get trackerEmpty =>
+      'Mark your prayers on the home screen to see stats here.';
+
+  @override
+  String get qadaTitle => 'Qada · missed prayers';
+
+  @override
+  String get qadaNone => 'Nothing to make up';
+
+  @override
+  String qadaLeft(String n) {
+    return '$n prayers to make up';
+  }
+
+  @override
+  String get qadaHint =>
+      'Add the prayers you owe, then tap − each time you make one up.';
+
+  @override
+  String get qadaMadeUp => 'Made one up';
+
+  @override
+  String get qadaAdd => 'Add one';
+
+  @override
+  String get featRamadan => 'Ramadan';
+
+  @override
+  String get featRamadanSub => 'Iftar countdown, duas and a 30-day tracker';
+
+  @override
+  String get featFriday => 'Jumu\'ah';
+
+  @override
+  String get featFridaySub => 'Al-Kahf, salawat and the last hour';
+
+  @override
+  String get dailyAyahTitle => 'Ayah of the day';
+
+  @override
+  String get kahfReminderTitle => 'Friday · Surah Al-Kahf';
+
+  @override
+  String get kahfReminderBody =>
+      'Read Surah Al-Kahf and send plenty of salawat on the Prophet ﷺ.';
+
+  @override
+  String get fridayHourTitle => 'The last hour of Friday';
+
+  @override
+  String get fridayHourBody =>
+      'An hour in which du\'a is answered — until Maghrib.';
+
+  @override
+  String fridayHourRange(String from, String to) {
+    return 'From $from until Maghrib at $to';
+  }
+
+  @override
+  String get suhoorTitle => 'Suhoor';
+
+  @override
+  String suhoorBody(String n) {
+    return 'Fajr is in $n minutes — time for suhoor.';
+  }
+
+  @override
+  String get dailyAyahReminder => 'Ayah of the day';
+
+  @override
+  String get kahfReminder => 'Surah Al-Kahf on Friday';
+
+  @override
+  String get kahfReminderSub => 'Friday at 10:00 AM';
+
+  @override
+  String get fridayHourReminder => 'Last hour of Friday';
+
+  @override
+  String get fridayHourReminderSub => 'An hour before Maghrib';
+
+  @override
+  String get suhoorReminder => 'Suhoor in Ramadan';
+
+  @override
+  String get suhoorReminderSub => '45 minutes before Fajr';
+
+  @override
+  String get moreReminders => 'Daily & weekly reminders';
+
+  @override
+  String get reminders => 'Reminders';
+
+  @override
+  String get jumuahMubarak => 'Jumu\'ah Mubarak';
+
+  @override
+  String get fridayTomorrow => 'Friday is tomorrow';
+
+  @override
+  String fridayIn(String n) {
+    return 'Friday in $n days';
+  }
+
+  @override
+  String get fridayIntro => 'The best day the sun rises on.';
+
+  @override
+  String get fridayHomeSub => 'Al-Kahf, salawat and the last hour';
+
+  @override
+  String get fridaySunnahs => 'Sunnahs of Friday';
+
+  @override
+  String get sunnahGhusl => 'Take a ghusl (full bath) before the prayer.';
+
+  @override
+  String get sunnahClothes => 'Wear your best clothes and use perfume.';
+
+  @override
+  String get sunnahEarly => 'Go early to the mosque, walking if you can.';
+
+  @override
+  String get sunnahKhutbah => 'Listen to the khutbah in silence.';
+
+  @override
+  String get sunnahKahf => 'Read Surah Al-Kahf.';
+
+  @override
+  String get sunnahSalawat => 'Send plenty of salawat on the Prophet ﷺ.';
+
+  @override
+  String get sunnahDua =>
+      'Make du\'a, especially in the last hour before Maghrib.';
+
+  @override
+  String get readKahf => 'Read Surah Al-Kahf';
+
+  @override
+  String get kahfHint => 'Tick it once you\'ve read it today.';
+
+  @override
+  String get kahfDone => 'Read today — may Allah accept it.';
+
+  @override
+  String get salawatCounter => 'Salawat on the Prophet ﷺ';
+
+  @override
+  String get salawatHint => 'Tap the circle with each one.';
+
+  @override
+  String get iftarDua => 'Dua when breaking the fast';
+
+  @override
+  String get iftarDuaMeaning =>
+      'The thirst has gone, the veins are moistened, and the reward is certain, if Allah wills.';
+
+  @override
+  String get iftarDuaSource => 'Abu Dawud';
+
+  @override
+  String get qadrDua => 'Dua for Laylat al-Qadr';
+
+  @override
+  String get qadrDuaMeaning =>
+      'O Allah, You are Pardoning and love to pardon, so pardon me.';
+
+  @override
+  String get qadrDuaSource => 'At-Tirmidhi';
+
+  @override
+  String ramadanTracker(String year) {
+    return 'Ramadan $year';
+  }
+
+  @override
+  String ramadanDay(String n) {
+    return 'Day $n of Ramadan';
+  }
+
+  @override
+  String get iftarIn => 'Iftar in';
+
+  @override
+  String get suhoorEndsIn => 'Suhoor ends in';
+
+  @override
+  String ramadanIn(String n) {
+    return 'Ramadan in $n days';
+  }
+
+  @override
+  String get deedFast => 'Fasted';
+
+  @override
+  String get deedTaraweeh => 'Taraweeh';
+
+  @override
+  String get deedJuz => 'A juz read';
+
+  @override
+  String get ramadanTrackerHint =>
+      'Tap a day to tick its fast, taraweeh and juz.';
+
+  @override
+  String get shareAyah => 'Share ayah';
+
+  @override
+  String get shareImage => 'Share as image';
+
+  @override
+  String get includeTranslation => 'Include translation';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get hadithTitle => 'Hadith of the day';
+
+  @override
+  String get liveActivity => 'Lock screen countdown';
+
+  @override
+  String get liveActivitySub =>
+      'A Live Activity counting down to the next prayer';
+
+  @override
+  String get liveNow => 'It\'s time';
+
+  @override
+  String get fridayPriorities => 'Today\'s deeds, by priority';
+
+  @override
+  String get deedJumuah => 'Pray Jumu\'ah and listen to the khutbah.';
+
+  @override
+  String get tagFard => 'Obligatory';
+
+  @override
+  String get tagMuakkad => 'Emphasized sunnah';
+
+  @override
+  String get tagSunnah => 'Sunnah';
+
+  @override
+  String get kahfOpen => 'Open';
+
+  @override
+  String get hifzPlayAyah => 'Play this ayah';
+
+  @override
+  String get hifzPageHint =>
+      'Tap an ayah to reveal it · tap its number to play or mark it learnt';
+
+  @override
+  String get reciteCheck => 'Recite & check';
+
+  @override
+  String get reciteHint =>
+      'Recite the range from memory. It\'s checked on your device.';
+
+  @override
+  String get reciteModelTitle => 'Download the recitation model?';
+
+  @override
+  String reciteModelBody(String size) {
+    return 'A $size Quran speech model (Tarteel AI) is downloaded once. Your recordings never leave your phone.';
+  }
+
+  @override
+  String get reciteDownload => 'Download';
+
+  @override
+  String reciteDownloading(String percent) {
+    return 'Downloading model… $percent';
+  }
+
+  @override
+  String get reciteListening => 'Listening… tap to finish';
+
+  @override
+  String get reciteChecking => 'Checking your recitation…';
+
+  @override
+  String reciteResult(String correct, String total) {
+    return '$correct of $total words matched';
+  }
+
+  @override
+  String reciteMistakes(String count) {
+    return '$count possible mistakes';
+  }
+
+  @override
+  String reciteMissed(String count) {
+    return '$count skipped';
+  }
+
+  @override
+  String get reciteLegend =>
+      'Green: matched · red: possible mistake · underlined: skipped. Automatic check, it can be wrong.';
+
+  @override
+  String get reciteHeard => 'What was heard';
+
+  @override
+  String get reciteClear => 'Clear';
+
+  @override
+  String get reciteNoPermission =>
+      'Microphone access is needed to check your recitation.';
+
+  @override
+  String get reciteFailed => 'Couldn\'t check the recitation. Try again.';
+
+  @override
+  String get reciteNothing => 'Nothing was heard. Recite a little louder.';
+
+  @override
+  String get reciteDownloadFailed => 'Download failed. Check your connection.';
+
+  @override
+  String get reciteRevealLive => 'Show the words as I recite';
+
+  @override
+  String get reciteRevealLiveHint =>
+      'The page stays covered and each word appears once it\'s heard.';
+
+  @override
+  String reciteProgress(String done, String total) {
+    return '$done of $total words';
+  }
+
+  @override
+  String get feedbackTitle => 'Your recitation';
+
+  @override
+  String get gradeExcellent => 'Excellent, mashaAllah';
+
+  @override
+  String get gradeVeryGood => 'Very good';
+
+  @override
+  String get gradeGood => 'Good, review the marked words';
+
+  @override
+  String get gradeReview => 'Needs more review';
+
+  @override
+  String get feedbackMatched => 'Matched';
+
+  @override
+  String get feedbackMistakes => 'Possible mistakes';
+
+  @override
+  String get feedbackSkipped => 'Skipped';
+
+  @override
+  String get feedbackReview => 'Words to review';
+
+  @override
+  String feedbackHeardAs(String word) {
+    return 'heard: $word';
+  }
+
+  @override
+  String get feedbackSkippedWord => 'skipped';
+
+  @override
+  String feedbackPerfect(String count) {
+    return '$count ayahs recited without mistakes';
+  }
+
+  @override
+  String get feedbackMarkLearnt => 'Mark as learnt';
+
+  @override
+  String feedbackUnreached(String count) {
+    return 'Stopped before the end: $count words not recited.';
+  }
+
+  @override
+  String get feedbackOpen => 'Feedback';
+
+  @override
+  String get feedbackDone => 'Done';
 }

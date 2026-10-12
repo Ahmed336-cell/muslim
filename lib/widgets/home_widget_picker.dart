@@ -34,7 +34,12 @@ class HomeWidgetPicker extends StatelessWidget {
       ('PrayerWidget', Icons.schedule_rounded, l.nextPrayer, l.widgetPrayerSub),
       ('AyahWidget', Icons.menu_book_rounded, l.widgetVerse, l.widgetAyahSub),
       ('DuaWidget', Icons.front_hand_outlined, l.widgetDua, l.widgetDuaSub),
-      ('NameWidget', Icons.auto_awesome_outlined, l.namesTitle, l.widgetNameSub),
+      (
+        'NameWidget',
+        Icons.auto_awesome_outlined,
+        l.namesTitle,
+        l.widgetNameSub,
+      ),
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

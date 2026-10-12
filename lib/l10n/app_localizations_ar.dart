@@ -478,7 +478,7 @@ class L10nAr extends L10n {
   String get quranTitle => 'القرآن الكريم';
 
   @override
-  String get quranSearch => 'اسم السورة أو رقمها';
+  String get quranSearch => 'سورة أو رقم أو ٢:٢٥٥ أو كلمات من آية';
 
   @override
   String ayahCount(int n) {
@@ -829,7 +829,7 @@ class L10nAr extends L10n {
 
   @override
   String get aboutBody =>
-      'المواقيت والصيام والنصاب والأدعية والأسماء والرقية مصدرها islamicapi.com، ونص القرآن والتفسير من alquran.cloud وquran.com. سجل صلواتك والتسبيح والإعدادات تبقى على هذا الجهاز.';
+      'تُحسب مواقيت الصلاة والتاريخ الهجري على هذا الجهاز، ونص القرآن مضمّن في التطبيق، أما التلاوات والتفاسير وباقي المحتوى فتُحمَّل من المصادر المذكورة. سجل صلواتك والتسبيح والإعدادات تبقى على هذا الجهاز.';
 
   @override
   String get obSkip => 'تخطي';
@@ -1183,4 +1183,794 @@ class L10nAr extends L10n {
   @override
   String get widgetIosHint =>
       'اضغط مطولًا على الشاشة الرئيسية أو شاشة القفل، ثم تعديل أو +، وابحث عن Muslim.';
+
+  @override
+  String get calcMethod => 'طريقة الحساب';
+
+  @override
+  String calcCityDefault(String city) {
+    return 'المقترحة لـ$city';
+  }
+
+  @override
+  String get calcOffline => 'تُحسب المواقيت على جهازك، فتعمل دون إنترنت.';
+
+  @override
+  String get adjustTimes => 'ضبط المواقيت';
+
+  @override
+  String get adjustTimesSub => 'أضف أو أنقص دقائق لتوافق مسجدك.';
+
+  @override
+  String get adjustNone => 'بدون تعديل';
+
+  @override
+  String get adjustSome => 'تعديلات مخصصة';
+
+  @override
+  String get hijriAdjust => 'التاريخ الهجري';
+
+  @override
+  String get hijriAdjustSub =>
+      'قدّم أو أخّر يومًا إن اختلفت رؤية الهلال في بلدك.';
+
+  @override
+  String get credits => 'المصادر والتراخيص';
+
+  @override
+  String get creditsSub => 'مصادر نص القرآن والصوتيات والبيانات';
+
+  @override
+  String get creditsPhotos => 'صور القرّاء';
+
+  @override
+  String get creditsPhotosSub =>
+      'من ويكيميديا كومنز، ويظهر اسم المصوّر والترخيص تحت كل صورة.';
+
+  @override
+  String get openSourceLicences => 'تراخيص البرمجيات مفتوحة المصدر';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get privacyPolicySub => 'بلا حساب ولا تتبّع';
+
+  @override
+  String get privacyNoAccountTitle => 'بلا حساب ولا تتبّع';
+
+  @override
+  String get privacyNoAccount =>
+      'لا يوجد في التطبيق تسجيل دخول ولا إعلانات ولا تحليلات. سجل صلواتك وعدّاد التسبيح والعلامات وتقدّم الختمة والإعدادات محفوظة على هذا الجهاز فقط، وتُحذف بحذف التطبيق.';
+
+  @override
+  String get privacyLocationTitle => 'الموقع';
+
+  @override
+  String get privacyLocation =>
+      'إذا اخترت «موقعي»، يُستخدم موقعك على الجهاز لحساب مواقيت الصلاة والقبلة. يُقرَّب إلى نحو ١٠٠ متر، ولا يُرسل إلا إلى islamicapi.com لجلب مواعيد الصيام، ولا نحفظه على أي خادم.';
+
+  @override
+  String get privacyNetworkTitle => 'المحتوى عبر الإنترنت';
+
+  @override
+  String get privacyNetwork =>
+      'تُحمَّل التلاوات والتفاسير والأدعية وغيرها من المصادر المذكورة في صفحة المصادر، وترى هذه الخدمات عنوان IP كأي موقع. يُحفظ المحتوى المحمَّل على الجهاز ليعمل دون إنترنت.';
+
+  @override
+  String get privacyNotificationsTitle => 'التنبيهات والأدوات';
+
+  @override
+  String get privacyNotifications =>
+      'تُجدول التنبيهات محليًا على الجهاز، وتقرأ الأدوات بيانات يحفظها التطبيق على الجهاز؛ لا يُرسل شيء إلى أي جهة.';
+
+  @override
+  String get privacyContactTitle => 'استفسارات';
+
+  @override
+  String get privacyContact =>
+      'لأي سؤال عن الخصوصية، تواصل مع المطوّر عبر صفحة التطبيق في المتجر.';
+
+  @override
+  String ayahMatches(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count آية',
+      few: '$count آيات',
+      two: 'آيتان',
+      one: 'آية واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ayahMatchesMore(String shown) {
+    return 'تظهر أول $shown نتيجة. أضف كلمة لتضييق البحث.';
+  }
+
+  @override
+  String goToAyah(String surah, String ayah) {
+    return 'اذهب إلى $surah، الآية $ayah';
+  }
+
+  @override
+  String get searchArabicHint => 'اكتب كلمات عربية للبحث داخل الآيات.';
+
+  @override
+  String get khatmah => 'الختمة';
+
+  @override
+  String get khatmahSub => 'خطة لختم القرآن كاملًا';
+
+  @override
+  String get khatmahIntro =>
+      'اختر عدد الأيام التي تريد أن تختم فيها القرآن، وسنقسّمه إلى ورد يومي ونتابع الصفحات التي تقرؤها.';
+
+  @override
+  String get khatmahFinishIn => 'الختم خلال';
+
+  @override
+  String khatmahDays(String n) {
+    return '$n يومًا';
+  }
+
+  @override
+  String khatmahPerDay(String n) {
+    return '≈ $n صفحة يوميًا';
+  }
+
+  @override
+  String get khatmahStart => 'ابدأ الختمة';
+
+  @override
+  String get khatmahToday => 'ورد اليوم';
+
+  @override
+  String khatmahTodayGoal(String read, String target) {
+    return '$read من $target صفحة';
+  }
+
+  @override
+  String get khatmahTodayDone => 'أتممت ورد اليوم، بارك الله فيك!';
+
+  @override
+  String khatmahPages(String read, String total) {
+    return '$read من $total صفحة';
+  }
+
+  @override
+  String khatmahDayOf(String day, String days) {
+    return 'اليوم $day من $days';
+  }
+
+  @override
+  String get khatmahStreak => 'المواظبة';
+
+  @override
+  String khatmahStreakDays(String n) {
+    return '$n يوم';
+  }
+
+  @override
+  String get khatmahAhead => 'متقدّم على الخطة';
+
+  @override
+  String get khatmahOnTrack => 'على الخطة';
+
+  @override
+  String khatmahBehind(String n) {
+    return 'متأخر $n صفحة';
+  }
+
+  @override
+  String khatmahContinue(String page) {
+    return 'تابع من الصفحة $page';
+  }
+
+  @override
+  String get khatmahHint =>
+      'تُحتسب الصفحة إذا قلّبتها إلى التالية أو بقيت مفتوحة ٢٠ ثانية.';
+
+  @override
+  String get khatmahDone => 'ختمت القرآن، تقبّل الله منك!';
+
+  @override
+  String khatmahCompleted(String n) {
+    return 'الختمات المكتملة: $n';
+  }
+
+  @override
+  String get khatmahNew => 'ابدأ ختمة جديدة';
+
+  @override
+  String get khatmahEnd => 'إنهاء الخطة';
+
+  @override
+  String get khatmahEndConfirm => 'إنهاء هذه الختمة؟ سيُمسح تقدّمها.';
+
+  @override
+  String get khatmahReadUpTo => 'قرأت جزءًا من قبل؟';
+
+  @override
+  String khatmahReadUpToSub(String page) {
+    return 'اعتبر كل الصفحات حتى الصفحة $page مقروءة.';
+  }
+
+  @override
+  String get khatmahMark => 'تحديد كمقروء';
+
+  @override
+  String get featCalendar => 'التقويم الهجري';
+
+  @override
+  String get featCalendarSub => 'الشهور والمناسبات الإسلامية';
+
+  @override
+  String get featKhatmah => 'الختمة';
+
+  @override
+  String get featKhatmahSub => 'اختم القرآن بخطة';
+
+  @override
+  String get calendarToday => 'اليوم';
+
+  @override
+  String get calendarUpcoming => 'القادم';
+
+  @override
+  String get calendarWhiteDays => 'الأيام البيض (١٣–١٥): يُستحب صيامها';
+
+  @override
+  String calendarInDays(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'بعد $n يومًا',
+      few: 'بعد $n أيام',
+      two: 'بعد يومين',
+      one: 'غدًا',
+      zero: 'اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get calendarNoEvents => 'لا مناسبات في هذا اليوم.';
+
+  @override
+  String get calendarShiftNote =>
+      'التواريخ وفق تقويم أم القرى. يمكنك تعديلها يومًا من الإعدادات ← ضبط المواقيت إن اختلفت رؤية الهلال في بلدك.';
+
+  @override
+  String get evNewYear => 'رأس السنة الهجرية';
+
+  @override
+  String get evNewYearSub => '١ محرم';
+
+  @override
+  String get evAshura => 'يوم عاشوراء';
+
+  @override
+  String get evAshuraSub =>
+      'صيامه يكفّر السنة الماضية، ويُستحب صيام التاسع معه.';
+
+  @override
+  String get evRamadan => 'بداية رمضان';
+
+  @override
+  String get evRamadanSub => 'شهر الصيام';
+
+  @override
+  String get evLastTen => 'العشر الأواخر';
+
+  @override
+  String get evLastTenSub => 'تحرَّوا ليلة القدر في الوتر منها.';
+
+  @override
+  String get evEidFitr => 'عيد الفطر';
+
+  @override
+  String get evEidFitrSub => 'ثم ست من شوال';
+
+  @override
+  String get evDhulHijjah => 'العشر الأوائل من ذي الحجة';
+
+  @override
+  String get evDhulHijjahSub => 'أفضل أيام السنة للعمل الصالح';
+
+  @override
+  String get evArafah => 'يوم عرفة';
+
+  @override
+  String get evArafahSub => 'صيامه يكفّر سنتين.';
+
+  @override
+  String get evEidAdha => 'عيد الأضحى';
+
+  @override
+  String get evEidAdhaSub => 'يوم النحر';
+
+  @override
+  String get evTashreeq => 'أيام التشريق';
+
+  @override
+  String get evTashreeqSub => '١١–١٣ ذو الحجة: أيام أكل وشرب وذكر لله';
+
+  @override
+  String get featHifz => 'الحفظ';
+
+  @override
+  String get featHifzSub => 'احفظ بالتكرار';
+
+  @override
+  String get hifzSurah => 'السورة';
+
+  @override
+  String hifzRange(String from, String to) {
+    return 'الآيات $from–$to';
+  }
+
+  @override
+  String get hifzAyahRepeat => 'تكرار كل آية';
+
+  @override
+  String get hifzRangeRepeat => 'تكرار المقطع كاملًا';
+
+  @override
+  String hifzTimes(String n) {
+    return '$n×';
+  }
+
+  @override
+  String get hifzPlay => 'ابدأ الاستماع';
+
+  @override
+  String get hifzStop => 'إيقاف';
+
+  @override
+  String get hifzShow => 'إظهار';
+
+  @override
+  String get hifzFirstWords => 'أول الكلمات';
+
+  @override
+  String get hifzHideAll => 'إخفاء';
+
+  @override
+  String get hifzTapReveal => 'اضغط للإظهار';
+
+  @override
+  String hifzMemorized(String n, String total) {
+    return 'حفظت $n من $total آية في هذه السورة';
+  }
+
+  @override
+  String get hifzMark => 'تحديد كمحفوظة';
+
+  @override
+  String get hifzUnmark => 'محفوظة';
+
+  @override
+  String get hifzTestHint =>
+      'أخفِ النص، واقرأ من حفظك، ثم اضغط على الآية لتتأكد.';
+
+  @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get themeSystem => 'تلقائي';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
+
+  @override
+  String get tracker => 'متابعة الصلاة';
+
+  @override
+  String get featTracker => 'متابعة الصلاة';
+
+  @override
+  String get featTrackerSub => 'الأيام المتتالية والسجل وقضاء الفوائت';
+
+  @override
+  String get trackerWeek => 'آخر ٧ أيام';
+
+  @override
+  String get trackerByPrayer => 'حسب الصلاة · ٣٠ يومًا';
+
+  @override
+  String get trackerStreak => 'أيام متتالية بالخمس';
+
+  @override
+  String get trackerLast7 => 'آخر ٧ أيام';
+
+  @override
+  String get trackerLast30 => 'آخر ٣٠ يومًا';
+
+  @override
+  String get trackerTapHint => 'اضغط على أي دائرة لتسجيل صلاة في يوم سابق.';
+
+  @override
+  String get trackerEmpty =>
+      'سجّل صلواتك من الشاشة الرئيسية لتظهر الإحصاءات هنا.';
+
+  @override
+  String get qadaTitle => 'قضاء الفوائت';
+
+  @override
+  String get qadaNone => 'لا توجد صلوات فائتة';
+
+  @override
+  String qadaLeft(String n) {
+    return 'متبقٍ $n صلاة للقضاء';
+  }
+
+  @override
+  String get qadaHint => 'أضف الصلوات الفائتة، ثم اضغط − كلما قضيت واحدة.';
+
+  @override
+  String get qadaMadeUp => 'قضيت واحدة';
+
+  @override
+  String get qadaAdd => 'إضافة واحدة';
+
+  @override
+  String get featRamadan => 'رمضان';
+
+  @override
+  String get featRamadanSub => 'عدّاد الإفطار والأدعية ومتابعة ٣٠ يومًا';
+
+  @override
+  String get featFriday => 'الجمعة';
+
+  @override
+  String get featFridaySub => 'الكهف والصلاة على النبي وساعة الإجابة';
+
+  @override
+  String get dailyAyahTitle => 'آية اليوم';
+
+  @override
+  String get kahfReminderTitle => 'الجمعة · سورة الكهف';
+
+  @override
+  String get kahfReminderBody => 'اقرأ سورة الكهف وأكثر من الصلاة على النبي ﷺ.';
+
+  @override
+  String get fridayHourTitle => 'آخر ساعة من يوم الجمعة';
+
+  @override
+  String get fridayHourBody => 'ساعة يُرجى فيها إجابة الدعاء — حتى المغرب.';
+
+  @override
+  String fridayHourRange(String from, String to) {
+    return 'من $from حتى المغرب $to';
+  }
+
+  @override
+  String get suhoorTitle => 'السحور';
+
+  @override
+  String suhoorBody(String n) {
+    return 'بقي $n دقيقة على الفجر — وقت السحور.';
+  }
+
+  @override
+  String get dailyAyahReminder => 'آية اليوم';
+
+  @override
+  String get kahfReminder => 'سورة الكهف يوم الجمعة';
+
+  @override
+  String get kahfReminderSub => 'يوم الجمعة الساعة ١٠ صباحًا';
+
+  @override
+  String get fridayHourReminder => 'آخر ساعة يوم الجمعة';
+
+  @override
+  String get fridayHourReminderSub => 'قبل المغرب بساعة';
+
+  @override
+  String get suhoorReminder => 'السحور في رمضان';
+
+  @override
+  String get suhoorReminderSub => 'قبل الفجر بـ ٤٥ دقيقة';
+
+  @override
+  String get moreReminders => 'تنبيهات يومية وأسبوعية';
+
+  @override
+  String get reminders => 'التنبيهات';
+
+  @override
+  String get jumuahMubarak => 'جمعة مباركة';
+
+  @override
+  String get fridayTomorrow => 'الجمعة غدًا';
+
+  @override
+  String fridayIn(String n) {
+    return 'الجمعة بعد $n أيام';
+  }
+
+  @override
+  String get fridayIntro => 'خير يوم طلعت عليه الشمس.';
+
+  @override
+  String get fridayHomeSub => 'الكهف والصلاة على النبي وساعة الإجابة';
+
+  @override
+  String get fridaySunnahs => 'سنن يوم الجمعة';
+
+  @override
+  String get sunnahGhusl => 'الاغتسال قبل الصلاة.';
+
+  @override
+  String get sunnahClothes => 'لبس أحسن الثياب والتطيب.';
+
+  @override
+  String get sunnahEarly => 'التبكير إلى المسجد والمشي إليه إن تيسر.';
+
+  @override
+  String get sunnahKhutbah => 'الإنصات للخطبة.';
+
+  @override
+  String get sunnahKahf => 'قراءة سورة الكهف.';
+
+  @override
+  String get sunnahSalawat => 'الإكثار من الصلاة على النبي ﷺ.';
+
+  @override
+  String get sunnahDua => 'الإكثار من الدعاء، خاصة في آخر ساعة قبل المغرب.';
+
+  @override
+  String get readKahf => 'اقرأ سورة الكهف';
+
+  @override
+  String get kahfHint => 'ضع علامة بعد قراءتها اليوم.';
+
+  @override
+  String get kahfDone => 'قرأتها اليوم — تقبّل الله.';
+
+  @override
+  String get salawatCounter => 'الصلاة على النبي ﷺ';
+
+  @override
+  String get salawatHint => 'اضغط على الدائرة مع كل صلاة.';
+
+  @override
+  String get iftarDua => 'دعاء الإفطار';
+
+  @override
+  String get iftarDuaMeaning =>
+      'ذهب الظمأ وابتلت العروق وثبت الأجر إن شاء الله.';
+
+  @override
+  String get iftarDuaSource => 'رواه أبو داود';
+
+  @override
+  String get qadrDua => 'دعاء ليلة القدر';
+
+  @override
+  String get qadrDuaMeaning => 'اللهم إنك عفو تحب العفو فاعف عني.';
+
+  @override
+  String get qadrDuaSource => 'رواه الترمذي';
+
+  @override
+  String ramadanTracker(String year) {
+    return 'رمضان $year';
+  }
+
+  @override
+  String ramadanDay(String n) {
+    return 'اليوم $n من رمضان';
+  }
+
+  @override
+  String get iftarIn => 'الإفطار بعد';
+
+  @override
+  String get suhoorEndsIn => 'ينتهي السحور بعد';
+
+  @override
+  String ramadanIn(String n) {
+    return 'رمضان بعد $n يومًا';
+  }
+
+  @override
+  String get deedFast => 'الصيام';
+
+  @override
+  String get deedTaraweeh => 'التراويح';
+
+  @override
+  String get deedJuz => 'جزء من القرآن';
+
+  @override
+  String get ramadanTrackerHint =>
+      'اضغط على اليوم لتسجيل الصيام والتراويح والجزء.';
+
+  @override
+  String get shareAyah => 'مشاركة الآية';
+
+  @override
+  String get shareImage => 'مشاركة كصورة';
+
+  @override
+  String get includeTranslation => 'إضافة الترجمة';
+
+  @override
+  String get share => 'مشاركة';
+
+  @override
+  String get hadithTitle => 'حديث اليوم';
+
+  @override
+  String get liveActivity => 'العدّاد على شاشة القفل';
+
+  @override
+  String get liveActivitySub => 'نشاط مباشر يعدّ الوقت حتى الصلاة القادمة';
+
+  @override
+  String get liveNow => 'حان الوقت';
+
+  @override
+  String get fridayPriorities => 'أعمال اليوم حسب الأولوية';
+
+  @override
+  String get deedJumuah => 'صلاة الجمعة والإنصات للخطبة.';
+
+  @override
+  String get tagFard => 'فرض';
+
+  @override
+  String get tagMuakkad => 'سنة مؤكدة';
+
+  @override
+  String get tagSunnah => 'سنة';
+
+  @override
+  String get kahfOpen => 'افتح';
+
+  @override
+  String get hifzPlayAyah => 'تشغيل هذه الآية';
+
+  @override
+  String get hifzPageHint =>
+      'اضغط على الآية لإظهارها · واضغط على رقمها للتشغيل أو التعليم كمحفوظة';
+
+  @override
+  String get reciteCheck => 'سمّع واختبر';
+
+  @override
+  String get reciteHint => 'اقرأ المقطع من حفظك، ويُراجَع على جهازك.';
+
+  @override
+  String get reciteModelTitle => 'تنزيل نموذج التسميع؟';
+
+  @override
+  String reciteModelBody(String size) {
+    return 'يُنزَّل نموذج للتعرّف على التلاوة ($size) من Tarteel AI مرة واحدة. تسجيلاتك لا تغادر جهازك.';
+  }
+
+  @override
+  String get reciteDownload => 'تنزيل';
+
+  @override
+  String reciteDownloading(String percent) {
+    return 'جارٍ تنزيل النموذج… $percent';
+  }
+
+  @override
+  String get reciteListening => 'أستمع… اضغط للإنهاء';
+
+  @override
+  String get reciteChecking => 'جارٍ مراجعة التلاوة…';
+
+  @override
+  String reciteResult(String correct, String total) {
+    return '$correct من $total كلمة مطابقة';
+  }
+
+  @override
+  String reciteMistakes(String count) {
+    return 'أخطاء محتملة: $count';
+  }
+
+  @override
+  String reciteMissed(String count) {
+    return 'متروك: $count';
+  }
+
+  @override
+  String get reciteLegend =>
+      'أخضر: مطابق · أحمر: خطأ محتمل · مسطّر: متروك. التدقيق آلي وقد يخطئ.';
+
+  @override
+  String get reciteHeard => 'ما سُمِع';
+
+  @override
+  String get reciteClear => 'مسح';
+
+  @override
+  String get reciteNoPermission => 'يلزم السماح بالميكروفون لتدقيق التلاوة.';
+
+  @override
+  String get reciteFailed => 'تعذّر التدقيق، حاول مرة أخرى.';
+
+  @override
+  String get reciteNothing => 'لم يُسمع شيء، ارفع صوتك قليلاً.';
+
+  @override
+  String get reciteDownloadFailed => 'فشل التنزيل، تحقق من الاتصال.';
+
+  @override
+  String get reciteRevealLive => 'أظهر الكلمات أثناء تلاوتي';
+
+  @override
+  String get reciteRevealLiveHint =>
+      'تبقى الصفحة مغطاة وتظهر كل كلمة عند سماعها.';
+
+  @override
+  String reciteProgress(String done, String total) {
+    return '$done من $total كلمة';
+  }
+
+  @override
+  String get feedbackTitle => 'نتيجة التسميع';
+
+  @override
+  String get gradeExcellent => 'ممتاز، ما شاء الله';
+
+  @override
+  String get gradeVeryGood => 'جيد جدًا';
+
+  @override
+  String get gradeGood => 'جيد، راجع الكلمات المعلّمة';
+
+  @override
+  String get gradeReview => 'يحتاج إلى مراجعة';
+
+  @override
+  String get feedbackMatched => 'مطابق';
+
+  @override
+  String get feedbackMistakes => 'أخطاء محتملة';
+
+  @override
+  String get feedbackSkipped => 'متروك';
+
+  @override
+  String get feedbackReview => 'كلمات للمراجعة';
+
+  @override
+  String feedbackHeardAs(String word) {
+    return 'سُمِع: $word';
+  }
+
+  @override
+  String get feedbackSkippedWord => 'متروكة';
+
+  @override
+  String feedbackPerfect(String count) {
+    return 'آيات بلا أخطاء: $count';
+  }
+
+  @override
+  String get feedbackMarkLearnt => 'علّمها كمحفوظة';
+
+  @override
+  String feedbackUnreached(String count) {
+    return 'توقفت قبل النهاية: $count كلمة لم تُقرأ.';
+  }
+
+  @override
+  String get feedbackOpen => 'التقييم';
+
+  @override
+  String get feedbackDone => 'تم';
 }

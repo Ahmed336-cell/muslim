@@ -29,6 +29,30 @@ class QuranText {
   Future<Ayah> ayah(int surah, int ayah, Mushaf mushaf) async =>
       (await _edition(mushaf)).ayah(surah, ayah);
 
+  /// Ayahs whose plain text contains [query], ignoring diacritics and the
+  /// common spelling variants of alef, ya and ta marbuta. Ayahs come back in
+  /// the plain script so [QuranMatch.start] indexes into [Ayah.text].
+  Future<QuranSearch> search(String query, {int limit = 100}) async {
+    final q = foldArabic(query).trim().replaceAll(RegExp(r'\s+'), ' ');
+    if (q.length < 2) return const QuranSearch(0, []);
+    final edition = await _edition(Mushaf.plain);
+    final folded = edition.folded ??= [
+      for (var i = 0; i < edition.texts.length; i++)
+        foldArabic(edition._ayah(i).text),
+    ];
+    var total = 0;
+    final matches = <QuranMatch>[];
+    for (var i = 0; i < folded.length; i++) {
+      final at = folded[i].indexOf(q);
+      if (at < 0) continue;
+      total++;
+      if (matches.length < limit) {
+        matches.add(QuranMatch(edition._ayah(i), at, q.length));
+      }
+    }
+    return QuranSearch(total, matches);
+  }
+
   Future<_Edition> _edition(Mushaf mushaf) async {
     final ready = _ready[mushaf];
     if (ready != null) return ready;
@@ -48,15 +72,45 @@ class QuranText {
 
   Future<List<String>> _loadTexts(Mushaf mushaf) async {
     final data = await _bundle.load('$_dir/${mushaf.edition}.txt.gz');
-    final bytes = gzip.decode(data.buffer.asUint8List(
-      data.offsetInBytes,
-      data.lengthInBytes,
-    ));
+    final bytes = gzip.decode(
+      data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+    );
     final texts = utf8.decode(bytes).split('\n');
     if (texts.length != _Meta.ayahCount) throw const FormatException();
     return texts;
   }
 }
+
+class QuranMatch {
+  const QuranMatch(this.ayah, this.start, this.length);
+
+  final Ayah ayah;
+  final int start;
+  final int length;
+}
+
+class QuranSearch {
+  const QuranSearch(this.total, this.matches);
+
+  /// Every matching ayah, even beyond [matches].
+  final int total;
+  final List<QuranMatch> matches;
+}
+
+final _diacritics = RegExp(
+  '[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]',
+);
+
+const _folds = {
+  'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ى': 'ي', 'ئ': 'ي', 'ة': 'ه', //
+  'ؤ': 'و',
+};
+
+/// Arabic folded for matching. Only drops marks, so text without them keeps
+/// its length and offsets.
+String foldArabic(String s) => s
+    .replaceAll(_diacritics, '')
+    .replaceAllMapped(RegExp('[أإآٱىئةؤ]'), (m) => _folds[m[0]]!);
 
 class _Meta {
   _Meta(Map json)
@@ -102,6 +156,9 @@ class _Edition {
   final _Meta meta;
   final List<String> texts;
   final _pages = <int, MushafPage>{};
+
+  /// [texts] folded by [foldArabic], built on the first search.
+  List<String>? folded;
 
   MushafPage page(int number) => _pages[number] ??= MushafPage(
     number: number,

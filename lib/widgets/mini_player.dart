@@ -43,7 +43,9 @@ class MiniPlayer extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
         child: Material(
-          color: Color.alphaBlend(Colors.black.withValues(alpha: .25), dark),
+          color: Palette.dark
+              ? Listen.surfaceHi
+              : Color.alphaBlend(Colors.black.withValues(alpha: .25), dark),
           borderRadius: BorderRadius.circular(10),
           clipBehavior: Clip.antiAlias,
           elevation: 6,
@@ -92,7 +94,7 @@ class MiniPlayer extends StatelessWidget {
                         ),
                       ),
                       if (ambient)
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
                           child: Icon(
                             Icons.spa_outlined,
@@ -103,7 +105,7 @@ class MiniPlayer extends StatelessWidget {
                       SizedBox.square(
                         dimension: 44,
                         child: s.buffering && s.playing
-                            ? const Padding(
+                            ? Padding(
                                 padding: EdgeInsets.all(13),
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,

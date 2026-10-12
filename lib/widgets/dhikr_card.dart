@@ -169,7 +169,7 @@ class _Counter extends StatelessWidget {
             ),
           ),
           if (done)
-            const Icon(Icons.check_rounded, color: Palette.green, size: 24)
+            Icon(Icons.check_rounded, color: Palette.green, size: 24)
           else
             Text(
               context.n(target - count),

@@ -265,7 +265,7 @@
   "curCAD": "Canadian dollar",
   "curAUD": "Australian dollar",
   "quranTitle": "Quran",
-  "quranSearch": "Surah name, meaning or number",
+  "quranSearch": "Surah, number, 2:255 or words of an ayah",
   "ayahCount": "{n, plural, =1{1 ayah} other{{n} ayahs}}",
   "@ayahCount": {
     "placeholders": {
@@ -450,7 +450,7 @@
   "asrHanafi": "Hanafi",
   "asrHint": "Hanafi Asr starts later, when shadows are twice an object's length.",
   "about": "About",
-  "aboutBody": "Prayer times, fasting, nisab, duas, names and ruqyah come from islamicapi.com; Quran text and tafsir from alquran.cloud and quran.com. Your prayer log, tasbih and settings stay on this device.",
+  "aboutBody": "Prayer times and the Hijri date are calculated on this device. The Quran text is bundled; recitations, tafsir and other content are downloaded from the sources in Credits. Your prayer log, tasbih and settings stay on this device.",
   "obSkip": "Skip",
   "obNext": "Next",
   "obBack": "Back",
@@ -631,5 +631,499 @@
   "widgetNameSub": "A name of Allah every half hour",
   "widgetAdd": "Add",
   "widgetAddFailed": "Your launcher can't add widgets from here. Long-press the home screen and choose Widgets.",
-  "widgetIosHint": "Long-press the home or lock screen, tap Edit or +, then search for Muslim."
+  "widgetIosHint": "Long-press the home or lock screen, tap Edit or +, then search for Muslim.",
+  "calcMethod": "Calculation method",
+  "calcCityDefault": "Recommended for {city}",
+  "@calcCityDefault": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "calcOffline": "Times are calculated on your device, so they work offline.",
+  "adjustTimes": "Adjust times",
+  "adjustTimesSub": "Add or subtract minutes to match your local mosque.",
+  "adjustNone": "No adjustments",
+  "adjustSome": "Custom adjustments",
+  "hijriAdjust": "Hijri date",
+  "hijriAdjustSub": "Shift by a day if the moon was sighted differently where you live.",
+  "credits": "Credits & licences",
+  "creditsSub": "Sources of the Quran text, audio and data",
+  "creditsPhotos": "Reciter photos",
+  "creditsPhotosSub": "Wikimedia Commons; the author and licence also appear under each photo.",
+  "openSourceLicences": "Open-source licences",
+  "privacyPolicy": "Privacy policy",
+  "privacyPolicySub": "No account, no tracking",
+  "privacyNoAccountTitle": "No account, no tracking",
+  "privacyNoAccount": "The app has no sign-in, ads or analytics. Your prayer log, tasbih counts, bookmarks, Khatmah progress and settings are stored only on this device and are deleted with the app.",
+  "privacyLocationTitle": "Location",
+  "privacyLocation": "If you choose \"my location\", your position is used on the device to calculate prayer times and the qibla. It is rounded to about 100 m and is only sent to islamicapi.com to fetch fasting times. It is never stored on a server by us.",
+  "privacyNetworkTitle": "Online content",
+  "privacyNetwork": "Recitations, tafsir, duas and other content are downloaded from the services listed in Credits. Those services see your IP address like any website. Downloads are cached on the device so they work offline.",
+  "privacyNotificationsTitle": "Notifications and widgets",
+  "privacyNotifications": "Reminders are scheduled locally on the device. Widgets read data the app saves on the device; nothing is sent anywhere.",
+  "privacyContactTitle": "Questions",
+  "privacyContact": "For any privacy question, contact the developer through the app store listing.",
+  "ayahMatches": "{count, plural, =1{1 ayah} other{{count} ayahs}}",
+  "@ayahMatches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ayahMatchesMore": "Showing the first {shown}. Add a word to narrow it down.",
+  "@ayahMatchesMore": {
+    "placeholders": {
+      "shown": {
+        "type": "String"
+      }
+    }
+  },
+  "goToAyah": "Go to {surah}, ayah {ayah}",
+  "@goToAyah": {
+    "placeholders": {
+      "surah": {
+        "type": "String"
+      },
+      "ayah": {
+        "type": "String"
+      }
+    }
+  },
+  "searchArabicHint": "Type Arabic words to search inside ayahs.",
+  "khatmah": "Khatmah",
+  "khatmahSub": "Plan to finish the whole Quran",
+  "khatmahIntro": "Pick how many days you want to finish the Quran in. We'll split it into a daily portion and track the pages you read.",
+  "khatmahFinishIn": "Finish in",
+  "khatmahDays": "{n} days",
+  "@khatmahDays": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahPerDay": "≈ {n} pages a day",
+  "@khatmahPerDay": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahStart": "Start khatmah",
+  "khatmahToday": "Today's portion",
+  "khatmahTodayGoal": "{read} of {target} pages",
+  "@khatmahTodayGoal": {
+    "placeholders": {
+      "read": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahTodayDone": "Today's portion is done. Barak Allahu feek!",
+  "khatmahPages": "{read} of {total} pages",
+  "@khatmahPages": {
+    "placeholders": {
+      "read": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahDayOf": "Day {day} of {days}",
+  "@khatmahDayOf": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahStreak": "Streak",
+  "khatmahStreakDays": "{n} days",
+  "@khatmahStreakDays": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahAhead": "Ahead of schedule",
+  "khatmahOnTrack": "On track",
+  "khatmahBehind": "{n} pages behind",
+  "@khatmahBehind": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahContinue": "Continue from page {page}",
+  "@khatmahContinue": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahHint": "A page counts once you turn past it or keep it open for 20 seconds.",
+  "khatmahDone": "You finished the Quran. May Allah accept it from you!",
+  "khatmahCompleted": "Khatmahs completed: {n}",
+  "@khatmahCompleted": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahNew": "Start a new khatmah",
+  "khatmahEnd": "End plan",
+  "khatmahEndConfirm": "End this khatmah? Its progress will be cleared.",
+  "khatmahReadUpTo": "Already read some?",
+  "khatmahReadUpToSub": "Mark every page up to page {page} as read.",
+  "@khatmahReadUpToSub": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "khatmahMark": "Mark as read",
+  "featCalendar": "Hijri calendar",
+  "featCalendarSub": "Months and Islamic occasions",
+  "featKhatmah": "Khatmah",
+  "featKhatmahSub": "Finish the Quran on a plan",
+  "calendarToday": "Today",
+  "calendarUpcoming": "Upcoming",
+  "calendarWhiteDays": "White days (13–15): recommended fasting",
+  "calendarInDays": "{n, plural, =0{Today} =1{Tomorrow} other{In {n} days}}",
+  "@calendarInDays": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "calendarNoEvents": "No occasions on this day.",
+  "calendarShiftNote": "Dates follow the Umm al-Qura calendar. Adjust by a day in Settings → Adjust times if your country sighted the moon differently.",
+  "evNewYear": "Islamic New Year",
+  "evNewYearSub": "1 Muharram",
+  "evAshura": "Day of Ashura",
+  "evAshuraSub": "Fasting it expiates the past year; fast the 9th too.",
+  "evRamadan": "Ramadan begins",
+  "evRamadanSub": "The month of fasting",
+  "evLastTen": "Last ten nights",
+  "evLastTenSub": "Seek Laylat al-Qadr in the odd nights.",
+  "evEidFitr": "Eid al-Fitr",
+  "evEidFitrSub": "Then six days of Shawwal",
+  "evDhulHijjah": "First ten days of Dhul Hijjah",
+  "evDhulHijjahSub": "The best days of the year for good deeds",
+  "evArafah": "Day of Arafah",
+  "evArafahSub": "Fasting it expiates two years.",
+  "evEidAdha": "Eid al-Adha",
+  "evEidAdhaSub": "The day of sacrifice",
+  "evTashreeq": "Days of Tashreeq",
+  "evTashreeqSub": "11–13 Dhul Hijjah: days of eating and remembrance",
+  "featHifz": "Hifz",
+  "featHifzSub": "Memorise with repetition",
+  "hifzSurah": "Surah",
+  "hifzRange": "Ayahs {from}–{to}",
+  "@hifzRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "hifzAyahRepeat": "Repeat each ayah",
+  "hifzRangeRepeat": "Repeat the whole range",
+  "hifzTimes": "{n}×",
+  "@hifzTimes": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "hifzPlay": "Start listening",
+  "hifzStop": "Stop",
+  "hifzShow": "Show",
+  "hifzFirstWords": "First words",
+  "hifzHideAll": "Hide",
+  "hifzTapReveal": "Tap to reveal",
+  "hifzMemorized": "Memorised {n} of {total} ayahs in this surah",
+  "@hifzMemorized": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "hifzMark": "Mark as memorised",
+  "hifzUnmark": "Memorised",
+  "hifzTestHint": "Hide the text, recite from memory, then tap an ayah to check yourself.",
+  "appearance": "Appearance",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "tracker": "Prayer tracker",
+  "featTracker": "Tracker",
+  "featTrackerSub": "Streaks, history and missed prayers",
+  "trackerWeek": "Last 7 days",
+  "trackerByPrayer": "By prayer · 30 days",
+  "trackerStreak": "Days with all five",
+  "trackerLast7": "Last 7 days",
+  "trackerLast30": "Last 30 days",
+  "trackerTapHint": "Tap a circle to log a prayer on an earlier day.",
+  "trackerEmpty": "Mark your prayers on the home screen to see stats here.",
+  "qadaTitle": "Qada · missed prayers",
+  "qadaNone": "Nothing to make up",
+  "qadaLeft": "{n} prayers to make up",
+  "@qadaLeft": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaHint": "Add the prayers you owe, then tap − each time you make one up.",
+  "qadaMadeUp": "Made one up",
+  "qadaAdd": "Add one",
+  "featRamadan": "Ramadan",
+  "featRamadanSub": "Iftar countdown, duas and a 30-day tracker",
+  "featFriday": "Jumu'ah",
+  "featFridaySub": "Al-Kahf, salawat and the last hour",
+  "dailyAyahTitle": "Ayah of the day",
+  "kahfReminderTitle": "Friday · Surah Al-Kahf",
+  "kahfReminderBody": "Read Surah Al-Kahf and send plenty of salawat on the Prophet ﷺ.",
+  "fridayHourTitle": "The last hour of Friday",
+  "fridayHourBody": "An hour in which du'a is answered — until Maghrib.",
+  "fridayHourRange": "From {from} until Maghrib at {to}",
+  "@fridayHourRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "suhoorTitle": "Suhoor",
+  "suhoorBody": "Fajr is in {n} minutes — time for suhoor.",
+  "@suhoorBody": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "dailyAyahReminder": "Ayah of the day",
+  "kahfReminder": "Surah Al-Kahf on Friday",
+  "kahfReminderSub": "Friday at 10:00 AM",
+  "fridayHourReminder": "Last hour of Friday",
+  "fridayHourReminderSub": "An hour before Maghrib",
+  "suhoorReminder": "Suhoor in Ramadan",
+  "suhoorReminderSub": "45 minutes before Fajr",
+  "moreReminders": "Daily & weekly reminders",
+  "reminders": "Reminders",
+  "jumuahMubarak": "Jumu'ah Mubarak",
+  "fridayTomorrow": "Friday is tomorrow",
+  "fridayIn": "Friday in {n} days",
+  "@fridayIn": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "fridayIntro": "The best day the sun rises on.",
+  "fridayHomeSub": "Al-Kahf, salawat and the last hour",
+  "fridaySunnahs": "Sunnahs of Friday",
+  "sunnahGhusl": "Take a ghusl (full bath) before the prayer.",
+  "sunnahClothes": "Wear your best clothes and use perfume.",
+  "sunnahEarly": "Go early to the mosque, walking if you can.",
+  "sunnahKhutbah": "Listen to the khutbah in silence.",
+  "sunnahKahf": "Read Surah Al-Kahf.",
+  "sunnahSalawat": "Send plenty of salawat on the Prophet ﷺ.",
+  "sunnahDua": "Make du'a, especially in the last hour before Maghrib.",
+  "readKahf": "Read Surah Al-Kahf",
+  "kahfHint": "Tick it once you've read it today.",
+  "kahfDone": "Read today — may Allah accept it.",
+  "salawatCounter": "Salawat on the Prophet ﷺ",
+  "salawatHint": "Tap the circle with each one.",
+  "iftarDua": "Dua when breaking the fast",
+  "iftarDuaMeaning": "The thirst has gone, the veins are moistened, and the reward is certain, if Allah wills.",
+  "iftarDuaSource": "Abu Dawud",
+  "qadrDua": "Dua for Laylat al-Qadr",
+  "qadrDuaMeaning": "O Allah, You are Pardoning and love to pardon, so pardon me.",
+  "qadrDuaSource": "At-Tirmidhi",
+  "ramadanTracker": "Ramadan {year}",
+  "@ramadanTracker": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "ramadanDay": "Day {n} of Ramadan",
+  "@ramadanDay": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "iftarIn": "Iftar in",
+  "suhoorEndsIn": "Suhoor ends in",
+  "ramadanIn": "Ramadan in {n} days",
+  "@ramadanIn": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "deedFast": "Fasted",
+  "deedTaraweeh": "Taraweeh",
+  "deedJuz": "A juz read",
+  "ramadanTrackerHint": "Tap a day to tick its fast, taraweeh and juz.",
+  "shareAyah": "Share ayah",
+  "shareImage": "Share as image",
+  "includeTranslation": "Include translation",
+  "share": "Share",
+  "hadithTitle": "Hadith of the day",
+  "liveActivity": "Lock screen countdown",
+  "liveActivitySub": "A Live Activity counting down to the next prayer",
+  "liveNow": "It's time",
+  "fridayPriorities": "Today's deeds, by priority",
+  "deedJumuah": "Pray Jumu'ah and listen to the khutbah.",
+  "tagFard": "Obligatory",
+  "tagMuakkad": "Emphasized sunnah",
+  "tagSunnah": "Sunnah",
+  "kahfOpen": "Open",
+  "hifzPlayAyah": "Play this ayah",
+  "hifzPageHint": "Tap an ayah to reveal it · tap its number to play or mark it learnt",
+  "reciteCheck": "Recite & check",
+  "reciteHint": "Recite the range from memory. It's checked on your device.",
+  "reciteModelTitle": "Download the recitation model?",
+  "reciteModelBody": "A {size} Quran speech model (Tarteel AI) is downloaded once. Your recordings never leave your phone.",
+  "@reciteModelBody": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "reciteDownload": "Download",
+  "reciteDownloading": "Downloading model… {percent}",
+  "@reciteDownloading": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "reciteListening": "Listening… tap to finish",
+  "reciteChecking": "Checking your recitation…",
+  "reciteResult": "{correct} of {total} words matched",
+  "@reciteResult": {
+    "placeholders": {
+      "correct": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "reciteMistakes": "{count} possible mistakes",
+  "@reciteMistakes": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "reciteMissed": "{count} skipped",
+  "@reciteMissed": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "reciteLegend": "Green: matched · red: possible mistake · underlined: skipped. Automatic check, it can be wrong.",
+  "reciteHeard": "What was heard",
+  "reciteClear": "Clear",
+  "reciteNoPermission": "Microphone access is needed to check your recitation.",
+  "reciteFailed": "Couldn't check the recitation. Try again.",
+  "reciteNothing": "Nothing was heard. Recite a little louder.",
+  "reciteDownloadFailed": "Download failed. Check your connection.",
+  "reciteRevealLive": "Show the words as I recite",
+  "reciteRevealLiveHint": "The page stays covered and each word appears once it's heard.",
+  "reciteProgress": "{done} of {total} words",
+  "@reciteProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "feedbackTitle": "Your recitation",
+  "gradeExcellent": "Excellent, mashaAllah",
+  "gradeVeryGood": "Very good",
+  "gradeGood": "Good, review the marked words",
+  "gradeReview": "Needs more review",
+  "feedbackMatched": "Matched",
+  "feedbackMistakes": "Possible mistakes",
+  "feedbackSkipped": "Skipped",
+  "feedbackReview": "Words to review",
+  "feedbackHeardAs": "heard: {word}",
+  "@feedbackHeardAs": {
+    "placeholders": {
+      "word": {
+        "type": "String"
+      }
+    }
+  },
+  "feedbackSkippedWord": "skipped",
+  "feedbackPerfect": "{count} ayahs recited without mistakes",
+  "@feedbackPerfect": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "feedbackMarkLearnt": "Mark as learnt",
+  "feedbackUnreached": "Stopped before the end: {count} words not recited.",
+  "@feedbackUnreached": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "feedbackOpen": "Feedback",
+  "feedbackDone": "Done"
 }

@@ -39,7 +39,7 @@ class AzkarSessionCard extends StatelessWidget {
     final total = items?.length ?? 0;
     final finished = total > 0 && done == total;
     final evening = session == AzkarSession.evening;
-    final fg = evening ? Palette.paper : Palette.green;
+    final fg = evening ? Palette.cream : Palette.green;
 
     return AppCard(
       margin: wide

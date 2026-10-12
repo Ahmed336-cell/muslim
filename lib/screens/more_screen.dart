@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/extra_reminders_cubit.dart';
+import '../bloc/live_activity_cubit.dart';
 import '../bloc/onboarding_cubit.dart';
 import '../bloc/quran/quran_prefs_cubit.dart';
 import '../bloc/settings_cubit.dart';
 import '../l10n/l10n.dart';
+import '../services/live_activity.dart';
 import '../theme.dart';
+import '../widgets/calculation_settings.dart';
+import 'credits_screen.dart';
 import '../widgets/city_picker.dart';
 import '../widgets/azkar_reminder_settings.dart';
 import '../widgets/common.dart';
+import '../widgets/extra_reminder_tile.dart';
 import '../widgets/features.dart';
 import '../widgets/home_widget_picker.dart';
 import '../widgets/reminder_settings.dart';
@@ -33,7 +39,7 @@ class MoreScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: Column(
               children: [
-                for (final (i, f) in Feature.values.indexed) ...[
+                for (final (i, f) in visibleFeatures(context).indexed) ...[
                   if (i > 0) const RowDivider(indent: 76),
                   FeatureRow(feature: f),
                 ],
@@ -59,6 +65,31 @@ class MoreScreen extends StatelessWidget {
                   onSelectionChanged: (s) => cubit.setLanguage(s.first),
                 ),
                 const SizedBox(height: 20),
+                _Label(icon: Icons.contrast_rounded, text: l.appearance),
+                const SizedBox(height: 10),
+                SegmentedButton<AppTheme>(
+                  showSelectedIcon: false,
+                  segments: [
+                    ButtonSegment(
+                      value: AppTheme.system,
+                      icon: const Icon(Icons.brightness_auto_outlined),
+                      label: Text(l.themeSystem),
+                    ),
+                    ButtonSegment(
+                      value: AppTheme.light,
+                      icon: const Icon(Icons.light_mode_outlined),
+                      label: Text(l.themeLight),
+                    ),
+                    ButtonSegment(
+                      value: AppTheme.dark,
+                      icon: const Icon(Icons.dark_mode_outlined),
+                      label: Text(l.themeDark),
+                    ),
+                  ],
+                  selected: {settings.theme},
+                  onSelectionChanged: (s) => cubit.setTheme(s.first),
+                ),
+                const SizedBox(height: 20),
                 const Divider(),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -74,7 +105,7 @@ class MoreScreen extends StatelessWidget {
                     placeName(context, settings),
                     style: Fonts.body(13, color: Palette.inkSoft),
                   ),
-                  trailing: const Icon(
+                  trailing: Icon(
                     Icons.chevron_right_rounded,
                     color: Palette.inkSoft,
                   ),
@@ -94,6 +125,9 @@ class MoreScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(l.asrHint, style: Fonts.body(12, color: Palette.inkSoft)),
+                const SizedBox(height: 8),
+                const Divider(),
+                const CalculationTiles(),
               ],
             ),
           ),
@@ -110,11 +144,47 @@ class MoreScreen extends StatelessWidget {
             child: AzkarReminderSettings(),
           ),
           const SizedBox(height: 24),
+          SectionHeader(l.moreReminders),
+          const AppCard(
+            padding: EdgeInsets.fromLTRB(18, 6, 18, 10),
+            child: Column(
+              children: [
+                ExtraReminderTile(ExtraKind.ayah),
+                ExtraReminderTile(ExtraKind.kahf),
+                ExtraReminderTile(ExtraKind.fridayHour),
+                ExtraReminderTile(ExtraKind.suhoor),
+                ExtraRemindersDenied(),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
           SectionHeader(l.widgetsTitle),
           const AppCard(
             padding: EdgeInsets.fromLTRB(18, 4, 18, 4),
             child: HomeWidgetPicker(),
           ),
+          if (context.read<LiveActivity>().supported) ...[
+            const SizedBox(height: 16),
+            AppCard(
+              padding: const EdgeInsets.fromLTRB(18, 4, 18, 4),
+              child: SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: context.watch<LiveActivityCubit>().state,
+                activeThumbColor: Palette.cream,
+                activeTrackColor: Palette.green,
+                onChanged: context.read<LiveActivityCubit>().set,
+                secondary: Icon(
+                  Icons.lock_clock_outlined,
+                  color: Palette.green,
+                ),
+                title: Text(l.liveActivity, style: Fonts.body(15)),
+                subtitle: Text(
+                  l.liveActivitySub,
+                  style: Fonts.body(12.5, color: Palette.inkSoft),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           AppCard(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
@@ -123,10 +193,7 @@ class MoreScreen extends StatelessWidget {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: () => showReadingSettings(context),
-                  leading: const Icon(
-                    Icons.menu_book_rounded,
-                    color: Palette.green,
-                  ),
+                  leading: Icon(Icons.menu_book_rounded, color: Palette.green),
                   title: Text(l.quranReading, style: Fonts.body(15)),
                   subtitle: Text(
                     context.mushafName(
@@ -134,7 +201,7 @@ class MoreScreen extends StatelessWidget {
                     ),
                     style: Fonts.body(13, color: Palette.inkSoft),
                   ),
-                  trailing: const Icon(
+                  trailing: Icon(
                     Icons.chevron_right_rounded,
                     color: Palette.inkSoft,
                   ),
@@ -143,7 +210,7 @@ class MoreScreen extends StatelessWidget {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: context.read<OnboardingCubit>().restart,
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.auto_awesome_outlined,
                     color: Palette.green,
                   ),
@@ -155,9 +222,44 @@ class MoreScreen extends StatelessWidget {
           const SizedBox(height: 24),
           SectionHeader(l.about),
           AppCard(
-            child: Text(
-              l.aboutBody,
-              style: Fonts.body(14, color: Palette.inkSoft),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l.aboutBody,
+                  style: Fonts.body(14, color: Palette.inkSoft),
+                ),
+                const SizedBox(height: 8),
+                const Divider(),
+                for (final (icon, title, sub, route) in [
+                  (
+                    Icons.volunteer_activism_outlined,
+                    l.credits,
+                    l.creditsSub,
+                    CreditsScreen.route,
+                  ),
+                  (
+                    Icons.privacy_tip_outlined,
+                    l.privacyPolicy,
+                    l.privacyPolicySub,
+                    PrivacyScreen.route,
+                  ),
+                ])
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    onTap: () => Navigator.push(context, route()),
+                    leading: Icon(icon, color: Palette.green),
+                    title: Text(title, style: Fonts.body(15)),
+                    subtitle: Text(
+                      sub,
+                      style: Fonts.body(13, color: Palette.inkSoft),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Palette.inkSoft,
+                    ),
+                  ),
+              ],
             ),
           ),
         ],

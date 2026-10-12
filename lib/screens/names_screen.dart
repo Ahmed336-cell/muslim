@@ -43,7 +43,7 @@ class NamesScreen extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.format_quote_rounded,
                             color: Palette.brass,
                           ),
@@ -62,7 +62,7 @@ class NamesScreen extends StatelessWidget {
                         context.read<NamesBloc>().add(NamesSearched(v)),
                   ),
                   if (state.status == NamesStatus.loading && book != null)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 6),
                       child: LinearProgressIndicator(
                         minHeight: 2,
@@ -255,7 +255,7 @@ class _NameSheet extends StatelessWidget {
                         playing ? l.stop : l.hearIt,
                         style: Fonts.body(
                           15,
-                          color: Palette.paper,
+                          color: Palette.cream,
                           weight: FontWeight.w600,
                         ),
                       ),

@@ -99,7 +99,7 @@ class _Body extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.event_available_rounded,
                         size: 18,
                         color: Palette.green,

@@ -91,9 +91,9 @@ class ZakatScreen extends StatelessWidget {
           ActionChip(
             onPressed: () => _pickCurrency(context, currency),
             backgroundColor: Palette.card,
-            side: const BorderSide(color: Palette.rule),
+            side: BorderSide(color: Palette.rule),
             shape: const StadiumBorder(),
-            avatar: const Icon(
+            avatar: Icon(
               Icons.currency_exchange_rounded,
               size: 18,
               color: Palette.green,
@@ -175,10 +175,7 @@ class _NisabPanel extends StatelessWidget {
                       context.read<NisabBloc>().add(const NisabRequested()),
                 ),
               )
-            : const Padding(
-                padding: EdgeInsets.all(16),
-                child: CardSkeleton(),
-              ),
+            : const Padding(padding: EdgeInsets.all(16), child: CardSkeleton()),
       );
     }
 
@@ -286,7 +283,7 @@ class _MetalTile extends StatelessWidget {
                     ),
                   ),
                   if (selected)
-                    const Icon(
+                    Icon(
                       Icons.check_circle_rounded,
                       size: 18,
                       color: Palette.green,
@@ -488,7 +485,7 @@ class _Result extends StatelessWidget {
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     headline,
-                    style: Fonts.display(34, color: Palette.paper),
+                    style: Fonts.display(34, color: Palette.cream),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -496,7 +493,7 @@ class _Result extends StatelessWidget {
                   detail,
                   style: Fonts.body(
                     13,
-                    color: Palette.paper.withValues(alpha: .7),
+                    color: Palette.cream.withValues(alpha: .7),
                   ),
                 ),
               ],

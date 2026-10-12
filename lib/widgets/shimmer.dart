@@ -6,14 +6,21 @@ import 'listen_style.dart';
 
 /// Colours a skeleton for the surface it sits on.
 enum ShimmerTone {
-  paper(Palette.paperDeep, Palette.card),
-  dark(Color(0x1FFFFFFF), Color(0x40FFFFFF)),
-  listen(Listen.surface, Listen.surfaceHi);
+  paper,
+  dark,
+  listen;
 
-  const ShimmerTone(this.base, this.highlight);
+  Color get base => switch (this) {
+    paper => Palette.paperDeep,
+    dark => const Color(0x1FFFFFFF),
+    listen => Listen.surface,
+  };
 
-  final Color base;
-  final Color highlight;
+  Color get highlight => switch (this) {
+    paper => Palette.card,
+    dark => const Color(0x40FFFFFF),
+    listen => Listen.surfaceHi,
+  };
 }
 
 /// Sweeps a highlight across the [Bone]s in [child].
@@ -259,7 +266,9 @@ class PageSkeleton extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 18),
               child: FractionallySizedBox(
-                widthFactor: i == lines - 1 ? .45 : const [1.0, .94, .98][i % 3],
+                widthFactor: i == lines - 1
+                    ? .45
+                    : const [1.0, .94, .98][i % 3],
                 child: const Bone(height: 16, radius: 8),
               ),
             ),

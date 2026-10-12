@@ -8,6 +8,7 @@ import 'package:muslim/bloc/tasbih_cubit.dart';
 import 'package:muslim/data.dart';
 import 'package:muslim/services/islamic_api.dart';
 import 'package:muslim/services/location.dart';
+import 'package:muslim/services/prayer_calc.dart';
 
 import 'helpers.dart';
 
@@ -21,14 +22,14 @@ const _day = PrayerDay(
   qiblaKm: 1287.22,
 );
 
-class _FakeRepo extends IslamicApi {
-  _FakeRepo(this.result) : super(apiKey: 'test');
+class _FakeCalc extends PrayerCalculator {
+  _FakeCalc(this.result);
 
   final Object result;
   final places = <Place>[];
 
   @override
-  Future<PrayerDay> fetchToday(Place place) async {
+  PrayerDay today(Place place, DateTime now, {int days = 7}) {
     places.add(place);
     if (result is PrayerDay) return result as PrayerDay;
     throw result;
@@ -40,60 +41,39 @@ void main() {
 
   group('PrayerTimesBloc', () {
     blocTest<PrayerTimesBloc, PrayerTimesState>(
-      'loads the day',
-      build: () => PrayerTimesBloc(repository: _FakeRepo(_day)),
+      'computes the day',
+      build: () => PrayerTimesBloc(calculator: _FakeCalc(_day)),
       act: (b) => b.add(const PrayerTimesRequested()),
       expect: () => const [
-        PrayerTimesState(status: PrayerTimesStatus.loading),
         PrayerTimesState(status: PrayerTimesStatus.success, day: _day),
       ],
     );
 
     blocTest<PrayerTimesBloc, PrayerTimesState>(
-      'surfaces API errors',
-      build: () => PrayerTimesBloc(
-        repository: _FakeRepo(const ApiException('Invalid API key')),
-      ),
-      act: (b) => b.add(const PrayerTimesRequested()),
-      expect: () => const [
-        PrayerTimesState(status: PrayerTimesStatus.loading),
-        PrayerTimesState(
-          status: PrayerTimesStatus.failure,
-          error: 'Invalid API key',
-        ),
-      ],
-    );
-
-    blocTest<PrayerTimesBloc, PrayerTimesState>(
-      'keeps old data when refresh fails',
-      build: () =>
-          PrayerTimesBloc(repository: _FakeRepo(const ApiException('x'))),
+      'keeps old data when a calculation fails',
+      build: () => PrayerTimesBloc(calculator: _FakeCalc(StateError('x'))),
       seed: () =>
           const PrayerTimesState(status: PrayerTimesStatus.success, day: _day),
       act: (b) => b.add(const PrayerTimesRefreshed()),
       expect: () => const [
-        PrayerTimesState(status: PrayerTimesStatus.loading, day: _day),
         PrayerTimesState(
           status: PrayerTimesStatus.failure,
           day: _day,
-          error: 'x',
+          error: ApiException.badResponse,
         ),
       ],
     );
 
-    final repo = _FakeRepo(_day);
+    final calc = _FakeCalc(_day);
     const makkah = Place(21.4225, 39.8262, method: 4);
     blocTest<PrayerTimesBloc, PrayerTimesState>(
-      'drops the old city when switching place',
-      build: () => PrayerTimesBloc(repository: repo),
-      seed: () =>
-          const PrayerTimesState(status: PrayerTimesStatus.success, day: _day),
+      'switches place',
+      build: () => PrayerTimesBloc(calculator: calc),
       act: (b) => b.add(const PrayerTimesRequested(place: makkah)),
       expect: () => const [
-        PrayerTimesState(status: PrayerTimesStatus.loading),
         PrayerTimesState(status: PrayerTimesStatus.success, day: _day),
       ],
-      verify: (_) => expect(repo.places, [makkah]),
+      verify: (_) => expect(calc.places, [makkah]),
     );
   });
 
@@ -129,9 +109,49 @@ void main() {
   group('PrayerLogCubit', () {
     test('toggles', () {
       final c = PrayerLogCubit()..toggle('Fajr');
-      expect(c.state, {'Fajr'});
+      expect(c.today, {'Fajr'});
       c.toggle('Fajr');
-      expect(c.state, isEmpty);
+      expect(c.today, isEmpty);
+    });
+
+    test('keeps history, streak, rate and qada', () {
+      var now = DateTime(2026, 10, 10, 22);
+      final c = PrayerLogCubit(clock: () => now);
+      for (final p in ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']) {
+        c.toggle(p);
+      }
+      now = DateTime(2026, 10, 11, 22);
+      for (final p in ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']) {
+        c.toggle(p);
+      }
+      now = DateTime(2026, 10, 12, 9);
+      c.toggle('Fajr');
+      expect(c.state.streak(now), 2);
+      expect(c.state.rate(now, 7), 11 / 15);
+      expect(c.state.rate(now, 7, prayer: 'Fajr'), 1);
+      c.toggleOn(DateTime(2026, 10, 11), 'Asr');
+      expect(c.state.streak(now), 0);
+
+      c
+        ..addQada('Fajr', 3)
+        ..addQada('Fajr', -1)
+        ..addQada('Isha', -4);
+      expect(c.state.qada, {'Fajr': 2, 'Isha': 0});
+      expect(PrayerLogCubit(clock: () => now).state, c.state);
+    });
+
+    test('reads the old one-day format', () {
+      final now = DateTime(2026, 10, 12, 9);
+      final c = PrayerLogCubit(clock: () => now);
+      expect(
+        c
+            .fromJson({
+              'day': '2026-10-12',
+              'prayed': ['Fajr'],
+            })!
+            .on(now),
+        {'Fajr'},
+      );
     });
 
     test('starts empty on a new day', () {
@@ -143,7 +163,7 @@ void main() {
       expect(c.today, isEmpty);
       expect(PrayerLogCubit(clock: () => now).today, isEmpty);
       c.toggle('Fajr');
-      expect(c.state, {'Fajr'});
+      expect(c.today, {'Fajr'});
     });
   });
 

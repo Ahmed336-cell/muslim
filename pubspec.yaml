@@ -52,6 +52,13 @@ dependencies:
   just_audio_background: ^0.0.1-beta.17
   crypto: ^3.0.7
   home_widget: ^0.10.0
+  adhan: ^2.0.0+1
+  hijri: ^3.0.1
+  share_plus: ^13.3.1
+  whisper_ggml:
+    path: packages/whisper_ggml
+  record: ^7.1.2
+  audio_session: ^0.2.4
 
 dev_dependencies:
   flutter_test:
