@@ -1,14 +1,32 @@
+import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-/// Number of the surah the user marked as last read, or null.
-class QuranBookmarkCubit extends HydratedCubit<int?> {
+final class QuranBookmark extends Equatable {
+  const QuranBookmark(this.surah, [this.ayah = 1]);
+
+  final int surah;
+  final int ayah;
+
+  @override
+  List<Object> get props => [surah, ayah];
+}
+
+/// Where the user marked they stopped reading, or null.
+class QuranBookmarkCubit extends HydratedCubit<QuranBookmark?> {
   QuranBookmarkCubit() : super(null);
 
-  void mark(int surah) => emit(surah);
+  void mark(int surah, [int ayah = 1]) => emit(QuranBookmark(surah, ayah));
 
   @override
-  int? fromJson(Map<String, dynamic> json) => json['surah'] as int?;
+  QuranBookmark? fromJson(Map<String, dynamic> json) {
+    final surah = json['surah'] as int?;
+    if (surah == null) return null;
+    return QuranBookmark(surah, json['ayah'] as int? ?? 1);
+  }
 
   @override
-  Map<String, dynamic> toJson(int? state) => {'surah': state};
+  Map<String, dynamic> toJson(QuranBookmark? state) => {
+    'surah': state?.surah,
+    'ayah': state?.ayah,
+  };
 }

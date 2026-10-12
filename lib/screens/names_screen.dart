@@ -7,6 +7,7 @@ import '../l10n/l10n.dart';
 import '../services/names.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/shimmer.dart';
 import '../widgets/star_pattern.dart';
 
 class NamesScreen extends StatelessWidget {
@@ -76,16 +77,19 @@ class NamesScreen extends StatelessWidget {
           if (book == null)
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(
-                child: state.status == NamesStatus.failure
-                    ? ErrorState(
+              child: state.status == NamesStatus.failure
+                  ? Center(
+                      child: ErrorState(
                         error: state.error,
                         onRetry: () => context.read<NamesBloc>().add(
                           const NamesRequested(),
                         ),
-                      )
-                    : const Spinner(),
-              ),
+                      ),
+                    )
+                  : const Align(
+                      alignment: Alignment.topCenter,
+                      child: ListSkeleton(leading: 40),
+                    ),
             )
           else ...[
             if (state.status == NamesStatus.failure)

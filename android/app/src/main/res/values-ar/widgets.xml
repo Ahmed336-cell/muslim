@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_prayer">الصلاة القادمة</string>
+    <string name="widget_ayah">آية</string>
+    <string name="widget_dua">دعاء</string>
+    <string name="widget_name">أسماء الله الحسنى</string>
+    <string name="widget_prayer_desc">موعد الصلاة القادمة والوقت المتبقي</string>
+    <string name="widget_ayah_desc">آية من القرآن تتغير كل نصف ساعة</string>
+    <string name="widget_dua_desc">دعاء من حصن المسلم يتغير كل نصف ساعة</string>
+    <string name="widget_name_desc">اسم من أسماء الله الحسنى يتغير كل نصف ساعة</string>
+</resources>

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/onboarding_cubit.dart';
+import '../bloc/quran/quran_prefs_cubit.dart';
 import '../bloc/settings_cubit.dart';
 import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../widgets/city_picker.dart';
+import '../widgets/azkar_reminder_settings.dart';
 import '../widgets/common.dart';
 import '../widgets/features.dart';
+import '../widgets/home_widget_picker.dart';
+import '../widgets/reminder_settings.dart';
+import 'mushaf_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -57,13 +63,15 @@ class MoreScreen extends StatelessWidget {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: () => showCityPicker(context),
-                  leading: const Icon(
-                    Icons.location_on_outlined,
+                  leading: Icon(
+                    settings.usesLocation
+                        ? Icons.my_location_rounded
+                        : Icons.location_on_outlined,
                     color: Palette.green,
                   ),
                   title: Text(l.city, style: Fonts.body(15)),
                   subtitle: Text(
-                    settings.city.name(context.isAr),
+                    placeName(context, settings),
                     style: Fonts.body(13, color: Palette.inkSoft),
                   ),
                   trailing: const Icon(
@@ -86,6 +94,61 @@ class MoreScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(l.asrHint, style: Fonts.body(12, color: Palette.inkSoft)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          SectionHeader(l.prayerReminders),
+          const AppCard(
+            padding: EdgeInsets.fromLTRB(18, 6, 18, 16),
+            child: ReminderSettings(),
+          ),
+          const SizedBox(height: 24),
+          SectionHeader(l.azkarReminders),
+          const AppCard(
+            padding: EdgeInsets.fromLTRB(18, 6, 18, 10),
+            child: AzkarReminderSettings(),
+          ),
+          const SizedBox(height: 24),
+          SectionHeader(l.widgetsTitle),
+          const AppCard(
+            padding: EdgeInsets.fromLTRB(18, 4, 18, 4),
+            child: HomeWidgetPicker(),
+          ),
+          const SizedBox(height: 16),
+          AppCard(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () => showReadingSettings(context),
+                  leading: const Icon(
+                    Icons.menu_book_rounded,
+                    color: Palette.green,
+                  ),
+                  title: Text(l.quranReading, style: Fonts.body(15)),
+                  subtitle: Text(
+                    context.mushafName(
+                      context.watch<QuranPrefsCubit>().state.mushaf,
+                    ),
+                    style: Fonts.body(13, color: Palette.inkSoft),
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: Palette.inkSoft,
+                  ),
+                ),
+                const Divider(),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: context.read<OnboardingCubit>().restart,
+                  leading: const Icon(
+                    Icons.auto_awesome_outlined,
+                    color: Palette.green,
+                  ),
+                  title: Text(l.replayTour, style: Fonts.body(15)),
+                ),
               ],
             ),
           ),

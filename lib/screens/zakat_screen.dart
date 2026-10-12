@@ -9,6 +9,7 @@ import '../l10n/l10n.dart';
 import '../services/islamic_api.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/shimmer.dart';
 import '../widgets/star_pattern.dart';
 
 const _currencies = [
@@ -166,15 +167,18 @@ class _NisabPanel extends StatelessWidget {
     if (nisab == null) {
       return SizedBox(
         height: 150,
-        child: Center(
-          child: state.status == NisabStatus.failure
-              ? ErrorState(
+        child: state.status == NisabStatus.failure
+            ? Center(
+                child: ErrorState(
                   error: state.error,
                   onRetry: () =>
                       context.read<NisabBloc>().add(const NisabRequested()),
-                )
-              : const Spinner(),
-        ),
+                ),
+              )
+            : const Padding(
+                padding: EdgeInsets.all(16),
+                child: CardSkeleton(),
+              ),
       );
     }
 

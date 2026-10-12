@@ -14,7 +14,9 @@ import '../l10n/l10n.dart';
 import '../services/islamic_api.dart';
 import '../theme.dart';
 import '../widgets/city_picker.dart';
+import '../widgets/azkar_card.dart';
 import '../widgets/common.dart';
+import '../widgets/shimmer.dart';
 import '../widgets/dua_of_the_day.dart';
 import '../widgets/features.dart';
 import '../widgets/name_of_the_day.dart';
@@ -58,6 +60,8 @@ class HomeScreen extends StatelessWidget {
               onAction: () => context.read<TabCubit>().select(AppTab.prayer),
             ),
             const _TodayStrip(),
+            const SizedBox(height: 12),
+            const AzkarNowCard(),
             const SizedBox(height: 24),
             SectionHeader(l.explore),
             const FeatureGrid(),
@@ -138,14 +142,17 @@ class _Header extends StatelessWidget {
                         ? _NextPrayer(day: day, now: now)
                         : SizedBox(
                             height: 112,
-                            child: Center(
-                              child: state.status == PrayerTimesStatus.failure
-                                  ? _HeaderError(error: state.error)
-                                  : const CircularProgressIndicator(
-                                      strokeWidth: 1.6,
-                                      color: Palette.paper,
+                            child: state.status == PrayerTimesStatus.failure
+                                ? Center(
+                                    child: _HeaderError(error: state.error),
+                                  )
+                                : const Align(
+                                    alignment: AlignmentDirectional.centerStart,
+                                    child: CardSkeleton(
+                                      lines: 1,
+                                      tone: ShimmerTone.dark,
                                     ),
-                            ),
+                                  ),
                           ),
                   ),
                 ],

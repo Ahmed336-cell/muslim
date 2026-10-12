@@ -8,6 +8,7 @@ import '../l10n/l10n.dart';
 import '../services/islamic_api.dart';
 import '../theme.dart';
 import 'common.dart';
+import 'shimmer.dart';
 
 class FastingSection extends StatelessWidget {
   const FastingSection({super.key});
@@ -18,17 +19,16 @@ class FastingSection extends StatelessWidget {
     final day = state.day;
 
     if (day != null) return _Body(day: day);
+    if (state.status != FastingStatus.failure) return const SkeletonCard();
     return AppCard(
       child: SizedBox(
         height: 120,
         child: Center(
-          child: state.status == FastingStatus.failure
-              ? ErrorState(
-                  error: state.error,
-                  onRetry: () =>
-                      context.read<FastingBloc>().add(const FastingRequested()),
-                )
-              : const Spinner(),
+          child: ErrorState(
+            error: state.error,
+            onRetry: () =>
+                context.read<FastingBloc>().add(const FastingRequested()),
+          ),
         ),
       ),
     );

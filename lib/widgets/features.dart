@@ -3,19 +3,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/tab_cubit.dart';
 import '../l10n/l10n.dart';
+import '../screens/azkar_screen.dart';
 import '../screens/duas_screen.dart';
 import '../screens/fasting_screen.dart';
+import '../screens/hisn_screen.dart';
 import '../screens/names_screen.dart';
 import '../screens/quran_screen.dart';
+import '../screens/reciters_screen.dart';
 import '../screens/ruqyah_screen.dart';
 import '../screens/zakat_screen.dart';
+import '../services/hisn.dart';
 import '../theme.dart';
 
 enum Feature {
   prayer(Icons.schedule_rounded),
   quran(Icons.menu_book_rounded),
+  reciters(Icons.headphones_rounded),
   qibla(Icons.explore_outlined),
   tasbih(Icons.blur_circular_rounded),
+  azkar(Icons.wb_twilight_rounded),
+  hisn(Icons.fort_outlined),
   duas(Icons.volunteer_activism_outlined),
   names(Icons.auto_awesome_outlined),
   zakat(Icons.savings_outlined),
@@ -29,8 +36,11 @@ enum Feature {
   String title(L10n l) => switch (this) {
     prayer => l.featPrayer,
     quran => l.featQuran,
+    reciters => l.featReciters,
     qibla => l.featQibla,
     tasbih => l.featTasbih,
+    azkar => l.featAzkar,
+    hisn => l.featHisn,
     duas => l.featDuas,
     names => l.featNames,
     zakat => l.featZakat,
@@ -41,8 +51,11 @@ enum Feature {
   String subtitle(L10n l) => switch (this) {
     prayer => l.featPrayerSub,
     quran => l.featQuranSub,
+    reciters => l.featRecitersSub,
     qibla => l.featQiblaSub,
     tasbih => l.featTasbihSub,
+    azkar => l.featAzkarSub,
+    hisn => l.featHisnSub,
     duas => l.featDuasSub,
     names => l.featNamesSub,
     zakat => l.featZakatSub,
@@ -60,8 +73,14 @@ enum Feature {
         tabs.select(AppTab.qibla);
       case tasbih:
         tabs.select(AppTab.tasbih);
+      case azkar:
+        route = AzkarScreen.route(AzkarSession.forHour(DateTime.now().hour));
+      case hisn:
+        route = HisnScreen.route();
       case quran:
         route = QuranScreen.route();
+      case reciters:
+        route = RecitersScreen.route();
       case duas:
         route = DuasScreen.route();
       case names:
@@ -88,6 +107,7 @@ class FeatureGrid extends StatelessWidget {
       child: GridView.count(
         crossAxisCount: 3,
         shrinkWrap: true,
+        padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,

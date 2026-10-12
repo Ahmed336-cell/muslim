@@ -31,7 +31,7 @@ class L10nEn extends L10n {
 
   @override
   String get errMissingKey =>
-      'The API key is missing. Run the app with --dart-define-from-file=env.json';
+      'The API key is missing. Add it to assets/env/env.json';
 
   @override
   String get errNetwork => 'Couldn\'t reach the server. Check your connection.';
@@ -156,7 +156,7 @@ class L10nEn extends L10n {
   String get featQuran => 'Quran';
 
   @override
-  String get featQuranSub => 'All 114 surahs';
+  String get featQuranSub => 'Mushaf & tafsir';
 
   @override
   String get featQibla => 'Qibla';
@@ -519,6 +519,177 @@ class L10nEn extends L10n {
   String get ayahs => 'Ayahs';
 
   @override
+  String get readSurah => 'Read';
+
+  @override
+  String get tapAyahHint => 'Tap any ayah to read its tafsir';
+
+  @override
+  String ayahRef(String surah, String n) {
+    return '$surah · Ayah $n';
+  }
+
+  @override
+  String ayahOf(String n, String total) {
+    return 'Ayah $n of $total';
+  }
+
+  @override
+  String get viewSurahs => 'Surahs';
+
+  @override
+  String get viewJuz => 'Juz';
+
+  @override
+  String get recentlyRead => 'Recently read';
+
+  @override
+  String fromAyah(String n) {
+    return 'From ayah $n';
+  }
+
+  @override
+  String get myLocation => 'My location';
+
+  @override
+  String get useMyLocation => 'Use my location';
+
+  @override
+  String get useMyLocationSub => 'Prayer times for where you are now';
+
+  @override
+  String get locating => 'Finding your location…';
+
+  @override
+  String nearCity(String city) {
+    return 'Method and currency of $city';
+  }
+
+  @override
+  String get locDisabled => 'Location services are off.';
+
+  @override
+  String get locDenied => 'Location permission was denied. Tap to try again.';
+
+  @override
+  String get locBlocked => 'Location access is blocked. Allow it in Settings.';
+
+  @override
+  String get locFailed => 'Couldn\'t get your location. Try again.';
+
+  @override
+  String get openSettings => 'Open settings';
+
+  @override
+  String pageN(String n) {
+    return 'Page $n';
+  }
+
+  @override
+  String juzN(String n) {
+    return 'Juz $n';
+  }
+
+  @override
+  String get sajdah => 'Sajdah';
+
+  @override
+  String get nextSurah => 'Next surah';
+
+  @override
+  String get previousSurah => 'Previous surah';
+
+  @override
+  String get readingSettings => 'Reading settings';
+
+  @override
+  String get mushafType => 'Mushaf';
+
+  @override
+  String get mushafUthmani => 'Uthmani script';
+
+  @override
+  String get mushafUthmaniSub => 'The Madinah mushaf script';
+
+  @override
+  String get mushafTajweed => 'Colour-coded tajweed';
+
+  @override
+  String get mushafTajweedSub => 'Uthmani script, rules in colour';
+
+  @override
+  String get mushafSimple => 'Simple script';
+
+  @override
+  String get mushafSimpleSub => 'Modern spelling with full diacritics';
+
+  @override
+  String get mushafPlain => 'Without diacritics';
+
+  @override
+  String get mushafPlainSub => 'Plain letters, easy to scan';
+
+  @override
+  String get textSize => 'Text size';
+
+  @override
+  String get tajweedKey => 'Colour key';
+
+  @override
+  String get tjSilent => 'Not pronounced';
+
+  @override
+  String get tjMadd => 'Prolongation (madd)';
+
+  @override
+  String get tjGhunnah => 'Nasalisation (ghunnah)';
+
+  @override
+  String get tjIkhfa => 'Concealment (ikhfa)';
+
+  @override
+  String get tjIdgham => 'Merging (idgham)';
+
+  @override
+  String get tjIqlab => 'Conversion (iqlab)';
+
+  @override
+  String get tjQalqalah => 'Echo (qalqalah)';
+
+  @override
+  String get tafsir => 'Tafsir';
+
+  @override
+  String get tafsirMuyassar => 'Al-Muyassar';
+
+  @override
+  String get tafsirJalalayn => 'Al-Jalalayn';
+
+  @override
+  String get tafsirBaghawi => 'Al-Baghawi';
+
+  @override
+  String get tafsirQurtubi => 'Al-Qurtubi';
+
+  @override
+  String get tafsirWaseet => 'Al-Waseet';
+
+  @override
+  String get tafsirIbnKathir => 'Ibn Kathir (abridged)';
+
+  @override
+  String get tafsirSaheeh => 'Saheeh International';
+
+  @override
+  String get tafsirArabicNote => 'Arabic';
+
+  @override
+  String get tafsirEnglishNote => 'English';
+
+  @override
+  String get tafsirEmpty => 'This source has no commentary on this ayah.';
+
+  @override
   String get namesTitle => 'Names of Allah';
 
   @override
@@ -647,5 +818,360 @@ class L10nEn extends L10n {
 
   @override
   String get aboutBody =>
-      'Prayer times, fasting, nisab, duas, names and ruqyah come from islamicapi.com. Your prayer log, tasbih and settings stay on this device.';
+      'Prayer times, fasting, nisab, duas, names and ruqyah come from islamicapi.com; Quran text and tafsir from alquran.cloud and quran.com. Your prayer log, tasbih and settings stay on this device.';
+
+  @override
+  String get obSkip => 'Skip';
+
+  @override
+  String get obNext => 'Next';
+
+  @override
+  String get obBack => 'Back';
+
+  @override
+  String get obStart => 'Start';
+
+  @override
+  String get obWelcomeTitle => 'Welcome';
+
+  @override
+  String get obWelcomeBody =>
+      'A quiet companion for prayer, Quran and remembrance. Let\'s set it up for you — it takes a minute.';
+
+  @override
+  String get obChooseLanguage => 'Choose your language';
+
+  @override
+  String get obLocationTitle => 'Where do you pray?';
+
+  @override
+  String get obLocationBody =>
+      'Prayer times and the Qibla depend on where you are. Allow location access, or pick a city.';
+
+  @override
+  String get obChooseCity => 'Choose a city instead';
+
+  @override
+  String get obNotifyTitle => 'Never miss a prayer';
+
+  @override
+  String get obNotifyBody =>
+      'Get a gentle reminder when each prayer time begins, for the prayers you choose.';
+
+  @override
+  String get obAllowNotifications => 'Allow notifications';
+
+  @override
+  String get obMushafTitle => 'Your mushaf';
+
+  @override
+  String get obMushafBody =>
+      'Pick the script, text size and tafsir you read best. You can change them anytime from the reader.';
+
+  @override
+  String get obDoneTitle => 'All set';
+
+  @override
+  String get obDoneBody => 'Here\'s what you chose. Tap any item to change it.';
+
+  @override
+  String get prayerReminders => 'Prayer reminders';
+
+  @override
+  String get prayerRemindersSub =>
+      'A notification when each prayer time begins';
+
+  @override
+  String get notificationsDenied =>
+      'Notifications are off for this app. Allow them in Settings.';
+
+  @override
+  String reminderTitle(String prayer) {
+    return 'Time for $prayer';
+  }
+
+  @override
+  String get reminderBody => 'Hayya ‘ala as-salah — come to prayer.';
+
+  @override
+  String get remindersOff => 'Off';
+
+  @override
+  String remindersCount(String n, String total) {
+    return '$n of $total prayers';
+  }
+
+  @override
+  String get defaultTafsir => 'Default tafsir';
+
+  @override
+  String get quranReading => 'Quran reading';
+
+  @override
+  String get replayTour => 'Show the welcome tour';
+
+  @override
+  String get featReciters => 'Reciters';
+
+  @override
+  String get featRecitersSub => 'Full surahs from 240+ reciters, offline too';
+
+  @override
+  String get recitersSearch => 'Search reciters';
+
+  @override
+  String surahCount(String n) {
+    return '$n surahs';
+  }
+
+  @override
+  String get listenFromHere => 'Listen from here';
+
+  @override
+  String get listenPage => 'Listen to this page';
+
+  @override
+  String get ayahReciter => 'Reciter';
+
+  @override
+  String get ayahReciterSub => 'Recites ayah by ayah as you read';
+
+  @override
+  String get download => 'Download';
+
+  @override
+  String get removeDownload => 'Remove download';
+
+  @override
+  String get downloadFailed => 'Download failed. Check your connection.';
+
+  @override
+  String get savedOffline => 'Saved offline';
+
+  @override
+  String get playbackError => 'Couldn\'t play. Tap to retry.';
+
+  @override
+  String get playTip => 'Play';
+
+  @override
+  String get pauseTip => 'Pause';
+
+  @override
+  String get nextTip => 'Next';
+
+  @override
+  String get previousTip => 'Previous';
+
+  @override
+  String get playAll => 'Play all';
+
+  @override
+  String get recentlyPlayed => 'Recently played';
+
+  @override
+  String get popularReciters => 'Popular reciters';
+
+  @override
+  String get allReciters => 'All reciters';
+
+  @override
+  String get nowPlaying => 'Now playing';
+
+  @override
+  String get fromMushaf => 'From the mushaf';
+
+  @override
+  String get openInMushaf => 'Open in the mushaf';
+
+  @override
+  String get repeatTip => 'Repeat';
+
+  @override
+  String get searchTip => 'Search';
+
+  @override
+  String get ambientTitle => 'Background sounds';
+
+  @override
+  String get ambientSub => 'Mix calm sounds under the recitation';
+
+  @override
+  String get ambientRain => 'Rain';
+
+  @override
+  String get ambientStorm => 'Thunderstorm';
+
+  @override
+  String get ambientFire => 'Fireplace';
+
+  @override
+  String get ambientWaves => 'Ocean waves';
+
+  @override
+  String get ambientBirds => 'Forest birds';
+
+  @override
+  String get ambientNight => 'Quiet night';
+
+  @override
+  String get ambientWind => 'Wind';
+
+  @override
+  String get ambientClear => 'Clear';
+
+  @override
+  String get adhanVoice => 'Adhan voice';
+
+  @override
+  String get adhanPlainSound => 'Notification sound only';
+
+  @override
+  String get adhanIosNote =>
+      'iPhone plays the first 30 seconds of the adhan with the notification.';
+
+  @override
+  String get previewTip => 'Preview';
+
+  @override
+  String get featHisn => 'Hisn al-Muslim';
+
+  @override
+  String get featHisnSub => 'Fortress of the Muslim — adhkar for every moment';
+
+  @override
+  String get featAzkar => 'Morning & evening';
+
+  @override
+  String get featAzkarSub => 'Daily adhkar with a counter';
+
+  @override
+  String get morningAzkar => 'Morning adhkar';
+
+  @override
+  String get eveningAzkar => 'Evening adhkar';
+
+  @override
+  String azkarProgress(String done, String total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String get azkarAllDone => 'All done today — may Allah accept.';
+
+  @override
+  String get azkarTapHint => 'Tap a card to count';
+
+  @override
+  String get azkarStart => 'Start';
+
+  @override
+  String get azkarContinue => 'Continue';
+
+  @override
+  String get azkarReset => 'Start over';
+
+  @override
+  String get azkarResetConfirm => 'Clear today\'s counts for this session?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String timesCount(String n) {
+    return '×$n';
+  }
+
+  @override
+  String get hisnSearch => 'Search chapters or words';
+
+  @override
+  String get hisnChapters => 'Chapters';
+
+  @override
+  String hisnChapterCount(String n) {
+    return '$n chapters';
+  }
+
+  @override
+  String noHisnMatch(String q) {
+    return 'Nothing found for “$q”';
+  }
+
+  @override
+  String get hisnSource => 'From Hisn al-Muslim by Sa‘id ibn Wahf al-Qahtani.';
+
+  @override
+  String get hisnLoadFailed => 'Couldn\'t open the book.';
+
+  @override
+  String get azkarReminders => 'Adhkar reminders';
+
+  @override
+  String get azkarRemindersSub =>
+      'A daily nudge for the morning and evening adhkar';
+
+  @override
+  String get azkarReminderBody => 'Take a few minutes for your adhkar.';
+
+  @override
+  String azkarRemindAt(String time) {
+    return 'Remind me at $time';
+  }
+
+  @override
+  String get azkarOff => 'Off';
+
+  @override
+  String get listenTip => 'Listen';
+
+  @override
+  String get copyTip => 'Copy';
+
+  @override
+  String get morning => 'Morning';
+
+  @override
+  String get evening => 'Evening';
+
+  @override
+  String photoCredit(String author, String licence) {
+    return 'Photo: $author · $licence · Wikimedia Commons';
+  }
+
+  @override
+  String get widgetVerse => 'A verse';
+
+  @override
+  String get widgetDua => 'Dua';
+
+  @override
+  String get widgetEmpty => 'Open the app to load';
+
+  @override
+  String get widgetsTitle => 'Home & lock screen widgets';
+
+  @override
+  String get widgetPrayerSub => 'Time left until the next prayer';
+
+  @override
+  String get widgetAyahSub => 'A new verse every half hour';
+
+  @override
+  String get widgetDuaSub => 'A new dua every half hour';
+
+  @override
+  String get widgetNameSub => 'A name of Allah every half hour';
+
+  @override
+  String get widgetAdd => 'Add';
+
+  @override
+  String get widgetAddFailed =>
+      'Your launcher can\'t add widgets from here. Long-press the home screen and choose Widgets.';
+
+  @override
+  String get widgetIosHint =>
+      'Long-press the home or lock screen, tap Edit or +, then search for Muslim.';
 }

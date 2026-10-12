@@ -1,0 +1,2 @@
+// Gives the widgets the app's version and build number.
+#include "../Flutter/Generated.xcconfig"

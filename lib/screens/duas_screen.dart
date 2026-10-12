@@ -6,6 +6,7 @@ import '../l10n/l10n.dart';
 import '../services/duas.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/shimmer.dart';
 import '../widgets/star_pattern.dart';
 import 'dua_screen.dart';
 
@@ -85,26 +86,27 @@ class _DuasScreenState extends State<DuasScreen> {
           if (library == null)
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(
-                child: state.status == DuaLibraryStatus.failure
-                    ? ErrorState(
+              child: state.status == DuaLibraryStatus.failure
+                  ? Center(
+                      child: ErrorState(
                         error: state.error,
                         onRetry: () => context.read<DuaLibraryBloc>().add(
                           const DuaLibraryRequested(force: true),
                         ),
-                      )
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Spinner(),
-                          const SizedBox(height: 14),
-                          Text(
+                      ),
+                    )
+                  : Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
                             l.duasLoading,
                             style: Fonts.body(13, color: Palette.inkSoft),
                           ),
-                        ],
-                      ),
-              ),
+                        ),
+                        const ListSkeleton(),
+                      ],
+                    ),
             )
           else if (state.searching) ...[
             SliverList.separated(

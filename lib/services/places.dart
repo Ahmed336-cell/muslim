@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'islamic_api.dart';
 
 /// Cities offered in Settings. `method` follows islamicapi.com's
@@ -164,3 +166,15 @@ const cities = [
 
 City cityById(String id) =>
     cities.firstWhere((c) => c.id == id, orElse: () => cities.first);
+
+/// Closest listed city, whose calculation method and currency stand in
+/// for an arbitrary position.
+City nearestCity(double lat, double lon) {
+  double dist(City c) {
+    final dLat = c.lat - lat;
+    final dLon = (c.lon - lon) * math.cos(lat * math.pi / 180);
+    return dLat * dLat + dLon * dLon;
+  }
+
+  return cities.reduce((a, b) => dist(a) <= dist(b) ? a : b);
+}

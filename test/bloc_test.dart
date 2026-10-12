@@ -1,11 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:muslim/bloc/location_cubit.dart';
 import 'package:muslim/bloc/prayer_log_cubit.dart';
 import 'package:muslim/bloc/prayer_times/prayer_times_bloc.dart';
 import 'package:muslim/bloc/settings_cubit.dart';
 import 'package:muslim/bloc/tasbih_cubit.dart';
 import 'package:muslim/data.dart';
 import 'package:muslim/services/islamic_api.dart';
+import 'package:muslim/services/location.dart';
 
 import 'helpers.dart';
 
@@ -168,5 +170,68 @@ void main() {
       useMemoryStorage();
       expect(SettingsCubit(initialLanguage: 'ar').state.language, 'ar');
     });
+
+    test('my location uses the GPS fix with the nearest city\'s method', () {
+      SettingsCubit().setLocation(24.71364, 46.67532); // Riyadh
+      final s = SettingsCubit().state;
+      expect(s.usesLocation, isTrue);
+      expect(s.location, (24.714, 46.675));
+      expect(s.place.lat, 24.714);
+      expect(s.city.id, 'riyadh');
+      expect(s.place.method, s.city.method);
+
+      final c = SettingsCubit()..setCity('cairo');
+      expect(c.state.usesLocation, isFalse);
+      expect(c.state.place.lat, 30.0444);
+    });
   });
+
+  group('LocationCubit', () {
+    setUp(useMemoryStorage);
+
+    test('stores the position, or reports why it failed', () async {
+      final settings = SettingsCubit();
+      final ok = LocationCubit(
+        service: _FakeLocation(() async => (21.42, 39.83)),
+        settings: settings,
+      );
+      await ok.locate();
+      expect(ok.state, const LocateState());
+      expect(settings.state.location, (21.42, 39.83));
+
+      final denied = LocationCubit(
+        service: _FakeLocation(
+          () => throw const LocationException(LocationException.blocked),
+        ),
+        settings: settings,
+      );
+      await denied.locate();
+      expect(denied.state.error, LocationException.blocked);
+      await denied.locate(silent: true);
+      expect(denied.state.error, isNull);
+    });
+
+    test('refreshes on launch only when reading by location', () async {
+      var calls = 0;
+      final settings = SettingsCubit();
+      final service = _FakeLocation(() async {
+        calls++;
+        return (30.0, 31.0);
+      });
+      LocationCubit(service: service, settings: settings).refresh();
+      expect(calls, 0);
+      settings.setLocation(30, 31);
+      LocationCubit(service: service, settings: settings).refresh();
+      expect(calls, 1);
+    });
+  });
+}
+
+class _FakeLocation extends LocationService {
+  _FakeLocation(this._current);
+
+  final Future<(double, double)> Function() _current;
+
+  @override
+  Future<(double, double)> current() => _current();
 }

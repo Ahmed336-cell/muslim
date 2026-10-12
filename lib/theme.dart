@@ -84,6 +84,18 @@ class Fonts {
   static TextStyle arabic(double size, {Color color = Palette.ink}) =>
       GoogleFonts.amiri(fontSize: size, color: color, height: 1.9);
 
+  /// Mushaf text; Amiri Quran places the small Uthmani marks correctly.
+  static TextStyle mushaf(
+    double size, {
+    Color color = Palette.ink,
+    double height = 2.05,
+  }) => GoogleFonts.amiriQuran(fontSize: size, color: color, height: height);
+
+  /// Long-form reading (tafsir) in the text's own language, whatever the UI.
+  static TextStyle reading(String language, double size) => language == 'ar'
+      ? GoogleFonts.amiri(fontSize: size + 2, color: Palette.ink, height: 1.9)
+      : GoogleFonts.workSans(fontSize: size, color: Palette.ink, height: 1.6);
+
   static TextStyle mono(double size, {Color color = Palette.ink}) => arabicUi
       ? GoogleFonts.ibmPlexSansArabic(
           fontSize: size,

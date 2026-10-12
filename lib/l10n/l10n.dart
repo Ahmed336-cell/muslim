@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../data.dart';
 import '../services/islamic_api.dart';
+import '../services/quran.dart';
 import 'app_localizations.dart';
 
 export 'app_localizations.dart';
@@ -60,6 +61,32 @@ extension L10nX on BuildContext {
       : day.hijriMonthEn.isEmpty
       ? ''
       : day.hijriEn;
+
+  String mushafName(Mushaf m) => switch (m) {
+    Mushaf.uthmani => l.mushafUthmani,
+    Mushaf.tajweed => l.mushafTajweed,
+    Mushaf.simple => l.mushafSimple,
+    Mushaf.plain => l.mushafPlain,
+  };
+
+  String mushafDetail(Mushaf m) => switch (m) {
+    Mushaf.uthmani => l.mushafUthmaniSub,
+    Mushaf.tajweed => l.mushafTajweedSub,
+    Mushaf.simple => l.mushafSimpleSub,
+    Mushaf.plain => l.mushafPlainSub,
+  };
+
+  String tafsirName(TafsirSource s) => switch (s) {
+    TafsirSource.muyassar => l.tafsirMuyassar,
+    TafsirSource.jalalayn => l.tafsirJalalayn,
+    TafsirSource.baghawi => l.tafsirBaghawi,
+    TafsirSource.qurtubi => l.tafsirQurtubi,
+    TafsirSource.waseet => l.tafsirWaseet,
+    TafsirSource.ibnKathir => l.tafsirIbnKathir,
+    TafsirSource.saheeh => l.tafsirSaheeh,
+  };
+
+  String surahName(Surah s) => isAr ? 'سورة ${s.arabic}' : s.name;
 
   String currencyName(String code) => switch (code) {
     'EGP' => l.curEGP,

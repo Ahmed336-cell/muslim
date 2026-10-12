@@ -7,6 +7,7 @@ import '../l10n/l10n.dart';
 import '../services/ruqyah.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/shimmer.dart';
 
 extension on RuqyahProgram {
   String title(L10n l) => switch (this) {
@@ -183,16 +184,19 @@ class _ReciteTab extends StatelessWidget {
         else
           SliverFillRemaining(
             hasScrollBody: false,
-            child: Center(
-              child: current.error != null
-                  ? ErrorState(
+            child: current.error != null
+                ? Center(
+                    child: ErrorState(
                       error: current.error,
                       onRetry: () => context.read<RuqyahBloc>().add(
                         const RuqyahRecitationRequested(),
                       ),
-                    )
-                  : const Spinner(),
-            ),
+                    ),
+                  )
+                : const Align(
+                    alignment: Alignment.topCenter,
+                    child: ListSkeleton(rows: 4, leading: 0),
+                  ),
           ),
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
       ],
@@ -325,15 +329,15 @@ class _LearnTab extends StatelessWidget {
     final data = topics.data;
 
     if (data == null) {
+      if (topics.error == null) {
+        return const SingleChildScrollView(child: ListSkeleton());
+      }
       return Center(
-        child: topics.error != null
-            ? ErrorState(
-                error: topics.error,
-                onRetry: () => context.read<RuqyahBloc>().add(
-                  const RuqyahTopicsRequested(),
-                ),
-              )
-            : const Spinner(),
+        child: ErrorState(
+          error: topics.error,
+          onRetry: () =>
+              context.read<RuqyahBloc>().add(const RuqyahTopicsRequested()),
+        ),
       );
     }
 
@@ -396,16 +400,16 @@ class _RuqyahTopicScreenState extends State<RuqyahTopicScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.topic.title)),
       body: data == null
-          ? Center(
-              child: articles.error != null
-                  ? ErrorState(
+          ? articles.error != null
+                ? Center(
+                    child: ErrorState(
                       error: articles.error,
                       onRetry: () => context.read<RuqyahBloc>().add(
                         RuqyahArticlesRequested(widget.topic.slug),
                       ),
-                    )
-                  : const Spinner(),
-            )
+                    ),
+                  )
+                : const SingleChildScrollView(child: ListSkeleton(leading: 0))
           : ListView.separated(
               padding: const EdgeInsets.fromLTRB(0, 4, 0, 32),
               itemCount: data.length,

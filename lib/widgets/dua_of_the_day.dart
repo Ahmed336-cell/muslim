@@ -7,6 +7,7 @@ import '../screens/dua_screen.dart';
 import '../screens/duas_screen.dart';
 import '../theme.dart';
 import 'common.dart';
+import 'shimmer.dart';
 import 'star_pattern.dart';
 
 class DuaOfTheDay extends StatelessWidget {
@@ -16,6 +17,7 @@ class DuaOfTheDay extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l;
     final dua = context.select((DuaOfDayCubit c) => c.state.dua);
+    final loading = context.select((DuaOfDayCubit c) => c.state.loading);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -65,6 +67,12 @@ class DuaOfTheDay extends StatelessWidget {
                     ],
                   ),
                 ),
+              ),
+              const Divider(),
+            ] else if (loading) ...[
+              const Padding(
+                padding: EdgeInsets.fromLTRB(18, 18, 18, 18),
+                child: CardSkeleton(),
               ),
               const Divider(),
             ],

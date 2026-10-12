@@ -1,34 +1,64 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'bloc/audio_cubit.dart';
+import 'bloc/azkar_cubit.dart';
+import 'bloc/azkar_reminders_cubit.dart';
 import 'bloc/clock_cubit.dart';
 import 'bloc/duas/dua_library_bloc.dart';
 import 'bloc/duas/dua_of_day_cubit.dart';
 import 'bloc/fasting/fasting_bloc.dart';
+import 'bloc/hisn_cubit.dart';
+import 'bloc/location_cubit.dart';
 import 'bloc/names/names_bloc.dart';
+import 'bloc/onboarding_cubit.dart';
 import 'bloc/nisab/nisab_bloc.dart';
 import 'bloc/prayer_log_cubit.dart';
 import 'bloc/prayer_times/prayer_times_bloc.dart';
+import 'bloc/quran/ambient_cubit.dart';
+import 'bloc/quran/downloads_cubit.dart';
+import 'bloc/quran/quran_prefs_cubit.dart';
+import 'bloc/quran/recent_reciters_cubit.dart';
+import 'bloc/quran/recent_surahs_cubit.dart';
+import 'bloc/quran/recitation_cubit.dart';
 import 'bloc/quran_bookmark_cubit.dart';
+import 'bloc/reminders_cubit.dart';
 import 'bloc/ruqyah/ruqyah_bloc.dart';
 import 'bloc/settings_cubit.dart';
 import 'bloc/tab_cubit.dart';
 import 'bloc/tasbih_cubit.dart';
 import 'bloc/zakat_cubit.dart';
 import 'l10n/l10n.dart';
+import 'screens/azkar_screen.dart';
 import 'screens/dhikr_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/more_screen.dart';
+import 'screens/onboarding_screen.dart';
 import 'screens/prayer_screen.dart';
 import 'screens/qibla_screen.dart';
+import 'services/ambient.dart';
+import 'services/hisn.dart';
+import 'services/home_widgets.dart';
 import 'services/islamic_api.dart';
+import 'services/location.dart';
+import 'services/notifications.dart';
+import 'services/offline_cache.dart';
+import 'services/player.dart';
+import 'services/quran.dart';
+import 'services/quran_text.dart';
+import 'services/recitation.dart';
 import 'theme.dart';
+import 'widgets/home_widget_sync.dart';
+import 'widgets/mini_player.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,19 +69,95 @@ Future<void> main() async {
             (await getApplicationSupportDirectory()).path,
           ),
   );
-  runApp(const MuslimApp());
+  try {
+    await JustAudioBackground.init(
+      androidNotificationChannelId: 'com.example.muslim.recitation',
+      androidNotificationChannelName: 'Quran recitation',
+      androidNotificationOngoing: true,
+    );
+  } catch (_) {
+    // Playback still works in the foreground.
+  }
+  runApp(MuslimApp(apiKey: await _loadApiKey()));
+}
+
+/// `--dart-define` wins; otherwise the bundled assets/env/env.json.
+Future<String> _loadApiKey() async {
+  const defined = String.fromEnvironment('ISLAMIC_API_KEY');
+  if (defined.isNotEmpty) return defined;
+  try {
+    final json = jsonDecode(await rootBundle.loadString('assets/env/env.json'));
+    return (json as Map<String, dynamic>)['ISLAMIC_API_KEY'] as String? ?? '';
+  } catch (_) {
+    return '';
+  }
 }
 
 class MuslimApp extends StatelessWidget {
-  const MuslimApp({super.key, this.api});
+  const MuslimApp({
+    super.key,
+    this.api,
+    this.quranApi,
+    this.location,
+    this.notifier,
+    this.audio,
+    this.ambient,
+    this.recitersApi,
+    this.audioStore,
+    this.hisn,
+    this.homeWidgets,
+    this.apiKey,
+  });
 
   /// Injected in tests.
   final IslamicApi? api;
+  final QuranApi? quranApi;
+  final LocationService? location;
+  final PrayerNotifier? notifier;
+  final AudioEngine? audio;
+  final AmbientEngine? ambient;
+  final RecitersApi? recitersApi;
+  final AudioStore? audioStore;
+  final HisnRepository? hisn;
+  final HomeWidgets? homeWidgets;
+  final String? apiKey;
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (_) => api ?? IslamicApi(),
+    return MultiRepositoryProvider(
+      providers: [
+        // Text from every API is kept on disk for offline use.
+        RepositoryProvider(create: (_) => OfflineClient()),
+        RepositoryProvider(
+          create: (c) =>
+              api ??
+              IslamicApi(client: c.read<OfflineClient>(), apiKey: apiKey),
+        ),
+        RepositoryProvider(create: (_) => QuranText()),
+        RepositoryProvider(
+          create: (c) =>
+              quranApi ??
+              QuranApi(
+                client: c.read<OfflineClient>(),
+                text: c.read<QuranText>(),
+              ),
+        ),
+        RepositoryProvider(create: (_) => homeWidgets ?? HomeWidgets()),
+        RepositoryProvider(create: (_) => location ?? const LocationService()),
+        RepositoryProvider(create: (_) => notifier ?? PrayerNotifier()),
+        RepositoryProvider(
+          create: (c) =>
+              recitersApi ?? RecitersApi(client: c.read<OfflineClient>()),
+        ),
+        RepositoryProvider(create: (_) => audioStore ?? AudioStore()),
+        RepositoryProvider(create: (_) => hisn ?? HisnRepository()),
+        RepositoryProvider<AudioEngine>(
+          create: (_) => audio ?? JustAudioEngine(),
+        ),
+        RepositoryProvider<AmbientEngine>(
+          create: (_) => ambient ?? AudioplayersAmbient(),
+        ),
+      ],
       child: BlocProvider(
         create: (_) => SettingsCubit(
           initialLanguage: PlatformDispatcher.instance.locale.languageCode,
@@ -73,8 +179,31 @@ class _Blocs extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => OnboardingCubit()),
+        BlocProvider(
+          create: (c) => RemindersCubit(notifier: c.read<PrayerNotifier>()),
+        ),
+        BlocProvider(
+          lazy: false,
+          create: (c) =>
+              AzkarRemindersCubit(notifier: c.read<PrayerNotifier>())
+                ..sync(lang),
+        ),
+        BlocProvider(
+          lazy: false,
+          create: (c) =>
+              HisnCubit(repository: c.read<HisnRepository>())..load(),
+        ),
+        BlocProvider(create: (_) => AzkarCubit()),
         BlocProvider(create: (_) => TabCubit()),
         BlocProvider(create: (_) => ClockCubit()),
+        BlocProvider(
+          lazy: false,
+          create: (c) => LocationCubit(
+            service: c.read<LocationService>(),
+            settings: c.read<SettingsCubit>(),
+          )..refresh(),
+        ),
         BlocProvider(
           create: (c) =>
               PrayerTimesBloc(repository: api(c), place: settings.place)
@@ -88,6 +217,25 @@ class _Blocs extends StatelessWidget {
         BlocProvider(create: (_) => PrayerLogCubit()),
         BlocProvider(create: (_) => TasbihCubit()),
         BlocProvider(create: (_) => QuranBookmarkCubit()),
+        BlocProvider(
+          lazy: false,
+          create: (c) {
+            final prefs = QuranPrefsCubit();
+            c.read<QuranApi>().preload(prefs.state.mushaf);
+            return prefs;
+          },
+        ),
+        BlocProvider(create: (_) => RecentSurahsCubit()),
+        BlocProvider(
+          create: (c) => RecitationCubit(engine: c.read<AudioEngine>()),
+        ),
+        BlocProvider(
+          create: (c) => DownloadsCubit(store: c.read<AudioStore>()),
+        ),
+        BlocProvider(
+          create: (c) => AmbientCubit(engine: c.read<AmbientEngine>()),
+        ),
+        BlocProvider(create: (_) => RecentRecitersCubit()),
         BlocProvider(
           create: (c) =>
               NisabBloc(api: api(c), currency: settings.city.currency)
@@ -129,10 +277,38 @@ class _SettingsSync extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        // Clips and recitation never play over each other.
+        BlocListener<AudioCubit, String?>(
+          listenWhen: (a, b) => b != null,
+          listener: (context, _) => context.read<RecitationCubit>().pause(),
+        ),
+        BlocListener<RecitationCubit, RecitationState>(
+          listenWhen: (a, b) => !a.playing && b.playing,
+          listener: (context, _) => context.read<AudioCubit>().stop(),
+        ),
+        BlocListener<QuranPrefsCubit, QuranPrefs>(
+          listenWhen: (a, b) => a.mushaf != b.mushaf,
+          listener: (context, s) => context.read<QuranApi>().preload(s.mushaf),
+        ),
+        // Background sounds play and pause with the recitation.
+        BlocListener<RecitationCubit, RecitationState>(
+          listenWhen: (a, b) => a.playing != b.playing,
+          listener: (context, s) =>
+              context.read<AmbientCubit>().setLive(s.playing),
+        ),
+        BlocListener<PrayerTimesBloc, PrayerTimesState>(
+          listenWhen: (a, b) => a.day != b.day && b.day != null,
+          listener: (context, s) => context.read<RemindersCubit>().sync(
+            s.day,
+            context.read<SettingsCubit>().state.language,
+          ),
+        ),
         BlocListener<SettingsCubit, Settings>(
           listenWhen: (a, b) => a.language != b.language,
           listener: (context, s) {
             final lang = s.language;
+            context.read<RemindersCubit>().sync(null, lang);
+            context.read<AzkarRemindersCubit>().sync(lang);
             context.read<AudioCubit>().stop();
             context.read<NamesBloc>().add(NamesRequested(lang));
             context.read<DuaOfDayCubit>().load(
@@ -193,9 +369,55 @@ class _App extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: const Shell(),
+      home: context.select((OnboardingCubit c) => c.state.done)
+          ? const _NotificationTaps(child: HomeWidgetSync(child: Shell()))
+          : const OnboardingScreen(),
     );
   }
+}
+
+/// Opens the screen a tapped notification points at.
+class _NotificationTaps extends StatefulWidget {
+  const _NotificationTaps({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_NotificationTaps> createState() => _NotificationTapsState();
+}
+
+class _NotificationTapsState extends State<_NotificationTaps> {
+  StreamSubscription<String>? _taps;
+
+  @override
+  void initState() {
+    super.initState();
+    final notifier = context.read<PrayerNotifier>();
+    _taps = notifier.taps.listen(_open);
+    notifier.launchPayload().then((p) {
+      if (p != null) _open(p);
+    }, onError: (Object _) {});
+  }
+
+  void _open(String payload) {
+    if (!mounted) return;
+    final session = AzkarSession.values
+        .where((s) => payload == 'azkar:${s.name}')
+        .firstOrNull;
+    if (session == null) return;
+    final nav = Navigator.of(context);
+    nav.popUntil((r) => r.isFirst);
+    nav.push(AzkarScreen.route(session));
+  }
+
+  @override
+  void dispose() {
+    _taps?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class Shell extends StatelessWidget {
@@ -225,42 +447,50 @@ class Shell extends StatelessWidget {
             : SystemUiOverlayStyle.dark,
         child: Scaffold(
           body: IndexedStack(index: tab.index, children: _pages),
-          bottomNavigationBar: DecoratedBox(
-            decoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: Palette.rule, width: .7)),
-            ),
-            child: NavigationBar(
-              selectedIndex: tab.index,
-              onDestinationSelected: (i) =>
-                  context.read<TabCubit>().select(AppTab.values[i]),
-              destinations: [
-                NavigationDestination(
-                  icon: const Icon(Icons.home_outlined),
-                  selectedIcon: const Icon(Icons.home_rounded),
-                  label: l.navHome,
+          bottomNavigationBar: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const MiniPlayer(safeArea: false),
+              DecoratedBox(
+                decoration: const BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: Palette.rule, width: .7),
+                  ),
                 ),
-                NavigationDestination(
-                  icon: const Icon(Icons.schedule_outlined),
-                  selectedIcon: const Icon(Icons.schedule_rounded),
-                  label: l.navPrayer,
+                child: NavigationBar(
+                  selectedIndex: tab.index,
+                  onDestinationSelected: (i) =>
+                      context.read<TabCubit>().select(AppTab.values[i]),
+                  destinations: [
+                    NavigationDestination(
+                      icon: const Icon(Icons.home_outlined),
+                      selectedIcon: const Icon(Icons.home_rounded),
+                      label: l.navHome,
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.schedule_outlined),
+                      selectedIcon: const Icon(Icons.schedule_rounded),
+                      label: l.navPrayer,
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.explore_outlined),
+                      selectedIcon: const Icon(Icons.explore_rounded),
+                      label: l.navQibla,
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.blur_circular_outlined),
+                      selectedIcon: const Icon(Icons.blur_circular_rounded),
+                      label: l.navTasbih,
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.grid_view_outlined),
+                      selectedIcon: const Icon(Icons.grid_view_rounded),
+                      label: l.navMore,
+                    ),
+                  ],
                 ),
-                NavigationDestination(
-                  icon: const Icon(Icons.explore_outlined),
-                  selectedIcon: const Icon(Icons.explore_rounded),
-                  label: l.navQibla,
-                ),
-                NavigationDestination(
-                  icon: const Icon(Icons.blur_circular_outlined),
-                  selectedIcon: const Icon(Icons.blur_circular_rounded),
-                  label: l.navTasbih,
-                ),
-                NavigationDestination(
-                  icon: const Icon(Icons.grid_view_outlined),
-                  selectedIcon: const Icon(Icons.grid_view_rounded),
-                  label: l.navMore,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -11,6 +11,7 @@ import '../services/islamic_api.dart';
 import '../theme.dart';
 import '../widgets/city_picker.dart';
 import '../widgets/common.dart';
+import '../widgets/shimmer.dart';
 import '../widgets/fasting_section.dart';
 
 class PrayerScreen extends StatelessWidget {
@@ -28,16 +29,24 @@ class PrayerScreen extends StatelessWidget {
         actions: const [CityChip(), SizedBox(width: 12)],
       ),
       body: day == null
-          ? Center(
-              child: state.status == PrayerTimesStatus.failure
-                  ? ErrorState(
+          ? state.status == PrayerTimesStatus.failure
+                ? Center(
+                    child: ErrorState(
                       error: state.error,
                       onRetry: () => context.read<PrayerTimesBloc>().add(
                         const PrayerTimesRequested(),
                       ),
-                    )
-                  : const Spinner(),
-            )
+                    ),
+                  )
+                : const SingleChildScrollView(
+                    padding: EdgeInsets.only(top: 12),
+                    child: Column(
+                      children: [
+                        SkeletonCard(lines: 1),
+                        ListSkeleton(rows: 6),
+                      ],
+                    ),
+                  )
           : RefreshIndicator(
               color: Palette.green,
               backgroundColor: Palette.card,

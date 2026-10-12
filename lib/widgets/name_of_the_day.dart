@@ -7,6 +7,7 @@ import '../l10n/l10n.dart';
 import '../screens/names_screen.dart';
 import '../theme.dart';
 import 'common.dart';
+import 'shimmer.dart';
 import 'star_pattern.dart';
 
 class NameOfTheDay extends StatelessWidget {
@@ -15,7 +16,19 @@ class NameOfTheDay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final book = context.select((NamesBloc b) => b.state.book);
-    if (book == null || book.names.isEmpty) return const SizedBox.shrink();
+    final loading = context.select(
+      (NamesBloc b) =>
+          b.state.status == NamesStatus.loading ||
+          b.state.status == NamesStatus.initial,
+    );
+    if (book == null || book.names.isEmpty) {
+      return loading
+          ? const Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: SkeletonCard(),
+            )
+          : const SizedBox.shrink();
+    }
 
     final l = context.l;
     final now = context.select((ClockCubit c) => c.state);

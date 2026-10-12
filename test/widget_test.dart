@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslim/bloc/onboarding_cubit.dart';
 import 'package:muslim/bloc/settings_cubit.dart';
 import 'package:muslim/data.dart';
 import 'package:muslim/l10n/l10n.dart';
@@ -129,6 +130,7 @@ void main() {
 
     Future<void> pumpApp(WidgetTester tester, String lang) async {
       useMemoryStorage();
+      OnboardingCubit().complete();
       SettingsCubit().setLanguage(lang);
       await tester.pumpWidget(MuslimApp(api: _OfflineApi()));
       await tester.pump();

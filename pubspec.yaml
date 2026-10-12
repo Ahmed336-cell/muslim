@@ -45,6 +45,13 @@ dependencies:
   intl: any
   hydrated_bloc: ^11.0.0
   path_provider: ^2.1.6
+  geolocator: ^14.1.1
+  flutter_local_notifications: ^22.3.1
+  timezone: ^0.11.1
+  just_audio: ^0.10.6
+  just_audio_background: ^0.0.1-beta.17
+  crypto: ^3.0.7
+  home_widget: ^0.10.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +76,15 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   generate: true
+
+  # Holds the gitignored env.json with ISLAMIC_API_KEY.
+  assets:
+    - assets/env/
+    - assets/sounds/
+    - assets/adhan/
+    - assets/hisn/
+    - assets/reciters/
+    - assets/quran/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

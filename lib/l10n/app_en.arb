@@ -1,15 +1,13 @@
 {
   "@@locale": "en",
   "appName": "Muslim",
-
   "navHome": "Home",
   "navPrayer": "Prayer",
   "navQibla": "Qibla",
   "navTasbih": "Tasbih",
   "navMore": "More",
-
   "retry": "Try again",
-  "errMissingKey": "The API key is missing. Run the app with --dart-define-from-file=env.json",
+  "errMissingKey": "The API key is missing. Add it to assets/env/env.json",
   "errNetwork": "Couldn't reach the server. Check your connection.",
   "errGeneric": "Something went wrong. Please try again.",
   "refreshFailed": "Couldn't refresh",
@@ -19,15 +17,35 @@
   "stop": "Stop",
   "seeAll": "See all",
   "noMatch": "Nothing matches “{query}”.",
-  "@noMatch": {"placeholders": {"query": {"type": "String"}}},
+  "@noMatch": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
   "am": "am",
   "pm": "pm",
   "hoursMinutes": "{h}h {m}m",
-  "@hoursMinutes": {"placeholders": {"h": {"type": "String"}, "m": {"type": "String"}}},
+  "@hoursMinutes": {
+    "placeholders": {
+      "h": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      }
+    }
+  },
   "minutesOnly": "{m}m",
-  "@minutesOnly": {"placeholders": {"m": {"type": "String"}}},
+  "@minutesOnly": {
+    "placeholders": {
+      "m": {
+        "type": "String"
+      }
+    }
+  },
   "hijriSuffix": "AH",
-
   "fajr": "Fajr",
   "sunrise": "Sunrise",
   "dhuhr": "Dhuhr",
@@ -35,15 +53,26 @@
   "asr": "Asr",
   "maghrib": "Maghrib",
   "isha": "Isha",
-
   "greeting": "Assalamu alaikum",
   "nextPrayer": "Next prayer",
   "inDuration": "in {d}",
-  "@inDuration": {"placeholders": {"d": {"type": "String"}}},
+  "@inDuration": {
+    "placeholders": {
+      "d": {
+        "type": "String"
+      }
+    }
+  },
   "explore": "Explore",
   "todayPrayers": "Today's prayers",
   "prayedCount": "{n} of 5 prayed",
-  "@prayedCount": {"placeholders": {"n": {"type": "String"}}},
+  "@prayedCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
   "verseTitle": "A verse for today",
   "verseTranslation": "“For indeed, with hardship comes ease. Indeed, with hardship comes ease.”",
   "verseRef": "Ash-Sharh 94:5–6",
@@ -51,11 +80,10 @@
   "allNames": "All 99 names",
   "duaOfDay": "A dua for today",
   "allDuas": "Duas for every occasion",
-
   "featPrayer": "Prayer times",
   "featPrayerSub": "Times, tracker and fasting",
   "featQuran": "Quran",
-  "featQuranSub": "All 114 surahs",
+  "featQuranSub": "Mushaf & tafsir",
   "featQibla": "Qibla",
   "featQiblaSub": "Direction to the Kaaba",
   "featTasbih": "Tasbih",
@@ -70,31 +98,46 @@
   "featRuqyahSub": "Protection and healing",
   "featFasting": "Fasting",
   "featFastingSub": "Sahur, iftar and white days",
-
   "prayerTitle": "Prayer times",
   "changeCity": "Change city",
   "trackerHint": "Tap the circle once you've prayed.",
   "nextBadge": "Next",
   "allPrayed": "All five prayed today. May Allah accept it.",
-
   "fastingTitle": "Fasting",
   "sahurEnds": "Sahur ends",
   "iftar": "Iftar",
   "fastLength": "{d} from dawn to sunset",
-  "@fastLength": {"placeholders": {"d": {"type": "String"}}},
+  "@fastLength": {
+    "placeholders": {
+      "d": {
+        "type": "String"
+      }
+    }
+  },
   "sunnahMonday": "Tomorrow is Monday — a sunnah fast.",
   "sunnahThursday": "Tomorrow is Thursday — a sunnah fast.",
   "whiteDays": "White days",
   "whiteDaysHint": "The 13th, 14th and 15th of every Hijri month.",
   "approx": "approx.",
-
   "qiblaTitle": "Qibla",
   "kmToKaaba": "km to the Kaaba",
   "facingQibla": "You're facing the Qibla",
   "turnRight": "Turn right {deg}°",
-  "@turnRight": {"placeholders": {"deg": {"type": "String"}}},
+  "@turnRight": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
   "turnLeft": "Turn left {deg}°",
-  "@turnLeft": {"placeholders": {"deg": {"type": "String"}}},
+  "@turnLeft": {
+    "placeholders": {
+      "deg": {
+        "type": "String"
+      }
+    }
+  },
   "dragHint": "Drag the dial to line it up",
   "compassN": "N",
   "compassE": "E",
@@ -108,16 +151,29 @@
   "dirSW": "Southwest",
   "dirW": "West",
   "dirNW": "Northwest",
-
   "tasbihTitle": "Tasbih",
   "reset": "Reset",
   "afterSalah": "After salah · {i} of {n}",
-  "@afterSalah": {"placeholders": {"i": {"type": "String"}, "n": {"type": "String"}}},
+  "@afterSalah": {
+    "placeholders": {
+      "i": {
+        "type": "String"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
   "tapToCount": "Tap anywhere to count",
   "todayTotal": "{n} today",
-  "@todayTotal": {"placeholders": {"n": {"type": "String"}}},
+  "@todayTotal": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
   "setComplete": "Adhkar complete — may Allah accept them.",
-
   "zakatTitle": "Zakat",
   "currency": "Currency",
   "standardClassical": "Classical",
@@ -128,9 +184,24 @@
   "goldLower": "gold",
   "silverLower": "silver",
   "gramsTimes": "{g} g × {price}",
-  "@gramsTimes": {"placeholders": {"g": {"type": "String"}, "price": {"type": "String"}}},
+  "@gramsTimes": {
+    "placeholders": {
+      "g": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "priceAsOf": "Market price as of {date}",
-  "@priceAsOf": {"placeholders": {"date": {"type": "String"}}},
+  "@priceAsOf": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "whatYouOwn": "What you own",
   "whatYouOwe": "What you owe",
   "clear": "Clear",
@@ -147,9 +218,33 @@
   "privacyNote": "Nothing you enter leaves your phone.",
   "noZakat": "No zakat due",
   "belowNisab": "You hold {net}, below the {metal} nisab of {threshold}.",
-  "@belowNisab": {"placeholders": {"net": {"type": "String"}, "metal": {"type": "String"}, "threshold": {"type": "String"}}},
+  "@belowNisab": {
+    "placeholders": {
+      "net": {
+        "type": "String"
+      },
+      "metal": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
   "aboveNisab": "2.5% of {net} — above the {metal} nisab of {threshold}.",
-  "@aboveNisab": {"placeholders": {"net": {"type": "String"}, "metal": {"type": "String"}, "threshold": {"type": "String"}}},
+  "@aboveNisab": {
+    "placeholders": {
+      "net": {
+        "type": "String"
+      },
+      "metal": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
   "zakatFootnote": "Zakat is due once a full lunar year (hawl) has passed while your wealth stayed above the nisab. Gold and silver are valued at the pure (24k) market price. For business stock, property or complex cases, ask a scholar you trust.",
   "curEGP": "Egyptian pound",
   "curSAR": "Saudi riyal",
@@ -169,11 +264,16 @@
   "curGBP": "British pound",
   "curCAD": "Canadian dollar",
   "curAUD": "Australian dollar",
-
   "quranTitle": "Quran",
   "quranSearch": "Surah name, meaning or number",
   "ayahCount": "{n, plural, =1{1 ayah} other{{n} ayahs}}",
-  "@ayahCount": {"placeholders": {"n": {"type": "int"}}},
+  "@ayahCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "meccan": "Meccan",
   "medinan": "Medinan",
   "quranSummary": "114 surahs · 6,236 ayahs",
@@ -183,24 +283,149 @@
   "surahNumber": "Surah",
   "revelation": "Revelation",
   "ayahs": "Ayahs",
-
+  "readSurah": "Read",
+  "tapAyahHint": "Tap any ayah to read its tafsir",
+  "ayahRef": "{surah} · Ayah {n}",
+  "@ayahRef": {
+    "placeholders": {
+      "surah": {
+        "type": "String"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "ayahOf": "Ayah {n} of {total}",
+  "@ayahOf": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "viewSurahs": "Surahs",
+  "viewJuz": "Juz",
+  "recentlyRead": "Recently read",
+  "fromAyah": "From ayah {n}",
+  "@fromAyah": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "myLocation": "My location",
+  "useMyLocation": "Use my location",
+  "useMyLocationSub": "Prayer times for where you are now",
+  "locating": "Finding your location…",
+  "nearCity": "Method and currency of {city}",
+  "@nearCity": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "locDisabled": "Location services are off.",
+  "locDenied": "Location permission was denied. Tap to try again.",
+  "locBlocked": "Location access is blocked. Allow it in Settings.",
+  "locFailed": "Couldn't get your location. Try again.",
+  "openSettings": "Open settings",
+  "pageN": "Page {n}",
+  "@pageN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "juzN": "Juz {n}",
+  "@juzN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "sajdah": "Sajdah",
+  "nextSurah": "Next surah",
+  "previousSurah": "Previous surah",
+  "readingSettings": "Reading settings",
+  "mushafType": "Mushaf",
+  "mushafUthmani": "Uthmani script",
+  "mushafUthmaniSub": "The Madinah mushaf script",
+  "mushafTajweed": "Colour-coded tajweed",
+  "mushafTajweedSub": "Uthmani script, rules in colour",
+  "mushafSimple": "Simple script",
+  "mushafSimpleSub": "Modern spelling with full diacritics",
+  "mushafPlain": "Without diacritics",
+  "mushafPlainSub": "Plain letters, easy to scan",
+  "textSize": "Text size",
+  "tajweedKey": "Colour key",
+  "tjSilent": "Not pronounced",
+  "tjMadd": "Prolongation (madd)",
+  "tjGhunnah": "Nasalisation (ghunnah)",
+  "tjIkhfa": "Concealment (ikhfa)",
+  "tjIdgham": "Merging (idgham)",
+  "tjIqlab": "Conversion (iqlab)",
+  "tjQalqalah": "Echo (qalqalah)",
+  "tafsir": "Tafsir",
+  "tafsirMuyassar": "Al-Muyassar",
+  "tafsirJalalayn": "Al-Jalalayn",
+  "tafsirBaghawi": "Al-Baghawi",
+  "tafsirQurtubi": "Al-Qurtubi",
+  "tafsirWaseet": "Al-Waseet",
+  "tafsirIbnKathir": "Ibn Kathir (abridged)",
+  "tafsirSaheeh": "Saheeh International",
+  "tafsirArabicNote": "Arabic",
+  "tafsirEnglishNote": "English",
+  "tafsirEmpty": "This source has no commentary on this ayah.",
   "namesTitle": "Names of Allah",
   "namesSearch": "Search a name or meaning",
   "hearIt": "Hear it",
-
   "duasTitle": "Duas",
   "duasSubtitle": "Supplications from the Quran and Sunnah",
   "duasCount": "{duas} supplications in {topics} topics",
-  "@duasCount": {"placeholders": {"duas": {"type": "String"}, "topics": {"type": "String"}}},
+  "@duasCount": {
+    "placeholders": {
+      "duas": {
+        "type": "String"
+      },
+      "topics": {
+        "type": "String"
+      }
+    }
+  },
   "duasSearch": "Travel, rain, anxiety, sleep…",
   "duasLoading": "Fetching about a thousand duas…",
   "noDuaMatch": "No dua mentions “{query}”.",
-  "@noDuaMatch": {"placeholders": {"query": {"type": "String"}}},
+  "@noDuaMatch": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
   "duaCount": "{n, plural, =1{1 dua} other{{n} duas}}",
-  "@duaCount": {"placeholders": {"n": {"type": "int"}}},
+  "@duaCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "sectionCount": "{n, plural, =1{1 section} other{{n} sections}}",
-  "@sectionCount": {"placeholders": {"n": {"type": "int"}}},
-
+  "@sectionCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "ruqyahTitle": "Ruqyah",
   "ruqyahSubtitle": "Healing and protection through the words of Allah and the supplications of the Prophet ﷺ.",
   "recite": "Recite",
@@ -214,7 +439,6 @@
   "fromSunnah": "Sunnah",
   "showMeaning": "Show meaning",
   "hideMeaning": "Hide meaning",
-
   "moreTitle": "More",
   "allFeatures": "All features",
   "settings": "Settings",
@@ -226,5 +450,186 @@
   "asrHanafi": "Hanafi",
   "asrHint": "Hanafi Asr starts later, when shadows are twice an object's length.",
   "about": "About",
-  "aboutBody": "Prayer times, fasting, nisab, duas, names and ruqyah come from islamicapi.com. Your prayer log, tasbih and settings stay on this device."
+  "aboutBody": "Prayer times, fasting, nisab, duas, names and ruqyah come from islamicapi.com; Quran text and tafsir from alquran.cloud and quran.com. Your prayer log, tasbih and settings stay on this device.",
+  "obSkip": "Skip",
+  "obNext": "Next",
+  "obBack": "Back",
+  "obStart": "Start",
+  "obWelcomeTitle": "Welcome",
+  "obWelcomeBody": "A quiet companion for prayer, Quran and remembrance. Let's set it up for you — it takes a minute.",
+  "obChooseLanguage": "Choose your language",
+  "obLocationTitle": "Where do you pray?",
+  "obLocationBody": "Prayer times and the Qibla depend on where you are. Allow location access, or pick a city.",
+  "obChooseCity": "Choose a city instead",
+  "obNotifyTitle": "Never miss a prayer",
+  "obNotifyBody": "Get a gentle reminder when each prayer time begins, for the prayers you choose.",
+  "obAllowNotifications": "Allow notifications",
+  "obMushafTitle": "Your mushaf",
+  "obMushafBody": "Pick the script, text size and tafsir you read best. You can change them anytime from the reader.",
+  "obDoneTitle": "All set",
+  "obDoneBody": "Here's what you chose. Tap any item to change it.",
+  "prayerReminders": "Prayer reminders",
+  "prayerRemindersSub": "A notification when each prayer time begins",
+  "notificationsDenied": "Notifications are off for this app. Allow them in Settings.",
+  "reminderTitle": "Time for {prayer}",
+  "reminderBody": "Hayya ‘ala as-salah — come to prayer.",
+  "remindersOff": "Off",
+  "remindersCount": "{n} of {total} prayers",
+  "defaultTafsir": "Default tafsir",
+  "quranReading": "Quran reading",
+  "replayTour": "Show the welcome tour",
+  "@reminderTitle": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "@remindersCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "featReciters": "Reciters",
+  "featRecitersSub": "Full surahs from 240+ reciters, offline too",
+  "recitersSearch": "Search reciters",
+  "surahCount": "{n} surahs",
+  "listenFromHere": "Listen from here",
+  "listenPage": "Listen to this page",
+  "ayahReciter": "Reciter",
+  "ayahReciterSub": "Recites ayah by ayah as you read",
+  "download": "Download",
+  "removeDownload": "Remove download",
+  "downloadFailed": "Download failed. Check your connection.",
+  "savedOffline": "Saved offline",
+  "playbackError": "Couldn't play. Tap to retry.",
+  "playTip": "Play",
+  "pauseTip": "Pause",
+  "nextTip": "Next",
+  "previousTip": "Previous",
+  "playAll": "Play all",
+  "@surahCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "recentlyPlayed": "Recently played",
+  "popularReciters": "Popular reciters",
+  "allReciters": "All reciters",
+  "nowPlaying": "Now playing",
+  "fromMushaf": "From the mushaf",
+  "openInMushaf": "Open in the mushaf",
+  "repeatTip": "Repeat",
+  "searchTip": "Search",
+  "ambientTitle": "Background sounds",
+  "ambientSub": "Mix calm sounds under the recitation",
+  "ambientRain": "Rain",
+  "ambientStorm": "Thunderstorm",
+  "ambientFire": "Fireplace",
+  "ambientWaves": "Ocean waves",
+  "ambientBirds": "Forest birds",
+  "ambientNight": "Quiet night",
+  "ambientWind": "Wind",
+  "ambientClear": "Clear",
+  "adhanVoice": "Adhan voice",
+  "adhanPlainSound": "Notification sound only",
+  "adhanIosNote": "iPhone plays the first 30 seconds of the adhan with the notification.",
+  "previewTip": "Preview",
+  "featHisn": "Hisn al-Muslim",
+  "featHisnSub": "Fortress of the Muslim — adhkar for every moment",
+  "featAzkar": "Morning & evening",
+  "featAzkarSub": "Daily adhkar with a counter",
+  "morningAzkar": "Morning adhkar",
+  "eveningAzkar": "Evening adhkar",
+  "azkarProgress": "{done} of {total} done",
+  "@azkarProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "azkarAllDone": "All done today — may Allah accept.",
+  "azkarTapHint": "Tap a card to count",
+  "azkarStart": "Start",
+  "azkarContinue": "Continue",
+  "azkarReset": "Start over",
+  "azkarResetConfirm": "Clear today's counts for this session?",
+  "cancel": "Cancel",
+  "timesCount": "×{n}",
+  "@timesCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "hisnSearch": "Search chapters or words",
+  "hisnChapters": "Chapters",
+  "hisnChapterCount": "{n} chapters",
+  "@hisnChapterCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "noHisnMatch": "Nothing found for “{q}”",
+  "@noHisnMatch": {
+    "placeholders": {
+      "q": {
+        "type": "String"
+      }
+    }
+  },
+  "hisnSource": "From Hisn al-Muslim by Sa‘id ibn Wahf al-Qahtani.",
+  "hisnLoadFailed": "Couldn't open the book.",
+  "azkarReminders": "Adhkar reminders",
+  "azkarRemindersSub": "A daily nudge for the morning and evening adhkar",
+  "azkarReminderBody": "Take a few minutes for your adhkar.",
+  "azkarRemindAt": "Remind me at {time}",
+  "@azkarRemindAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "azkarOff": "Off",
+  "listenTip": "Listen",
+  "copyTip": "Copy",
+  "morning": "Morning",
+  "evening": "Evening",
+  "photoCredit": "Photo: {author} · {licence} · Wikimedia Commons",
+  "@photoCredit": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "licence": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetVerse": "A verse",
+  "widgetDua": "Dua",
+  "widgetEmpty": "Open the app to load",
+  "widgetsTitle": "Home & lock screen widgets",
+  "widgetPrayerSub": "Time left until the next prayer",
+  "widgetAyahSub": "A new verse every half hour",
+  "widgetDuaSub": "A new dua every half hour",
+  "widgetNameSub": "A name of Allah every half hour",
+  "widgetAdd": "Add",
+  "widgetAddFailed": "Your launcher can't add widgets from here. Long-press the home screen and choose Widgets.",
+  "widgetIosHint": "Long-press the home or lock screen, tap Edit or +, then search for Muslim."
 }

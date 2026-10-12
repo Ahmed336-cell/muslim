@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/quran/recent_surahs_cubit.dart';
 import '../bloc/quran_bookmark_cubit.dart';
 import '../data.dart';
 import '../l10n/l10n.dart';
+import '../services/mushaf_pages.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/mini_player.dart';
 import '../widgets/star_pattern.dart';
+import 'mushaf_screen.dart';
+import 'reciters_screen.dart';
 
 String _westernDigits(String s) => s.replaceAllMapped(
   RegExp('[٠-٩]'),
@@ -25,25 +30,59 @@ class QuranScreen extends StatefulWidget {
 
 class _QuranScreenState extends State<QuranScreen> {
   String _query = '';
+  bool _byJuz = false;
+
+  bool _matches(Surah s, String q) =>
+      q.isEmpty ||
+      '${s.number}' == q ||
+      s.arabic.contains(q) ||
+      s.name.toLowerCase().contains(q) ||
+      s.meaning.toLowerCase().contains(q);
 
   @override
   Widget build(BuildContext context) {
     final l = context.l;
     final q = _westernDigits(_query.trim().toLowerCase());
-    final list = surahs
-        .where(
-          (s) =>
-              q.isEmpty ||
-              '${s.number}' == q ||
-              s.arabic.contains(q) ||
-              s.name.toLowerCase().contains(q) ||
-              s.meaning.toLowerCase().contains(q),
-        )
-        .toList();
     final bookmark = context.watch<QuranBookmarkCubit>().state;
+    final recent = context.watch<RecentSurahsCubit>().state;
+
+    final rows = <Widget>[];
+    if (_byJuz) {
+      for (var j = 1; j <= 30; j++) {
+        final inJuz = [
+          for (final (s, from) in surahsInJuz(j))
+            if (_matches(surahs[s - 1], q)) (surahs[s - 1], from),
+        ];
+        if (inJuz.isEmpty) continue;
+        rows.add(_JuzHeader(juz: j));
+        for (final (s, from) in inJuz) {
+          rows.add(_SurahRow(surah: s, fromAyah: from));
+        }
+      }
+    } else {
+      rows.addAll([
+        for (final s in surahs)
+          if (_matches(s, q)) _SurahRow(surah: s),
+      ]);
+    }
 
     return Scaffold(
-      appBar: AppBar(title: Text(l.quranTitle)),
+      appBar: AppBar(
+        title: Text(l.quranTitle),
+        actions: [
+          IconButton(
+            tooltip: l.featReciters,
+            icon: const Icon(Icons.headphones_rounded),
+            onPressed: () => Navigator.of(context).push(RecitersScreen.route()),
+          ),
+          IconButton(
+            tooltip: l.readingSettings,
+            icon: const Icon(Icons.tune_rounded),
+            onPressed: () => showReadingSettings(context),
+          ),
+        ],
+      ),
+      bottomNavigationBar: const MiniPlayer(),
       body: CustomScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: [
@@ -70,16 +109,38 @@ class _QuranScreenState extends State<QuranScreen> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(top: 14),
-                child: _LastRead(surah: surahs[bookmark - 1]),
+                child: _LastRead(
+                  surah: surahs[bookmark.surah - 1],
+                  ayah: bookmark.ayah,
+                ),
               ),
             ),
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
-          SliverList.separated(
-            itemCount: list.length,
-            separatorBuilder: (_, _) => const RowDivider(indent: 76),
-            itemBuilder: (_, i) => _SurahRow(surah: list[i]),
+          if (recent.isNotEmpty && q.isEmpty)
+            SliverToBoxAdapter(child: _Recent(recent: recent)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+              child: SegmentedButton<bool>(
+                showSelectedIcon: false,
+                segments: [
+                  ButtonSegment(
+                    value: false,
+                    icon: const Icon(Icons.format_list_numbered_rounded),
+                    label: Text(l.viewSurahs),
+                  ),
+                  ButtonSegment(
+                    value: true,
+                    icon: const Icon(Icons.auto_stories_outlined),
+                    label: Text(l.viewJuz),
+                  ),
+                ],
+                selected: {_byJuz},
+                onSelectionChanged: (v) => setState(() => _byJuz = v.first),
+              ),
+            ),
           ),
-          if (list.isEmpty)
+          SliverList.list(children: rows),
+          if (rows.isEmpty)
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(40),
@@ -97,10 +158,118 @@ class _QuranScreenState extends State<QuranScreen> {
   }
 }
 
+class _Recent extends StatelessWidget {
+  const _Recent({required this.recent});
+
+  final List<(int, int)> recent;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 14),
+          child: SectionHeader(l.recentlyRead),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              for (final (i, (s, page)) in recent.indexed) ...[
+                if (i > 0) const SizedBox(width: 10),
+                Expanded(
+                  child: AppCard(
+                    margin: EdgeInsets.zero,
+                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => MushafScreen(page: page),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          surahs[s - 1].arabic,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Fonts.arabic(
+                            20,
+                            color: Palette.green,
+                          ).copyWith(height: 1.6),
+                        ),
+                        if (!context.isAr)
+                          Text(
+                            surahs[s - 1].name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Fonts.body(13, weight: FontWeight.w500),
+                          ),
+                        Text(
+                          l.pageN(context.n(page)),
+                          style: Fonts.body(12, color: Palette.inkSoft),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              for (var i = recent.length; i < RecentSurahsCubit.limit; i++) ...[
+                const SizedBox(width: 10),
+                const Expanded(child: SizedBox()),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _JuzHeader extends StatelessWidget {
+  const _JuzHeader({required this.juz});
+
+  final int juz;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l;
+    final (s, a) = juzStarts[juz - 1];
+    return Material(
+      color: Palette.paperDeep,
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(MushafScreen.route(s, ayah: a)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.isAr
+                      ? 'الجزء ${juzOrdinalsAr[juz - 1]}'
+                      : l.juzN('$juz'),
+                  style: Fonts.display(17, color: Palette.green),
+                ),
+              ),
+              Text(
+                l.pageN(context.n(pageOf(s, a))),
+                style: Fonts.body(12.5, color: Palette.inkSoft),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _LastRead extends StatelessWidget {
-  const _LastRead({required this.surah});
+  const _LastRead({required this.surah, required this.ayah});
 
   final Surah surah;
+  final int ayah;
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +277,9 @@ class _LastRead extends StatelessWidget {
     return AppCard(
       color: Palette.ink,
       padding: EdgeInsets.zero,
-      onTap: () => _showSurah(context, surah),
+      onTap: () => Navigator.of(
+        context,
+      ).push(MushafScreen.route(surah.number, ayah: ayah, highlight: true)),
       child: Stack(
         children: [
           const PositionedDirectional(
@@ -135,7 +306,7 @@ class _LastRead extends StatelessWidget {
                         style: Fonts.display(24, color: Palette.paper),
                       ),
                       Text(
-                        context.n(l.ayahCount(surah.ayahs)),
+                        l.ayahOf(context.n(ayah), context.n(surah.ayahs)),
                         style: Fonts.body(
                           13,
                           color: Palette.paper.withValues(alpha: .6),
@@ -159,22 +330,28 @@ class _LastRead extends StatelessWidget {
 }
 
 class _SurahRow extends StatelessWidget {
-  const _SurahRow({required this.surah});
+  const _SurahRow({required this.surah, this.fromAyah = 1});
 
   final Surah surah;
+
+  /// Where the surah enters a juz, when listed by juz.
+  final int fromAyah;
 
   @override
   Widget build(BuildContext context) {
     final l = context.l;
     final ar = context.isAr;
     final details = [
-      if (!ar) surah.meaning,
+      if (fromAyah > 1) l.fromAyah(context.n(fromAyah)),
+      if (!ar && fromAyah == 1) surah.meaning,
       context.n(l.ayahCount(surah.ayahs)),
       surah.meccan ? l.meccan : l.medinan,
     ].join('  ·  ');
 
     return ListTile(
-      onTap: () => _showSurah(context, surah),
+      onTap: () => Navigator.of(
+        context,
+      ).push(MushafScreen.route(surah.number, ayah: fromAyah)),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       leading: NumberBadge(surah.number),
       title: Text(
@@ -187,87 +364,4 @@ class _SurahRow extends StatelessWidget {
           : Text(surah.arabic, style: Fonts.arabic(22, color: Palette.green)),
     );
   }
-}
-
-void _showSurah(BuildContext context, Surah surah) {
-  final bookmarks = context.read<QuranBookmarkCubit>();
-  final messenger = ScaffoldMessenger.of(context);
-  showModalBottomSheet<void>(
-    context: context,
-    builder: (sheet) {
-      final l = sheet.l;
-      Widget fact(String label, String value) => Expanded(
-        child: Column(
-          children: [
-            Text(value, style: Fonts.display(22)),
-            const SizedBox(height: 2),
-            Text(label, style: Fonts.body(12, color: Palette.inkSoft)),
-          ],
-        ),
-      );
-
-      return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                surah.arabic,
-                textAlign: TextAlign.center,
-                style: Fonts.arabic(48, color: Palette.green),
-              ),
-              if (!sheet.isAr) ...[
-                Text(
-                  surah.name,
-                  textAlign: TextAlign.center,
-                  style: Fonts.display(24),
-                ),
-                Text(
-                  surah.meaning,
-                  textAlign: TextAlign.center,
-                  style: Fonts.quote(16),
-                ),
-              ],
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  fact(l.surahNumber, sheet.n(surah.number)),
-                  fact(l.ayahs, sheet.n(surah.ayahs)),
-                  fact(l.revelation, surah.meccan ? l.meccan : l.medinan),
-                ],
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () {
-                  bookmarks.mark(surah.number);
-                  Navigator.pop(sheet);
-                  messenger.showSnackBar(
-                    SnackBar(content: Text(l.markedLastRead)),
-                  );
-                },
-                style: FilledButton.styleFrom(
-                  backgroundColor: Palette.green,
-                  minimumSize: const Size.fromHeight(52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                icon: const Icon(Icons.bookmark_add_outlined),
-                label: Text(
-                  l.markLastRead,
-                  style: Fonts.body(
-                    15,
-                    color: Palette.paper,
-                    weight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }
