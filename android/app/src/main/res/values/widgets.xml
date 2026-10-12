@@ -16,4 +16,10 @@
     <string name="widget_ayah_desc">A verse of the Quran, changing every half hour</string>
     <string name="widget_dua_desc">A dua from Hisn al-Muslim, changing every half hour</string>
     <string name="widget_name_desc">One of the names of Allah, changing every half hour</string>
+    <string name="widget_hadith">Hadith</string>
+    <string name="widget_hijri">Hijri date</string>
+    <string name="widget_tasbih">Tasbih</string>
+    <string name="widget_hadith_desc">A hadith, changing every half hour</string>
+    <string name="widget_hijri_desc">Today\'s Hijri date and the next occasion</string>
+    <string name="widget_tasbih_desc">Tap to count your dhikr</string>
 </resources>

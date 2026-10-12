@@ -4,12 +4,46 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 
 /// Morning adhkar run from Fajr until midday; evening ones after that.
-enum AzkarSession {
-  morning,
-  evening;
+enum AzkarSession { morning, evening }
 
-  static AzkarSession forHour(int hour) =>
-      hour >= 3 && hour < 14 ? morning : evening;
+/// Hisn al-Muslim chapter "What to say before sleeping".
+const sleepChapter = 28;
+
+/// Which adhkar are due: morning from Fajr to Dhuhr, evening from Dhuhr to
+/// the middle of the night (halfway from Maghrib to Fajr), then sleep.
+enum AzkarTime {
+  morning,
+  evening,
+  sleep;
+
+  /// The session to open; sleep falls back to evening.
+  AzkarSession get session =>
+      this == morning ? AzkarSession.morning : AzkarSession.evening;
+
+  static AzkarTime at(
+    DateTime now, {
+    required DateTime fajr,
+    required DateTime dhuhr,
+    required DateTime maghrib,
+  }) {
+    DateTime middle(DateTime maghrib, DateTime fajr) =>
+        maghrib.add(fajr.difference(maghrib) ~/ 2);
+    const day = Duration(days: 1);
+    if (now.isBefore(fajr)) {
+      return now.isBefore(middle(maghrib.subtract(day), fajr))
+          ? evening
+          : sleep;
+    }
+    if (now.isBefore(dhuhr)) return morning;
+    return now.isBefore(middle(maghrib, fajr.add(day))) ? evening : sleep;
+  }
+
+  /// Without prayer times: Fajr ~4:30, Dhuhr 12:00, Maghrib 18:00.
+  static AzkarTime atHour(DateTime now) {
+    DateTime t(int h, [int m = 0]) =>
+        DateTime(now.year, now.month, now.day, h, m);
+    return at(now, fajr: t(4, 30), dhuhr: t(12), maghrib: t(18));
+  }
 }
 
 class Dhikr extends Equatable {

@@ -11,29 +11,45 @@ import '../services/prayer_calc.dart';
 import '../services/quran.dart';
 import '../services/quran_text.dart';
 
-enum ExtraKind { ayah, kahf, fridayHour, suhoor }
+enum ExtraKind {
+  ayah(8 * 60),
+  kahf(null),
+  fridayHour(null),
+  suhoor(null),
+  wird(21 * 60),
+  sadaqah(12 * 60);
+
+  const ExtraKind(this.defaultTime);
+
+  /// Minutes after midnight for kinds the user can time; null otherwise.
+  final int? defaultTime;
+}
 
 final class ExtraReminders extends Equatable {
   const ExtraReminders({
     this.on = const {},
-    this.ayahTime = 8 * 60,
+    this.times = const {},
     this.denied = false,
   });
 
   final Set<ExtraKind> on;
 
-  /// Minutes after midnight, device time.
-  final int ayahTime;
+  /// Chosen times, minutes after midnight, device time.
+  final Map<ExtraKind, int> times;
 
   /// The last permission request was refused.
   final bool denied;
 
+  int timeOf(ExtraKind kind) => times[kind] ?? kind.defaultTime ?? 0;
+
+  int get ayahTime => timeOf(ExtraKind.ayah);
+
   @override
-  List<Object?> get props => [on, ayahTime, denied];
+  List<Object?> get props => [on, times, denied];
 }
 
-/// Ayah of the day, Surah al-Kahf on Friday morning, the last hour of
-/// Friday and, in Ramadan, suhoor.
+/// Ayah of the day, daily Quran wird, Surah al-Kahf and sadaqah on Friday,
+/// the last hour of Friday and, in Ramadan, suhoor.
 class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
   ExtraRemindersCubit({
     required this._notifier,
@@ -63,23 +79,27 @@ class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
         granted = false;
       }
       if (!granted) {
-        emit(
-          ExtraReminders(on: state.on, ayahTime: state.ayahTime, denied: true),
-        );
+        emit(ExtraReminders(on: state.on, times: state.times, denied: true));
         return;
       }
     }
     emit(
       ExtraReminders(
         on: enabled ? {...state.on, kind} : ({...state.on}..remove(kind)),
-        ayahTime: state.ayahTime,
+        times: state.times,
       ),
     );
     await _reschedule();
   }
 
-  Future<void> setAyahTime(int minutes) async {
-    emit(ExtraReminders(on: state.on, ayahTime: minutes, denied: state.denied));
+  Future<void> setTime(ExtraKind kind, int minutes) async {
+    emit(
+      ExtraReminders(
+        on: state.on,
+        times: {...state.times, kind: minutes},
+        denied: state.denied,
+      ),
+    );
     await _reschedule();
   }
 
@@ -133,6 +153,35 @@ class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
               title: l.dailyAyahTitle,
               body: body,
               payload: 'ayah:$surah:$ayah',
+            ),
+          );
+        }
+      }
+      if (state.on.contains(ExtraKind.wird)) {
+        final when = at(d, state.timeOf(ExtraKind.wird));
+        if (when.isAfter(local)) {
+          out.add(
+            ExtraReminder(
+              id: extraIdBase + 80 + d,
+              at: when.toUtc(),
+              title: l.wirdReminderTitle,
+              body: l.wirdReminderBody,
+              payload: 'khatmah',
+            ),
+          );
+        }
+      }
+      if (state.on.contains(ExtraKind.sadaqah) &&
+          date.weekday == DateTime.friday) {
+        final when = at(d, state.timeOf(ExtraKind.sadaqah));
+        if (when.isAfter(local)) {
+          out.add(
+            ExtraReminder(
+              id: extraIdBase + 100 + d,
+              at: when.toUtc(),
+              title: l.sadaqahReminderTitle,
+              body: l.sadaqahReminderBody,
+              payload: 'sadaqah',
             ),
           );
         }
@@ -230,12 +279,16 @@ class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
       for (final n in json['on'] as List? ?? const [])
         ...ExtraKind.values.where((k) => k.name == n),
     },
-    ayahTime: (json['ayahTime'] as num?)?.toInt() ?? 8 * 60,
+    times: {
+      for (final k in ExtraKind.values)
+        if (json['${k.name}Time'] case final num t) k: t.toInt(),
+    },
   );
 
   @override
   Map<String, dynamic> toJson(ExtraReminders state) => {
     'on': [for (final k in state.on) k.name],
-    'ayahTime': state.ayahTime,
+    for (final MapEntry(:key, :value) in state.times.entries)
+      '${key.name}Time': value,
   };
 }

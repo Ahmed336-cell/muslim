@@ -27,6 +27,8 @@ final class RecitationState extends Equatable {
     this.error = false,
     this.repeat = false,
     this.recording,
+    this.sleepAt,
+    this.sleepAfterSurah = false,
   });
 
   final RecitationKind? kind;
@@ -41,6 +43,14 @@ final class RecitationState extends Equatable {
 
   /// mp3quran recording id when playing whole surahs.
   final int? recording;
+
+  /// Playback fades out and pauses at this time.
+  final DateTime? sleepAt;
+
+  /// Playback pauses when the current surah ends.
+  final bool sleepAfterSurah;
+
+  bool get sleepOn => sleepAt != null || sleepAfterSurah;
 
   Track? get current => tracks.isEmpty ? null : tracks[index];
   bool get active => current != null;
@@ -57,6 +67,8 @@ final class RecitationState extends Equatable {
     bool? buffering,
     bool? error,
     bool? repeat,
+    DateTime? Function()? sleepAt,
+    bool? sleepAfterSurah,
   }) => RecitationState(
     kind: kind,
     tracks: tracks ?? this.tracks,
@@ -66,6 +78,8 @@ final class RecitationState extends Equatable {
     error: error ?? this.error,
     repeat: repeat ?? this.repeat,
     recording: recording,
+    sleepAt: sleepAt != null ? sleepAt() : this.sleepAt,
+    sleepAfterSurah: sleepAfterSurah ?? this.sleepAfterSurah,
   );
 
   @override
@@ -79,12 +93,16 @@ final class RecitationState extends Equatable {
     error,
     repeat,
     recording,
+    sleepAt,
+    sleepAfterSurah,
   ];
 }
 
 /// The Quran player: one queue for the whole app.
 class RecitationCubit extends Cubit<RecitationState> {
-  RecitationCubit({required this._engine}) : super(const RecitationState()) {
+  RecitationCubit({required this._engine, DateTime Function()? now})
+    : _now = now ?? DateTime.now,
+      super(const RecitationState()) {
     _sub = _engine.states.listen(
       _onEngine,
       onError: (Object _) =>
@@ -93,7 +111,12 @@ class RecitationCubit extends Cubit<RecitationState> {
   }
 
   final AudioEngine _engine;
+  final DateTime Function() _now;
   late final StreamSubscription<EngineState> _sub;
+  Timer? _sleepTimer;
+
+  /// Ten steps make the bedtime fade-out.
+  static const fadeStep = Duration(seconds: 3);
   AyahReciter? _reciter;
   String _language = 'en';
   bool _extending = false;
@@ -141,6 +164,8 @@ class RecitationCubit extends Cubit<RecitationState> {
         tracks: tracks,
         buffering: true,
         playing: true,
+        sleepAt: state.sleepAt,
+        sleepAfterSurah: state.sleepAfterSurah,
       ),
     );
     await _load(tracks, 0);
@@ -187,6 +212,8 @@ class RecitationCubit extends Cubit<RecitationState> {
         tracks: tracks,
         buffering: true,
         playing: true,
+        sleepAt: state.sleepAt,
+        sleepAfterSurah: state.sleepAfterSurah,
       ),
     );
     await _load(tracks, 0);
@@ -222,6 +249,8 @@ class RecitationCubit extends Cubit<RecitationState> {
         buffering: true,
         playing: true,
         recording: recording.id,
+        sleepAt: state.sleepAt,
+        sleepAfterSurah: state.sleepAfterSurah,
       ),
     );
     await _load(tracks, state.index);
@@ -241,6 +270,13 @@ class RecitationCubit extends Cubit<RecitationState> {
   void _onEngine(EngineState e) {
     if (!state.active) return;
     final index = (e.index ?? state.index).clamp(0, state.tracks.length - 1);
+    if (state.sleepAfterSurah &&
+        index != state.index &&
+        state.tracks[index].surah != state.tracks[state.index].surah) {
+      emit(state._copy(index: index, playing: false, sleepAfterSurah: false));
+      unawaited(_engine.pause());
+      return;
+    }
     emit(
       state._copy(
         index: index,
@@ -314,8 +350,42 @@ class RecitationCubit extends Cubit<RecitationState> {
     await _engine.setRepeat(repeat);
   }
 
+  /// Fades out and pauses after [after]; null turns the timer off.
+  void setSleepTimer(Duration? after) {
+    _sleepTimer?.cancel();
+    _sleepTimer = after == null ? null : Timer(after, _fadeOut);
+    emit(
+      state._copy(
+        sleepAt: () => after == null ? null : _now().add(after),
+        sleepAfterSurah: false,
+      ),
+    );
+  }
+
+  /// Pauses when the current surah ends.
+  void sleepAfterThisSurah() {
+    _sleepTimer?.cancel();
+    emit(state._copy(sleepAt: () => null, sleepAfterSurah: true));
+  }
+
+  Future<void> _fadeOut() async {
+    final at = state.sleepAt;
+    for (var v = 9; v >= 0 && state.sleepAt == at; v--) {
+      await _engine.setVolume(v / 10);
+      await Future<void>.delayed(fadeStep);
+    }
+    if (state.sleepAt != at) {
+      await _engine.setVolume(1);
+      return;
+    }
+    emit(state._copy(sleepAt: () => null));
+    await pause();
+    await _engine.setVolume(1);
+  }
+
   Future<void> stop() async {
     _reciter = null;
+    _sleepTimer?.cancel();
     final repeat = state.repeat;
     emit(const RecitationState());
     if (repeat) await _engine.setRepeat(false);
@@ -324,6 +394,7 @@ class RecitationCubit extends Cubit<RecitationState> {
 
   @override
   Future<void> close() async {
+    _sleepTimer?.cancel();
     await _sub.cancel();
     await _engine.dispose();
     return super.close();

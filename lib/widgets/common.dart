@@ -1,8 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../l10n/l10n.dart';
 import '../theme.dart';
 import 'star_pattern.dart';
+
+/// Asks for a money amount; pops with the number, [clearValue] or null.
+Future<double?> showAmountDialog(
+  BuildContext context, {
+  required String title,
+  required String initial,
+  required String currency,
+  required String clearLabel,
+  double? clearValue,
+}) => showDialog<double>(
+  context: context,
+  builder: (_) => _AmountDialog(
+    title: title,
+    initial: initial,
+    currency: currency,
+    clearLabel: clearLabel,
+    clearValue: clearValue,
+  ),
+);
+
+class _AmountDialog extends StatefulWidget {
+  const _AmountDialog({
+    required this.title,
+    required this.initial,
+    required this.currency,
+    required this.clearLabel,
+    required this.clearValue,
+  });
+
+  final String title;
+  final String initial;
+  final String currency;
+  final String clearLabel;
+  final double? clearValue;
+
+  @override
+  State<_AmountDialog> createState() => _AmountDialogState();
+}
+
+class _AmountDialogState extends State<_AmountDialog> {
+  late final _controller = TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+        decoration: InputDecoration(suffixText: widget.currency),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, widget.clearValue),
+          child: Text(widget.clearLabel),
+        ),
+        TextButton(
+          onPressed: () =>
+              Navigator.pop(context, double.tryParse(_controller.text) ?? 0),
+          child: Text(context.l.save),
+        ),
+      ],
+    );
+  }
+}
 
 class AppCard extends StatelessWidget {
   const AppCard({

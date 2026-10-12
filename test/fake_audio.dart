@@ -12,6 +12,7 @@ class FakeEngine implements AudioEngine {
   var failLoad = false;
   var loads = 0;
   var repeat = false;
+  var volume = 1.0;
 
   void emitState({bool completed = false}) => _states.add(
     EngineState(index: index, playing: playing, completed: completed),
@@ -63,6 +64,9 @@ class FakeEngine implements AudioEngine {
 
   @override
   Future<void> setRepeat(bool repeat) async => this.repeat = repeat;
+
+  @override
+  Future<void> setVolume(double volume) async => this.volume = volume;
 
   @override
   Future<void> stop() async {

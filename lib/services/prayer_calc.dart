@@ -252,14 +252,17 @@ class PrayerCalculator {
   }
 }
 
-double distanceToKaabaKm(double lat, double lon) {
-  const kaaba = (21.4225241, 39.8261818);
+double distanceToKaabaKm(double lat, double lon) =>
+    distanceKm(lat, lon, 21.4225241, 39.8261818);
+
+/// Great-circle distance.
+double distanceKm(double lat1, double lon1, double lat2, double lon2) {
   double rad(double d) => d * math.pi / 180;
-  final dLat = rad(kaaba.$1 - lat), dLon = rad(kaaba.$2 - lon);
+  final dLat = rad(lat2 - lat1), dLon = rad(lon2 - lon1);
   final a =
       math.pow(math.sin(dLat / 2), 2) +
-      math.cos(rad(lat)) *
-          math.cos(rad(kaaba.$1)) *
+      math.cos(rad(lat1)) *
+          math.cos(rad(lat2)) *
           math.pow(math.sin(dLon / 2), 2);
   return 6371 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
 }

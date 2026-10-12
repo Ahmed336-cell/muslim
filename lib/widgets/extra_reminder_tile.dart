@@ -18,7 +18,7 @@ class ExtraReminderTile extends StatelessWidget {
       initialTime: TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60),
     );
     if (picked == null) return;
-    await cubit.setAyahTime(picked.hour * 60 + picked.minute);
+    await cubit.setTime(kind, picked.hour * 60 + picked.minute);
     if (!cubit.state.on.contains(kind)) await cubit.setEnabled(kind, true);
   }
 
@@ -48,17 +48,24 @@ class ExtraReminderTile extends StatelessWidget {
         l.suhoorReminder,
         l.suhoorReminderSub,
       ),
+      ExtraKind.wird => (Icons.menu_book_rounded, l.wirdReminder, null),
+      ExtraKind.sadaqah => (
+        Icons.volunteer_activism_outlined,
+        l.sadaqahReminder,
+        null,
+      ),
     };
 
     final Widget? subtitle;
-    if (kind == ExtraKind.ayah) {
+    if (kind.defaultTime != null) {
+      final minutes = s.timeOf(kind);
       final time = context.n(
-        MaterialLocalizations.of(context).formatTimeOfDay(
-          TimeOfDay(hour: s.ayahTime ~/ 60, minute: s.ayahTime % 60),
-        ),
+        MaterialLocalizations.of(
+          context,
+        ).formatTimeOfDay(TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60)),
       );
       subtitle = InkWell(
-        onTap: () => _pickTime(context, s.ayahTime),
+        onTap: () => _pickTime(context, minutes),
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -66,7 +73,9 @@ class ExtraReminderTile extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  l.azkarRemindAt(time),
+                  kind == ExtraKind.sadaqah
+                      ? l.sadaqahRemindAt(time)
+                      : l.azkarRemindAt(time),
                   style: Fonts.body(
                     12.5,
                     color: on ? Palette.green : Palette.inkSoft,

@@ -68,7 +68,6 @@ class HomeScreen extends StatelessWidget {
             const AzkarNowCard(),
             const _Occasion(),
             const SizedBox(height: 24),
-            SectionHeader(l.explore),
             const FeatureGrid(),
             const SizedBox(height: 24),
             const NameOfTheDay(),

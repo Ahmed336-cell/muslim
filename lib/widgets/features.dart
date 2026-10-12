@@ -11,18 +11,28 @@ import '../screens/duas_screen.dart';
 import '../screens/fasting_screen.dart';
 import '../screens/friday_screen.dart';
 import '../screens/hifz_screen.dart';
+import '../screens/hadith_screen.dart';
 import '../screens/hisn_screen.dart';
 import '../screens/khatmah_screen.dart';
+import '../screens/kids_screen.dart';
+import '../screens/lesson_screen.dart';
 import '../screens/names_screen.dart';
+import '../screens/qada_screen.dart';
 import '../screens/quran_screen.dart';
 import '../screens/ramadan_screen.dart';
 import '../screens/reciters_screen.dart';
 import '../screens/ruqyah_screen.dart';
+import '../screens/sadaqah_screen.dart';
+import '../screens/sleep_screen.dart';
 import '../screens/tracker_screen.dart';
+import '../screens/travel_screen.dart';
 import '../screens/zakat_screen.dart';
-import '../services/hisn.dart';
+import '../services/lessons.dart';
+import '../services/tajweed_lessons.dart';
 import '../services/prayer_calc.dart';
 import '../theme.dart';
+import 'azkar_card.dart';
+import 'common.dart';
 
 enum Feature {
   prayer(Icons.schedule_rounded),
@@ -30,16 +40,24 @@ enum Feature {
   quran(Icons.menu_book_rounded),
   khatmah(Icons.flag_outlined),
   hifz(Icons.psychology_outlined),
+  tajweed(Icons.record_voice_over_outlined),
   reciters(Icons.headphones_rounded),
   qibla(Icons.explore_outlined),
+  travel(Icons.flight_takeoff_rounded),
   tasbih(Icons.blur_circular_rounded),
   azkar(Icons.wb_twilight_rounded),
   hisn(Icons.fort_outlined),
+  sleep(Icons.bedtime_outlined),
+  hadith(Icons.format_quote_rounded),
   duas(Icons.volunteer_activism_outlined),
+  learn(Icons.school_outlined),
+  kids(Icons.child_care_rounded),
   names(Icons.auto_awesome_outlined),
   zakat(Icons.savings_outlined),
+  sadaqah(Icons.volunteer_activism_rounded),
   ruqyah(Icons.shield_moon_outlined),
   fasting(Icons.nightlight_round),
+  qada(Icons.event_repeat_rounded),
   ramadan(Icons.mosque_outlined),
   friday(Icons.event_available_rounded),
   calendar(Icons.calendar_month_outlined);
@@ -53,16 +71,24 @@ enum Feature {
     quran => l.featQuran,
     reciters => l.featReciters,
     qibla => l.featQibla,
+    travel => l.featTravel,
     tasbih => l.featTasbih,
     azkar => l.featAzkar,
     hisn => l.featHisn,
+    sleep => l.featSleep,
+    hadith => l.featHadith,
     duas => l.featDuas,
+    learn => l.featLearn,
+    kids => l.featKids,
     names => l.featNames,
     zakat => l.featZakat,
+    sadaqah => l.featSadaqah,
     ruqyah => l.featRuqyah,
     fasting => l.featFasting,
+    qada => l.featQada,
     khatmah => l.featKhatmah,
     hifz => l.featHifz,
+    tajweed => l.featTajweed,
     calendar => l.featCalendar,
     tracker => l.featTracker,
     ramadan => l.featRamadan,
@@ -74,16 +100,24 @@ enum Feature {
     quran => l.featQuranSub,
     reciters => l.featRecitersSub,
     qibla => l.featQiblaSub,
+    travel => l.featTravelSub,
     tasbih => l.featTasbihSub,
     azkar => l.featAzkarSub,
     hisn => l.featHisnSub,
+    sleep => l.featSleepSub,
+    hadith => l.featHadithSub,
     duas => l.featDuasSub,
+    learn => l.featLearnSub,
+    kids => l.featKidsSub,
     names => l.featNamesSub,
     zakat => l.featZakatSub,
+    sadaqah => l.featSadaqahSub,
     ruqyah => l.featRuqyahSub,
     fasting => l.featFastingSub,
+    qada => l.featQadaSub,
     khatmah => l.featKhatmahSub,
     hifz => l.featHifzSub,
+    tajweed => l.featTajweedSub,
     calendar => l.featCalendarSub,
     tracker => l.featTrackerSub,
     ramadan => l.featRamadanSub,
@@ -91,6 +125,7 @@ enum Feature {
   };
 
   void open(BuildContext context) {
+    final l = context.l;
     final tabs = context.read<TabCubit>();
     Route<void>? route;
     switch (this) {
@@ -101,27 +136,48 @@ enum Feature {
       case tasbih:
         tabs.select(AppTab.tasbih);
       case azkar:
-        route = AzkarScreen.route(AzkarSession.forHour(DateTime.now().hour));
+        final day = context.read<PrayerTimesBloc>().state.day;
+        final now = context.read<ClockCubit>().state;
+        route = AzkarScreen.route(azkarTimeOf(day, now).session);
       case hisn:
         route = HisnScreen.route();
+      case sleep:
+        route = SleepScreen.route();
+      case hadith:
+        route = HadithScreen.route();
+      case travel:
+        route = TravelScreen.route();
       case quran:
         route = QuranScreen.route();
       case reciters:
         route = RecitersScreen.route();
       case duas:
         route = DuasScreen.route();
+      case kids:
+        route = KidsScreen.route();
+      case learn:
+        route = LessonsScreen.route(l.featLearn, const [
+          wuduLesson,
+          salahLesson,
+        ]);
       case names:
         route = NamesScreen.route();
       case zakat:
         route = ZakatScreen.route();
+      case sadaqah:
+        route = SadaqahScreen.route();
       case ruqyah:
         route = RuqyahScreen.route();
       case fasting:
         route = FastingScreen.route();
+      case qada:
+        route = QadaScreen.route();
       case khatmah:
         route = KhatmahScreen.route();
       case hifz:
         route = HifzScreen.route();
+      case tajweed:
+        route = LessonsScreen.route(l.featTajweed, tajweedLessons);
       case calendar:
         route = CalendarScreen.route();
       case tracker:
@@ -153,25 +209,53 @@ List<Feature> visibleFeatures(BuildContext context) {
 }
 
 /// 3-column grid of today's features, used on Home.
-class FeatureGrid extends StatelessWidget {
+/// The Explore section on Home: two rows of features, expandable to all.
+class FeatureGrid extends StatefulWidget {
   const FeatureGrid({super.key});
+
+  static const columns = 4;
+  static const collapsedRows = 2;
+
+  @override
+  State<FeatureGrid> createState() => _FeatureGridState();
+}
+
+class _FeatureGridState extends State<FeatureGrid> {
+  bool _expanded = false;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.count(
-        crossAxisCount: 3,
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: 1.02,
-        children: [
-          for (final f in visibleFeatures(context)) _FeatureTile(feature: f),
-        ],
-      ),
+    final l = context.l;
+    final all = visibleFeatures(context);
+    const collapsed = FeatureGrid.columns * FeatureGrid.collapsedRows;
+    final canExpand = all.length > collapsed;
+    final shown = _expanded || !canExpand ? all : all.take(collapsed);
+    return Column(
+      children: [
+        SectionHeader(
+          l.explore,
+          action: canExpand ? (_expanded ? l.showLess : l.seeAll) : null,
+          onAction: () => setState(() => _expanded = !_expanded),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.count(
+              crossAxisCount: FeatureGrid.columns,
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: .9,
+              children: [for (final f in shown) _FeatureTile(feature: f)],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -186,33 +270,36 @@ class _FeatureTile extends StatelessWidget {
     return Material(
       color: Palette.card,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: Palette.rule, width: .7),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => feature.open(context),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   color: Palette.greenSoft,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(feature.icon, color: Palette.green, size: 23),
+                child: Icon(feature.icon, color: Palette.green, size: 19),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 feature.title(context.l),
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
-                style: Fonts.body(13, weight: FontWeight.w500),
+                style: Fonts.body(
+                  11.5,
+                  weight: FontWeight.w500,
+                ).copyWith(height: 1.15),
               ),
             ],
           ),

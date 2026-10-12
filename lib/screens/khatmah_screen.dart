@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/clock_cubit.dart';
+import '../bloc/extra_reminders_cubit.dart';
 import '../bloc/quran/khatmah_cubit.dart';
 import '../l10n/l10n.dart';
 import '../services/mushaf_pages.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/extra_reminder_tile.dart';
 import 'mushaf_screen.dart';
 
 /// Plan, today's portion and progress for finishing the Quran.
@@ -257,6 +259,14 @@ class _Progress extends StatelessWidget {
                   l.khatmahTodayDone,
                   style: Fonts.body(13, color: Palette.green),
                 ),
+              ] else if (k.portion(now) case (final first, final last)) ...[
+                const SizedBox(height: 10),
+                Text(
+                  first == last
+                      ? l.wirdPortionOne(context.n(first))
+                      : l.wirdPortion(context.n(first), context.n(last)),
+                  style: Fonts.body(13.5, weight: FontWeight.w600),
+                ),
               ],
               const SizedBox(height: 14),
               FilledButton.icon(
@@ -266,6 +276,14 @@ class _Progress extends StatelessWidget {
                 icon: const Icon(Icons.menu_book_rounded),
                 label: Text(l.khatmahContinue(context.n(k.nextPage))),
               ),
+              if (today < target) ...[
+                const SizedBox(height: 6),
+                TextButton.icon(
+                  onPressed: context.read<KhatmahCubit>().readPortion,
+                  icon: const Icon(Icons.check_rounded),
+                  label: Text(l.wirdMarkDone),
+                ),
+              ],
             ],
           ),
         ),
@@ -280,6 +298,16 @@ class _Progress extends StatelessWidget {
                 l.khatmahStreakDays(context.n(k.streak(now))),
                 style: Fonts.body(15, weight: FontWeight.w600),
               ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        const AppCard(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Column(
+            children: [
+              ExtraReminderTile(ExtraKind.wird),
+              ExtraRemindersDenied(),
             ],
           ),
         ),

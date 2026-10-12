@@ -372,7 +372,8 @@ class _PageBody extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Expanded(
-            child: MushafFrame(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: LayoutBuilder(
                 builder: (context, c) {
                   final fit = _fit(

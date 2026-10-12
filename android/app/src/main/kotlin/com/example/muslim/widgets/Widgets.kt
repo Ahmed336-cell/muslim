@@ -203,3 +203,89 @@ class DuaWidget : ItemWidget("duas", "dua", false) {
 class NameWidget : ItemWidget("names", "name", true) {
     override fun title(labels: Labels) = labels.name
 }
+
+class HadithWidget : ItemWidget("hadiths", "hadith", false) {
+    override fun title(labels: Labels) = labels.hadith
+}
+
+/** Today's Hijri date; turns over at local midnight. */
+class HijriWidget : HomeWidgetProvider() {
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray,
+        widgetData: SharedPreferences,
+    ) {
+        val now = System.currentTimeMillis()
+        val labels = WidgetData.labels(widgetData, arabicDevice())
+        val day = WidgetData.hijri(widgetData, now)
+        for (id in appWidgetIds) {
+            val views = RemoteViews(context.packageName, R.layout.widget_hijri)
+            views.setOnClickPendingIntent(R.id.root, open(context, "hijri"))
+            views.setTextViewText(R.id.caption, day?.civil ?: labels.hijri)
+            views.setTextViewText(R.id.text, day?.hijri ?: labels.empty)
+            views.setTextViewText(R.id.sub, day?.next ?: "")
+            views.setViewVisibility(R.id.sub, if (day?.next.isNullOrEmpty()) View.GONE else View.VISIBLE)
+            appWidgetManager.updateAppWidget(id, views)
+        }
+        val midnight = java.util.Calendar.getInstance().apply {
+            add(java.util.Calendar.DAY_OF_YEAR, 1)
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 5)
+        }.timeInMillis
+        wakeAt(context, javaClass, midnight)
+    }
+}
+
+/** A tap counter: 33 each of SubhanAllah, Alhamdulillah and Allahu Akbar. */
+class TasbihWidget : HomeWidgetProvider() {
+    override fun onReceive(context: Context, intent: Intent) {
+        val prefs = HomeWidgetPlugin.getData(context)
+        when (intent.action) {
+            TAP -> prefs.edit().putLong(WidgetData.TASBIH_COUNT, prefs.getLong(WidgetData.TASBIH_COUNT, 0) + 1).apply()
+            RESET -> prefs.edit().putLong(WidgetData.TASBIH_COUNT, 0).apply()
+            else -> return super.onReceive(context, intent)
+        }
+        val manager = AppWidgetManager.getInstance(context)
+        val ids = manager.getAppWidgetIds(ComponentName(context, javaClass))
+        onUpdate(context, manager, ids, prefs)
+    }
+
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray,
+        widgetData: SharedPreferences,
+    ) {
+        val labels = WidgetData.labels(widgetData, arabicDevice())
+        val count = widgetData.getLong(WidgetData.TASBIH_COUNT, 0)
+        val phrase = labels.phrases[((count / 33) % labels.phrases.size).toInt()]
+        val shown = if (labels.rtl) toArabicDigits(count.toString()) else count.toString()
+        for (id in appWidgetIds) {
+            val views = RemoteViews(context.packageName, R.layout.widget_tasbih)
+            views.setOnClickPendingIntent(R.id.root, broadcast(context, TAP))
+            views.setOnClickPendingIntent(R.id.reset, broadcast(context, RESET))
+            views.setTextViewText(R.id.caption, phrase)
+            views.setTextViewText(R.id.text, shown)
+            views.setTextViewText(R.id.reset, labels.reset)
+            appWidgetManager.updateAppWidget(id, views)
+        }
+    }
+
+    private fun broadcast(context: Context, action: String): PendingIntent =
+        PendingIntent.getBroadcast(
+            context,
+            action.hashCode(),
+            Intent(context, TasbihWidget::class.java).setAction(action),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
+    private fun toArabicDigits(s: String) =
+        s.map { if (it in '0'..'9') '٠' + (it - '0') else it }.joinToString("")
+
+    companion object {
+        const val TAP = "com.example.muslim.TASBIH_TAP"
+        const val RESET = "com.example.muslim.TASBIH_RESET"
+    }
+}

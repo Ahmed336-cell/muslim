@@ -11,6 +11,7 @@ import '../theme.dart';
 import '../widgets/ambient_mixer.dart';
 import '../widgets/listen_style.dart';
 import '../widgets/reciter_art.dart';
+import '../widgets/sleep_timer.dart';
 import 'mushaf_screen.dart';
 
 Future<void> showNowPlaying(
@@ -107,8 +108,22 @@ class NowPlayingScreen extends StatelessWidget {
                                   weight: FontWeight.w600,
                                 ),
                               ),
+                              if (s.sleepOn)
+                                SleepCountdown(
+                                  style: Fonts.body(11.5, color: Listen.accent),
+                                ),
                             ],
                           ),
+                        ),
+                        IconButton(
+                          tooltip: l.sleepTimer,
+                          color: s.sleepOn ? Listen.accent : Listen.textSoft,
+                          icon: Icon(
+                            s.sleepOn
+                                ? Icons.bedtime_rounded
+                                : Icons.bedtime_outlined,
+                          ),
+                          onPressed: () => showSleepTimer(context),
                         ),
                         IconButton(
                           tooltip: l.stop,

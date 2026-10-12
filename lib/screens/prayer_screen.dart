@@ -15,6 +15,7 @@ import '../widgets/shimmer.dart';
 import '../widgets/fasting_section.dart';
 import 'calendar_screen.dart';
 import 'tracker_screen.dart';
+import 'travel_screen.dart';
 
 class PrayerScreen extends StatelessWidget {
   const PrayerScreen({super.key});
@@ -58,6 +59,7 @@ class PrayerScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.only(top: 4, bottom: 28),
                 children: [
+                  const TravelBanner(),
                   _DayCard(day: day),
                   const SizedBox(height: 12),
                   _PrayerList(day: day),

@@ -12,6 +12,11 @@ data class Labels(
     val dua: String,
     val name: String,
     val empty: String,
+    val hadith: String,
+    val hijri: String,
+    val tasbih: String,
+    val phrases: List<String>,
+    val reset: String,
 )
 
 data class PrayerTime(val name: String, val clock: String, val at: Long)
@@ -29,15 +34,23 @@ data class PrayerInfo(val city: String, val times: List<PrayerTime>, val perDay:
 
 data class Item(val text: String, val sub: String, val ref: String)
 
+data class HijriDay(val start: Long, val hijri: String, val civil: String, val next: String)
+
 object WidgetData {
     /** A new item every half hour, the same on every widget of a kind. */
     const val STEP = 30 * 60_000L
 
     fun labels(prefs: SharedPreferences, arabicDevice: Boolean): Labels {
         val fallback = if (arabicDevice) {
-            Labels(true, "الصلاة القادمة", "آية", "دعاء", "أسماء الله الحسنى", "افتح التطبيق للتحميل")
+            Labels(
+                true, "الصلاة القادمة", "آية", "دعاء", "أسماء الله الحسنى", "افتح التطبيق للتحميل",
+                "حديث", "التاريخ الهجري", "المسبحة", listOf("سبحان الله", "الحمد لله", "الله أكبر"), "تصفير",
+            )
         } else {
-            Labels(false, "Next prayer", "A verse", "Dua", "Names of Allah", "Open the app to load")
+            Labels(
+                false, "Next prayer", "A verse", "Dua", "Names of Allah", "Open the app to load",
+                "Hadith", "Hijri date", "Tasbih", listOf("SubhanAllah", "Alhamdulillah", "Allahu Akbar"), "Reset",
+            )
         }
         val m = obj(prefs, "labels") ?: return fallback
         return Labels(
@@ -47,8 +60,31 @@ object WidgetData {
             dua = m.optString("dua", fallback.dua),
             name = m.optString("name", fallback.name),
             empty = m.optString("empty", fallback.empty),
+            hadith = m.optString("hadith", fallback.hadith),
+            hijri = m.optString("hijri", fallback.hijri),
+            tasbih = m.optString("tasbih", fallback.tasbih),
+            phrases = m.optJSONArray("phrases")?.let { a ->
+                (0 until a.length()).map { a.optString(it) }.filter { it.isNotEmpty() }
+            }?.takeIf { it.isNotEmpty() } ?: fallback.phrases,
+            reset = m.optString("reset", fallback.reset),
         )
     }
+
+    /** The entry for the day containing [now], from the days the app wrote ahead. */
+    fun hijri(prefs: SharedPreferences, now: Long): HijriDay? {
+        val list = try {
+            JSONArray(prefs.getString("hijri", null) ?: return null)
+        } catch (_: Exception) {
+            return null
+        }
+        val days = (0 until list.length()).mapNotNull { i ->
+            val m = list.optJSONObject(i) ?: return@mapNotNull null
+            HijriDay(m.optLong("d"), m.optString("t"), m.optString("s"), m.optString("r"))
+        }
+        return days.lastOrNull { it.start <= now }
+    }
+
+    const val TASBIH_COUNT = "tasbih_count"
 
     fun prayers(prefs: SharedPreferences): PrayerInfo? {
         val m = obj(prefs, "prayer") ?: return null

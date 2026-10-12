@@ -8,11 +8,11 @@ class MushafColors {
   static Color get page =>
       Palette.dark ? const Color(0xFF0A0A0A) : const Color(0xFFFFFCF3);
   static Color get green =>
-      Palette.dark ? const Color(0xFF3FA372) : const Color(0xFF2F6B4F);
+      Palette.dark ? const Color(0xFFFFFFFF) : const Color(0xFF2F6B4F);
   static Color get band =>
       Palette.dark ? const Color(0xFF0F2219) : const Color(0xFFDCEBD3);
   static Color get flower =>
-      Palette.dark ? const Color(0xFF2E8B62) : const Color(0xFFCF7895);
+      Palette.dark ? const Color(0xFFFFFFFF) : const Color(0xFFCF7895);
 }
 
 /// Small four-petal flower used along the borders.
@@ -49,7 +49,7 @@ class _FramePainter extends CustomPainter {
     final outer = (Offset.zero & size).deflate(1);
     final inner = outer.deflate(b);
     final green = Paint()
-      ..color = MushafColors.green
+      ..color =Color(0xFFFFFFFF)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.4;
 

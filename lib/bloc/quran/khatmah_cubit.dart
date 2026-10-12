@@ -64,6 +64,18 @@ final class Khatmah extends Equatable {
   int expectedBy(DateTime now) =>
       (pageCount * dayOf(now) / days).ceil().clamp(0, pageCount);
 
+  /// Pages left for today, from [nextPage].
+  int leftToday(DateTime now) =>
+      (todayTarget(now) - readOn(now)).clamp(0, pageCount - read.length);
+
+  /// Today's remaining portion as (first, last) page, or null when done.
+  (int, int)? portion(DateTime now) {
+    final left = leftToday(now);
+    if (left == 0) return null;
+    final first = nextPage;
+    return (first, (first + left - 1).clamp(first, pageCount));
+  }
+
   /// Days in a row with some reading, ending today or yesterday.
   int streak(DateTime now) {
     var day = _date(now);
@@ -101,7 +113,7 @@ class KhatmahCubit extends HydratedCubit<Khatmah> {
 
   final DateTime Function() _clock;
 
-  static const durations = [7, 10, 15, 20, 30, 60, 90];
+  static const durations = [7, 10, 15, 20, 30, 60, 90, 120, 180, 365];
 
   void startPlan(int days) => emit(
     state.copyWith(start: () => _date(_clock()), days: days, read: const {}),
@@ -121,6 +133,28 @@ class KhatmahCubit extends HydratedCubit<Khatmah> {
         read: read,
         log: {...state.log, key: (state.log[key] ?? 0) + 1},
         completed: state.completed + (finished ? 1 : 0),
+      ),
+    );
+  }
+
+  /// Records today's remaining portion as read.
+  void readPortion() {
+    if (!state.active) return;
+    final range = state.portion(_clock());
+    if (range == null) return;
+    final (first, last) = range;
+    final added = [
+      for (var p = first; p <= last; p++)
+        if (!state.read.contains(p)) p,
+    ];
+    final key = _key(_clock());
+    final read = {...state.read, ...added};
+    emit(
+      state.copyWith(
+        read: read,
+        log: {...state.log, key: (state.log[key] ?? 0) + added.length},
+        completed:
+            state.completed + (read.length >= pageCount && !state.done ? 1 : 0),
       ),
     );
   }

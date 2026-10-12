@@ -22,7 +22,7 @@ class Palette {
   static Color get greenSoft =>
       dark ? const Color(0xFF16362A) : const Color(0xFFDCE6DF);
   static Color get brass =>
-      dark ? const Color(0xFF6FCF97) : const Color(0xFFB0812F);
+      dark ? const Color(0xFFE5E5EA) : const Color(0xFFB0812F);
   static Color get clay =>
       dark ? const Color(0xFFE5E5EA) : const Color(0xFFA9512F);
 

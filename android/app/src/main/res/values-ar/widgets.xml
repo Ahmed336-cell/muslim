@@ -8,4 +8,10 @@
     <string name="widget_ayah_desc">آية من القرآن تتغير كل نصف ساعة</string>
     <string name="widget_dua_desc">دعاء من حصن المسلم يتغير كل نصف ساعة</string>
     <string name="widget_name_desc">اسم من أسماء الله الحسنى يتغير كل نصف ساعة</string>
+    <string name="widget_hadith">حديث</string>
+    <string name="widget_hijri">التاريخ الهجري</string>
+    <string name="widget_tasbih">المسبحة</string>
+    <string name="widget_hadith_desc">حديث نبوي يتغير كل نصف ساعة</string>
+    <string name="widget_hijri_desc">التاريخ الهجري اليوم والمناسبة القادمة</string>
+    <string name="widget_tasbih_desc">اضغط لتعدّ تسبيحك</string>
 </resources>

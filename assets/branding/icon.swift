@@ -91,8 +91,21 @@ struct Background: View {
   }
 }
 
-@MainActor func save<V: View>(_ v: V, _ size: CGFloat, _ name: String) {
-  let r = ImageRenderer(content: v.frame(width: size, height: size))
+/// App name under the splash emblem.
+struct Wordmark: View {
+  var body: some View {
+    HStack(spacing: 36) {
+      Text("Sabeelak").font(.system(size: 64, weight: .semibold, design: .serif))
+      Circle().fill(brassLight).frame(width: 12, height: 12)
+      Text("سبيلك").font(.system(size: 72, weight: .bold))
+    }
+    .foregroundStyle(cream)
+    .frame(width: 800, height: 160)
+  }
+}
+
+@MainActor func save<V: View>(_ v: V, _ size: CGFloat, _ name: String, height: CGFloat? = nil) {
+  let r = ImageRenderer(content: v.frame(width: size, height: height ?? size))
   r.scale = 1
   guard let cg = r.cgImage else { fatalError(name) }
   let rep = NSBitmapImageRep(cgImage: cg)
@@ -107,6 +120,10 @@ struct Background: View {
     save(Emblem(s: S * 0.50), S, "foreground")
     save(Emblem(s: S * 0.50, mono: true), S, "monochrome")
     save(Background(s: S), S, "background")
+    // Splash: emblem on transparent; Android 12 keeps art inside a 2/3 circle.
+    save(Emblem(s: 480), 720, "splash")
+    save(Emblem(s: 720), 1152, "splash_android12")
+    save(Wordmark(), 800, "splash_branding", height: 160)
     print("done")
   }
 }

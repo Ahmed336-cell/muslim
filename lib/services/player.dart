@@ -71,6 +71,9 @@ abstract class AudioEngine {
 
   /// Loops the current track.
   Future<void> setRepeat(bool repeat);
+
+  /// 0–1, for fading out at bedtime.
+  Future<void> setVolume(double volume);
   Future<void> stop();
   Future<void> dispose();
 }
@@ -161,6 +164,9 @@ class JustAudioEngine implements AudioEngine {
   @override
   Future<void> setRepeat(bool repeat) =>
       _player.setLoopMode(repeat ? LoopMode.one : LoopMode.off);
+
+  @override
+  Future<void> setVolume(double volume) async => _p?.setVolume(volume);
 
   @override
   Future<void> stop() async {

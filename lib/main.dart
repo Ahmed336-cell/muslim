@@ -19,7 +19,12 @@ import 'bloc/duas/dua_of_day_cubit.dart';
 import 'bloc/extra_reminders_cubit.dart';
 import 'bloc/fasting/fasting_bloc.dart';
 import 'bloc/friday_cubit.dart';
+import 'bloc/hadith_saved_cubit.dart';
+import 'bloc/qada_cubit.dart';
+import 'bloc/sadaqah_cubit.dart';
+import 'bloc/travel_cubit.dart';
 import 'bloc/hisn_cubit.dart';
+import 'bloc/lessons_cubit.dart';
 import 'bloc/live_activity_cubit.dart';
 import 'bloc/location_cubit.dart';
 import 'bloc/names/names_bloc.dart';
@@ -47,13 +52,16 @@ import 'l10n/l10n.dart';
 import 'screens/azkar_screen.dart';
 import 'screens/dhikr_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/khatmah_screen.dart';
 import 'screens/more_screen.dart';
 import 'screens/mushaf_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/prayer_screen.dart';
 import 'screens/qibla_screen.dart';
+import 'screens/sadaqah_screen.dart';
 import 'services/ambient.dart';
 import 'services/clock.dart';
+import 'services/hadith.dart';
 import 'services/hisn.dart';
 import 'services/home_widgets.dart';
 import 'services/islamic_api.dart';
@@ -166,6 +174,7 @@ class MuslimApp extends StatelessWidget {
         ),
         RepositoryProvider(create: (_) => audioStore ?? AudioStore()),
         RepositoryProvider(create: (_) => hisn ?? HisnRepository()),
+        RepositoryProvider(create: (_) => HadithRepository()),
         RepositoryProvider(create: (_) => reciteEngine ?? ReciteEngine()),
         RepositoryProvider<AudioEngine>(
           create: (_) => audio ?? JustAudioEngine(),
@@ -218,6 +227,17 @@ class _Blocs extends StatelessWidget {
           )..sync(null, lang),
         ),
         BlocProvider(create: (_) => RamadanCubit()),
+        BlocProvider(create: (_) => HadithSavedCubit()),
+        BlocProvider(create: (_) => SadaqahCubit()),
+        BlocProvider(create: (_) => QadaCubit()),
+        BlocProvider(create: (_) => LessonsCubit()),
+        BlocProvider(
+          lazy: false,
+          create: (_) {
+            final p = settings.place;
+            return TravelCubit()..observe(p.lat, p.lon);
+          },
+        ),
         BlocProvider(create: (_) => LiveActivityCubit()),
         BlocProvider(create: (_) => FridayCubit()),
         BlocProvider(create: (_) => AzkarCubit()),
@@ -368,6 +388,7 @@ class _SettingsSync extends StatelessWidget {
               PrayerTimesRequested(place: s.place),
             );
             context.read<FastingBloc>().add(FastingRequested(place: s.place));
+            context.read<TravelCubit>().observe(s.place.lat, s.place.lon);
           },
         ),
         BlocListener<SettingsCubit, Settings>(
@@ -447,8 +468,10 @@ class _NotificationTapsState extends State<_NotificationTaps> {
 
   void _open(String payload) {
     if (!mounted) return;
-    final quran = switch (payload.split(':')) {
+    final Route<void>? quran = switch (payload.split(':')) {
       ['kahf'] => MushafScreen.route(18),
+      ['khatmah'] => KhatmahScreen.route(),
+      ['sadaqah'] => SadaqahScreen.route(),
       ['ayah', final s, final a] => MushafScreen.route(
         int.tryParse(s) ?? 1,
         ayah: int.tryParse(a) ?? 1,

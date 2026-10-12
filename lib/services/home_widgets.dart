@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:home_widget/home_widget.dart';
 
 import '../data.dart';
+import 'hadith.dart';
 import 'hisn.dart';
 import 'islamic_api.dart' show PrayerDay;
 import 'names.dart';
@@ -18,6 +19,8 @@ abstract final class WidgetKeys {
   static const ayahs = 'ayahs';
   static const duas = 'duas';
   static const names = 'names';
+  static const hadiths = 'hadiths';
+  static const hijri = 'hijri';
   static const labels = 'labels';
 
   /// iOS widget kinds and Android provider classes share these names.
@@ -26,6 +29,9 @@ abstract final class WidgetKeys {
     'AyahWidget',
     'DuaWidget',
     'NameWidget',
+    'HadithWidget',
+    'HijriWidget',
+    'TasbihWidget',
   ];
 }
 
@@ -120,6 +126,49 @@ List<Map<String, String>> duaWidgetData(
   ]..shuffle(random ?? Random());
   return all.take(count).toList();
 }
+
+/// Short hadiths that fit a widget, from every bundled collection.
+List<Map<String, String>> hadithWidgetData(
+  List<HadithCollection> books, {
+  required String lang,
+  Random? random,
+  int count = 48,
+}) {
+  final all = [
+    for (final b in books)
+      for (final h in b.hadiths)
+        if (h.arabic.length <= 200 &&
+            (lang == 'ar' || h.english.isNotEmpty && h.english.length <= 220))
+          {
+            't': _clean(h.arabic),
+            if (lang != 'ar') 's': h.english,
+            'r': '${b.title(lang)} · ${h.number}',
+          },
+  ]..shuffle(random ?? Random());
+  return all.take(count).toList();
+}
+
+/// One entry per day from [today]: Hijri date, civil date and the next
+/// occasion, so the widget turns the page at midnight on its own.
+typedef HijriDayText = ({String hijri, String civil, String? next});
+
+List<Map<String, Object>> hijriWidgetData(
+  DateTime today,
+  HijriDayText Function(DateTime day) text, {
+  int days = 14,
+}) => [
+  for (var d = 0; d < days; d++)
+    () {
+      final day = DateTime(today.year, today.month, today.day + d);
+      final t = text(day);
+      return <String, Object>{
+        'd': day.millisecondsSinceEpoch,
+        't': t.hijri,
+        's': t.civil,
+        'r': ?t.next,
+      };
+    }(),
+];
 
 List<Map<String, String>> nameWidgetData(NamesBook book, {Random? random}) => [
   for (final n in book.names)

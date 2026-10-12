@@ -1,4 +1,5 @@
 import ActivityKit
+import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -34,8 +35,31 @@ private enum Store {
       l.dua = m["dua"] as? String ?? l.dua
       l.name = m["name"] as? String ?? l.name
       l.empty = m["empty"] as? String ?? l.empty
+      l.hadith = m["hadith"] as? String ?? l.hadith
+      l.hijri = m["hijri"] as? String ?? l.hijri
+      l.tasbih = m["tasbih"] as? String ?? l.tasbih
+      l.reset = m["reset"] as? String ?? l.reset
+      if let p = m["phrases"] as? [String], !p.isEmpty { l.phrases = p }
     }
     return l
+  }
+
+  /// One entry per day, written ahead by the app.
+  static var hijriDays: [HijriDay] {
+    guard let list = json("hijri") as? [[String: Any]] else { return [] }
+    return list.compactMap { m in
+      guard let ms = m["d"] as? Double, let t = m["t"] as? String else { return nil }
+      return HijriDay(
+        start: Date(timeIntervalSince1970: ms / 1000), hijri: t,
+        civil: m["s"] as? String ?? "", next: m["r"] as? String ?? "")
+    }
+  }
+
+  static let tasbihKey = "tasbih_count"
+
+  static var tasbih: Int {
+    get { UserDefaults(suiteName: appGroup)?.integer(forKey: tasbihKey) ?? 0 }
+    set { UserDefaults(suiteName: appGroup)?.set(newValue, forKey: tasbihKey) }
   }
 
   static var prayers: PrayerInfo? {
@@ -71,13 +95,29 @@ struct Labels {
   var dua: String
   var name: String
   var empty: String
+  var hadith: String
+  var hijri: String
+  var tasbih: String
+  var phrases: [String]
+  var reset: String
 
   static let english = Labels(
     rtl: false, next: "Next prayer", verse: "A verse", dua: "Dua",
-    name: "Names of Allah", empty: "Open the app to load")
+    name: "Names of Allah", empty: "Open the app to load", hadith: "Hadith",
+    hijri: "Hijri date", tasbih: "Tasbih",
+    phrases: ["SubhanAllah", "Alhamdulillah", "Allahu Akbar"], reset: "Reset")
   static let arabic = Labels(
     rtl: true, next: "الصلاة القادمة", verse: "آية", dua: "دعاء",
-    name: "أسماء الله الحسنى", empty: "افتح التطبيق للتحميل")
+    name: "أسماء الله الحسنى", empty: "افتح التطبيق للتحميل", hadith: "حديث",
+    hijri: "التاريخ الهجري", tasbih: "المسبحة",
+    phrases: ["سبحان الله", "الحمد لله", "الله أكبر"], reset: "تصفير")
+}
+
+struct HijriDay {
+  let start: Date
+  let hijri: String
+  let civil: String
+  let next: String
 }
 
 struct PrayerTime: Hashable {
@@ -291,13 +331,14 @@ struct PrayerWidget: Widget {
 // MARK: - Rotating content
 
 enum Pool: String {
-  case ayahs, duas, names
+  case ayahs, duas, names, hadiths
 
   var host: String {
     switch self {
     case .ayahs: "ayah"
     case .duas: "dua"
     case .names: "name"
+    case .hadiths: "hadith"
     }
   }
 
@@ -306,6 +347,7 @@ enum Pool: String {
     case .ayahs: l.verse
     case .duas: l.dua
     case .names: l.name
+    case .hadiths: l.hadith
     }
   }
 
@@ -314,6 +356,10 @@ enum Pool: String {
     case .ayahs: Item(text: "فإن مع العسر يسرا", sub: "", ref: "Ash-Sharh · 5")
     case .duas: Item(text: "رب زدني علما", sub: "My Lord, increase me in knowledge", ref: "")
     case .names: Item(text: "الرحمن", sub: "The Most Merciful", ref: "Ar-Rahman")
+    case .hadiths:
+      Item(
+        text: "الدين النصيحة", sub: "The religion is sincerity.",
+        ref: "Nawawi's Forty · 7")
     }
   }
 }
@@ -462,6 +508,229 @@ struct NameWidget: Widget {
   }
 }
 
+struct HadithWidget: Widget {
+  var body: some WidgetConfiguration {
+    itemWidget(.hadiths, kind: "HadithWidget", families: [
+      .systemSmall, .systemMedium, .systemLarge, .accessoryRectangular,
+    ])
+  }
+}
+
+// MARK: - Hijri date
+
+struct HijriEntry: TimelineEntry {
+  let date: Date
+  let day: HijriDay?
+  let labels: Labels
+}
+
+struct HijriProvider: TimelineProvider {
+  static let sample = HijriDay(
+    start: .now, hijri: "12 Rabi al-Akhir 1448 AH", civil: "Monday 12 October",
+    next: "Ramadan in 140 days")
+
+  func placeholder(in context: Context) -> HijriEntry {
+    HijriEntry(date: .now, day: Self.sample, labels: .english)
+  }
+
+  func getSnapshot(in context: Context, completion: @escaping (HijriEntry) -> Void) {
+    let day = Store.hijriDays.last { $0.start <= .now } ?? (context.isPreview ? Self.sample : nil)
+    completion(HijriEntry(date: .now, day: day, labels: Store.labels))
+  }
+
+  func getTimeline(in context: Context, completion: @escaping (Timeline<HijriEntry>) -> Void) {
+    let labels = Store.labels
+    let days = Store.hijriDays
+    let now = Date()
+    var entries = [HijriEntry(date: now, day: days.last { $0.start <= now }, labels: labels)]
+    for d in days where d.start > now {
+      entries.append(HijriEntry(date: d.start, day: d, labels: labels))
+    }
+    completion(Timeline(entries: entries, policy: .atEnd))
+  }
+}
+
+struct HijriView: View {
+  @Environment(\.widgetFamily) var family
+  let entry: HijriEntry
+
+  var body: some View {
+    content
+      .direction(entry.labels)
+      .widgetBackground(Palette.green, family: family)
+      .widgetURL(link("hijri"))
+  }
+
+  @ViewBuilder var content: some View {
+    if let day = entry.day {
+      switch family {
+      case .accessoryInline:
+        Text(day.hijri)
+      case .accessoryCircular:
+        ZStack {
+          AccessoryWidgetBackground()
+          Text(day.hijri.split(separator: " ").first.map(String.init) ?? "")
+            .font(.system(size: 22, weight: .semibold))
+        }
+      case .accessoryRectangular:
+        VStack(alignment: .leading, spacing: 1) {
+          Text(day.civil).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+          Text(day.hijri).font(.headline).lineLimit(1).minimumScaleFactor(0.7)
+          if !day.next.isEmpty { Text(day.next).font(.caption2).lineLimit(1) }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+      default:
+        VStack(spacing: 6) {
+          caption(day.civil, rtl: entry.labels.rtl)
+          Spacer(minLength: 0)
+          Text(day.hijri)
+            .font(.system(size: 22, weight: .semibold, design: .serif))
+            .foregroundStyle(Palette.cream)
+            .multilineTextAlignment(.center)
+            .minimumScaleFactor(0.6)
+          Spacer(minLength: 0)
+          if !day.next.isEmpty {
+            Text(day.next).font(.system(size: 11))
+              .foregroundStyle(Palette.cream.opacity(0.7))
+              .lineLimit(2).multilineTextAlignment(.center)
+          }
+        }
+        .frame(maxWidth: .infinity)
+      }
+    } else if family == .accessoryInline || family == .accessoryCircular {
+      Image(systemName: "moon")
+    } else {
+      Text(entry.labels.empty).font(.footnote)
+        .foregroundStyle(family == .accessoryRectangular ? Color.primary : Palette.cream)
+    }
+  }
+}
+
+struct HijriWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: "HijriWidget", provider: HijriProvider()) {
+      HijriView(entry: $0)
+    }
+    .configurationDisplayName(Store.labels.hijri)
+    .description(Store.labels.rtl ? "التاريخ الهجري والمناسبة القادمة" : "Today's Hijri date and the next occasion")
+    .supportedFamilies([
+      .systemSmall, .accessoryCircular, .accessoryRectangular, .accessoryInline,
+    ])
+  }
+}
+
+// MARK: - Tasbih
+
+@available(iOSApplicationExtension 17.0, *)
+struct TasbihTap: AppIntent {
+  static var title: LocalizedStringResource = "Count"
+
+  func perform() async throws -> some IntentResult {
+    Store.tasbih += 1
+    return .result()
+  }
+}
+
+@available(iOSApplicationExtension 17.0, *)
+struct TasbihReset: AppIntent {
+  static var title: LocalizedStringResource = "Reset"
+
+  func perform() async throws -> some IntentResult {
+    Store.tasbih = 0
+    return .result()
+  }
+}
+
+struct TasbihEntry: TimelineEntry {
+  let date: Date
+  let count: Int
+  let labels: Labels
+}
+
+struct TasbihProvider: TimelineProvider {
+  func placeholder(in context: Context) -> TasbihEntry {
+    TasbihEntry(date: .now, count: 12, labels: .english)
+  }
+
+  func getSnapshot(in context: Context, completion: @escaping (TasbihEntry) -> Void) {
+    completion(TasbihEntry(date: .now, count: Store.tasbih, labels: Store.labels))
+  }
+
+  func getTimeline(in context: Context, completion: @escaping (Timeline<TasbihEntry>) -> Void) {
+    completion(
+      Timeline(
+        entries: [TasbihEntry(date: .now, count: Store.tasbih, labels: Store.labels)],
+        policy: .never))
+  }
+}
+
+@available(iOSApplicationExtension 17.0, *)
+struct TasbihView: View {
+  @Environment(\.widgetFamily) var family
+  let entry: TasbihEntry
+
+  var phrase: String {
+    let p = entry.labels.phrases
+    return p[(entry.count / 33) % p.count]
+  }
+
+  var count: String {
+    let n = "\(entry.count)"
+    guard entry.labels.rtl else { return n }
+    return String(n.map { c in
+      c.wholeNumberValue.map { Character(UnicodeScalar(0x0660 + $0)!) } ?? c
+    })
+  }
+
+  var body: some View {
+    Group {
+      if family == .accessoryCircular {
+        Button(intent: TasbihTap()) {
+          ZStack {
+            AccessoryWidgetBackground()
+            Text(count).font(.system(size: 20, weight: .semibold).monospacedDigit())
+              .minimumScaleFactor(0.5)
+          }
+        }
+        .buttonStyle(.plain)
+      } else {
+        VStack(spacing: 6) {
+          Text(phrase).font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(Palette.brass).lineLimit(1)
+          Button(intent: TasbihTap()) {
+            Text(count)
+              .font(.system(size: 40, weight: .bold).monospacedDigit())
+              .foregroundStyle(Palette.cream)
+              .minimumScaleFactor(0.5)
+              .frame(maxWidth: .infinity, maxHeight: .infinity)
+              .contentShape(Rectangle())
+          }
+          .buttonStyle(.plain)
+          Button(intent: TasbihReset()) {
+            Text(entry.labels.reset).font(.system(size: 11))
+              .foregroundStyle(Palette.cream.opacity(0.7))
+          }
+          .buttonStyle(.plain)
+        }
+      }
+    }
+    .direction(entry.labels)
+    .widgetBackground(Palette.green, family: family)
+  }
+}
+
+@available(iOSApplicationExtension 17.0, *)
+struct TasbihWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: "TasbihWidget", provider: TasbihProvider()) {
+      TasbihView(entry: $0)
+    }
+    .configurationDisplayName(Store.labels.tasbih)
+    .description(Store.labels.rtl ? "اضغط لتعدّ تسبيحك" : "Tap to count your dhikr")
+    .supportedFamilies([.systemSmall, .accessoryCircular])
+  }
+}
+
 // MARK: - Live Activity
 
 // Must match the copy in Runner/AppDelegate.swift field for field.
@@ -582,6 +851,11 @@ struct MuslimWidgets: WidgetBundle {
     AyahWidget()
     DuaWidget()
     NameWidget()
+    HadithWidget()
+    HijriWidget()
     PrayerLiveActivity()
+    if #available(iOSApplicationExtension 17.0, *) {
+      TasbihWidget()
+    }
   }
 }

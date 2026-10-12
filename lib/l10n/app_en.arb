@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appName": "Muslim",
+  "appName": "Sabeelak",
   "navHome": "Home",
   "navPrayer": "Prayer",
   "navQibla": "Qibla",
@@ -631,7 +631,7 @@
   "widgetNameSub": "A name of Allah every half hour",
   "widgetAdd": "Add",
   "widgetAddFailed": "Your launcher can't add widgets from here. Long-press the home screen and choose Widgets.",
-  "widgetIosHint": "Long-press the home or lock screen, tap Edit or +, then search for Muslim.",
+  "widgetIosHint": "Long-press the home or lock screen, tap Edit or +, then search for Sabeelak.",
   "calcMethod": "Calculation method",
   "calcCityDefault": "Recommended for {city}",
   "@calcCityDefault": {
@@ -802,7 +802,7 @@
   "featCalendar": "Hijri calendar",
   "featCalendarSub": "Months and Islamic occasions",
   "featKhatmah": "Khatmah",
-  "featKhatmahSub": "Finish the Quran on a plan",
+  "featKhatmahSub": "Daily wird to finish the Quran",
   "calendarToday": "Today",
   "calendarUpcoming": "Upcoming",
   "calendarWhiteDays": "White days (13–15): recommended fasting",
@@ -904,7 +904,7 @@
   },
   "qadaHint": "Add the prayers you owe, then tap − each time you make one up.",
   "qadaMadeUp": "Made one up",
-  "qadaAdd": "Add one",
+  "qadaAdd": "Add",
   "featRamadan": "Ramadan",
   "featRamadanSub": "Iftar countdown, duas and a 30-day tracker",
   "featFriday": "Jumu'ah",
@@ -1125,5 +1125,421 @@
     }
   },
   "feedbackOpen": "Feedback",
-  "feedbackDone": "Done"
+  "feedbackDone": "Done",
+  "featHadith": "Hadith",
+  "featHadithSub": "Nawawi's Forty, Qudsi, Riyad as-Salihin",
+  "hadithSearch": "Search hadith in Arabic or English",
+  "hadithCount": "{count} hadith",
+  "@hadithCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "hadithNumber": "Hadith {number}",
+  "@hadithNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "hadithSaved": "Saved hadith",
+  "hadithSave": "Save",
+  "hadithUnsave": "Remove from saved",
+  "hadithNoMatch": "No hadith matches “{query}”",
+  "@hadithNoMatch": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "hadithChapters": "Books",
+  "hadithSource": "Arabic text and English translation from Sunnah.com, via the open hadith-json project.",
+  "wirdReminder": "Daily Quran wird",
+  "wirdReminderTitle": "Your daily wird",
+  "wirdReminderBody": "Read today's portion of the Quran and keep your streak.",
+  "wirdPortion": "Today: pages {first}–{last}",
+  "@wirdPortion": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "last": {
+        "type": "String"
+      }
+    }
+  },
+  "wirdPortionOne": "Today: page {page}",
+  "@wirdPortionOne": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "wirdMarkDone": "I read today's portion",
+  "sadaqahReminder": "Friday sadaqah reminder",
+  "sadaqahReminderTitle": "Sadaqah",
+  "sadaqahReminderBody": "Charity does not decrease wealth. Give something today, even a little.",
+  "sadaqahRemindAt": "Fridays at {time}",
+  "@sadaqahRemindAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "save": "Save",
+  "featSadaqah": "Sadaqah",
+  "featSadaqahSub": "Private log, monthly goal, Friday reminder",
+  "sadaqahAdd": "Log sadaqah",
+  "sadaqahMoney": "Money",
+  "sadaqahFood": "Food",
+  "sadaqahHelp": "Help",
+  "sadaqahOther": "Other",
+  "sadaqahAmount": "Amount (optional)",
+  "sadaqahNote": "Note (optional)",
+  "sadaqahPrivate": "Stays on your phone only.",
+  "sadaqahCount": "{count} this month",
+  "@sadaqahCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sadaqahSetGoal": "Set a monthly goal",
+  "sadaqahGoalOf": "Goal: {amount} {currency}",
+  "@sadaqahGoalOf": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "sadaqahGoalTitle": "Monthly goal",
+  "sadaqahNoGoal": "No goal",
+  "sadaqahStreak": "Weeks in a row",
+  "sadaqahWeeks": "{count} weeks",
+  "@sadaqahWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sadaqahHistory": "History",
+  "sadaqahEmpty": "Nothing logged yet. Even a smile is charity.",
+  "sadaqahHadith": "“Charity does not decrease wealth.” — Sahih Muslim",
+  "featQada": "Missed fasts",
+  "featQadaSub": "Qada, fidyah and kaffarah tracker",
+  "qadaRemaining": "Fasts left to make up",
+  "qadaMadeOf": "{made} of {owed} made up",
+  "@qadaMadeOf": {
+    "placeholders": {
+      "made": {
+        "type": "String"
+      },
+      "owed": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaLess": "One less",
+  "qadaMore": "One more",
+  "qadaMarkToday": "I'm fasting today",
+  "qadaFastedToday": "Fasting today",
+  "qadaAllDone": "All made up. May Allah accept it.",
+  "qadaTip": "Mondays, Thursdays and the white days (13–15) are good days to make up fasts.",
+  "qadaIntro": "Missed days of Ramadan for illness, travel, pregnancy or menstruation? Add them with + and tick each day you make one up.",
+  "qadaFromRamadan": "Your Ramadan {year} tracker has {count} days not marked as fasted.",
+  "@qadaFromRamadan": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaFidyah": "Fidyah",
+  "qadaFidyahInfo": "For anyone who can never fast, like the very old or chronically ill: feed one poor person for each day missed.",
+  "qadaFidyahMeals": "{count} meals",
+  "@qadaFidyahMeals": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaFidyahTotal": "{count} meals ≈ {total}",
+  "@qadaFidyahTotal": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaMealCost": "Cost of one meal",
+  "qadaKaffarah": "Kaffarah",
+  "qadaKaffarahInfo": "Breaking a Ramadan fast by intercourse needs kaffarah: fasting 60 days in a row, or feeding 60 poor people if unable.",
+  "qadaKaffarahStart": "Start 60 days",
+  "qadaKaffarahProgress": "{days} of {total} days in a row",
+  "@qadaKaffarahProgress": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaKaffarahBroken": "A day was missed, so the count must start again (unless the break was for illness or menstruation).",
+  "qadaKaffarahRestart": "Start again",
+  "qadaKaffarahDone": "Kaffarah complete. May Allah accept it.",
+  "qadaDisclaimer": "Rulings differ between scholars; ask a scholar about your own case.",
+  "featSleep": "Bedtime",
+  "featSleepSub": "Sleep adhkar, al-Mulk and a sleep timer",
+  "sleepIntro": "End your day with remembrance. Recitations fade out gently when the timer ends.",
+  "sleepAdhkar": "Adhkar before sleeping",
+  "sleepAdhkarSub": "{count} adhkar from Hisn al-Muslim",
+  "@sleepAdhkarSub": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sleepRecite": "Recite before sleeping",
+  "sleepListen": "Listen",
+  "sleepMulk": "Surah al-Mulk",
+  "sleepMulkWhy": "It intercedes for its reader until he is forgiven. — Tirmidhi",
+  "sleepSajdah": "Surah as-Sajdah",
+  "sleepSajdahWhy": "The Prophet ﷺ would not sleep until he recited as-Sajdah and al-Mulk. — Tirmidhi",
+  "sleepKursi": "Ayat al-Kursi",
+  "sleepKursiWhy": "A guardian from Allah stays with you until morning. — Bukhari",
+  "sleepBaqarah": "Last two ayahs of al-Baqarah",
+  "sleepBaqarahWhy": "Whoever recites them at night, they suffice him. — Bukhari, Muslim",
+  "sleepQuls": "Al-Ikhlas, al-Falaq, an-Nas",
+  "sleepQulsWhy": "Blow into your palms, recite them and wipe over your body, three times. — Bukhari",
+  "sleepTimer": "Sleep timer",
+  "sleepMinutes": "{minutes} min",
+  "@sleepMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "sleepEndOfSurah": "End of surah",
+  "sleepOff": "Off",
+  "sleepTimerHint": "Also in the player: tap the moon icon.",
+  "featTravel": "Traveller",
+  "featTravelSub": "Shortening and combining prayers on a journey",
+  "travelOn": "You're travelling",
+  "travelOff": "You're at home",
+  "travelFromHome": "{km} km from home",
+  "@travelFromHome": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "travelDay": "Day {day} of your trip",
+  "@travelDay": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "travelAuto": "Auto",
+  "travelModeOn": "Travelling",
+  "travelModeOff": "At home",
+  "travelAutoHint": "Auto turns on when your prayer location is over 80 km from home.",
+  "travelSetHome": "Make this home",
+  "travelToday": "Today's prayers",
+  "travelRakahs": "{count} rak'ahs",
+  "@travelRakahs": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "travelCombine": "Combining (jam')",
+  "travelCombineDay": "{first} + {second}: in either one's time, from {from} until {to}.",
+  "@travelCombineDay": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "travelCombineNight": "{first} + {second}: in either one's time, from {from} until {to}.",
+  "@travelCombineNight": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "travelCombineHint": "Fajr is never combined, and Maghrib stays 3 rak'ahs.",
+  "travelRules": "Key rulings",
+  "travelRuleDistance": "A journey of about 80 km (48 miles) or more allows shortening, once you leave your town's buildings.",
+  "travelRuleQasr": "Dhuhr, Asr and Isha are prayed as 2 rak'ahs instead of 4.",
+  "travelRuleJam": "Dhuhr with Asr, and Maghrib with Isha, may be joined in the time of either.",
+  "travelRuleStay": "Intending to stay more than 4 days makes you a resident for most scholars (15 days for the Hanafi school).",
+  "travelRuleSunnah": "The regular sunnahs may be left, except the sunnah of Fajr and witr.",
+  "travelRuleImam": "Praying behind a resident imam, pray the full 4 with him.",
+  "travelRuleFast": "You may break the Ramadan fast on a journey and make it up later.",
+  "travelDuas": "Duas for the journey",
+  "travelDuaSetOff": "Setting off",
+  "travelDuaSetOffMeaning": "Allah is the Greatest (×3). Glory to Him who has subjected this to us, and we could not have done it ourselves, and to our Lord we will surely return. O Allah, we ask You on this journey for goodness, piety and deeds that please You. O Allah, make this journey easy and shorten its distance for us. O Allah, You are the Companion on the journey and the Guardian of the family. — Muslim",
+  "travelDuaTown": "Entering a town",
+  "travelDuaTownMeaning": "O Allah, Lord of the seven heavens and all they shade, Lord of the seven earths and all they carry, I ask You for the good of this town and the good of its people, and seek refuge in You from its evil and the evil of its people. — Nasa'i",
+  "travelDuaStop": "Stopping somewhere",
+  "travelDuaStopMeaning": "I seek refuge in the perfect words of Allah from the evil of what He has created. Nothing will harm you until you leave that place. — Muslim",
+  "travelBanner": "You seem to be travelling ({km} km from home). See how to shorten and combine prayers.",
+  "@travelBanner": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "featLearn": "Learn to pray",
+  "featLearnSub": "Wudu and salah, step by step",
+  "lessonSteps": "{count} steps",
+  "@lessonSteps": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "lessonQuestions": "{count} questions",
+  "@lessonQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "lessonStepOf": "Step {number} of {total}",
+  "@lessonStepOf": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "lessonQuestionOf": "Question {number} of {total}",
+  "@lessonQuestionOf": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "lessonBack": "Back",
+  "lessonNext": "Next",
+  "lessonStartQuiz": "Start quiz",
+  "lessonRight": "Correct!",
+  "lessonWrong": "Not quite.",
+  "lessonDone": "Lesson complete",
+  "lessonScore": "{correct} of {total} correct",
+  "@lessonScore": {
+    "placeholders": {
+      "correct": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "lessonRetryQuiz": "Try the quiz again",
+  "featTajweed": "Tajweed",
+  "featTajweedSub": "Rules with examples and quizzes",
+  "featKids": "Kids",
+  "featKidsSub": "Letters, short surahs and duas, with stars",
+  "kidsStars": "{count} stars",
+  "@kidsStars": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "kidsStarsHint": "Finish lessons and learn surahs to earn more.",
+  "kidsLetters": "Arabic letters",
+  "kidsLettersSub": "Tap a letter to see its name and a word.",
+  "kidsSurahs": "Short surahs",
+  "kidsListen": "Listen and repeat",
+  "kidsAyahs": "{count} ayahs",
+  "@kidsAyahs": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "kidsLearnt": "I learnt it",
+  "kidsDuas": "Duas and prayer",
+  "widgetHadith": "Hadith",
+  "widgetHijri": "Hijri date",
+  "widgetSubhanallah": "SubhanAllah",
+  "widgetAlhamdulillah": "Alhamdulillah",
+  "widgetAllahuAkbar": "Allahu Akbar",
+  "widgetReset": "Reset",
+  "widgetEventIn": "{event} in {days} days",
+  "@widgetEventIn": {
+    "placeholders": {
+      "event": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "showLess": "Show less",
+  "azkarSleepSub": "Recite them as you lie down to sleep"
 }

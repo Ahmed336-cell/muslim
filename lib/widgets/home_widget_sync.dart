@@ -11,10 +11,16 @@ import '../bloc/prayer_times/prayer_times_bloc.dart';
 import '../bloc/settings_cubit.dart';
 import '../bloc/tab_cubit.dart';
 import '../l10n/l10n.dart';
+import '../screens/calendar_screen.dart';
+import '../screens/hadith_screen.dart';
 import '../screens/hisn_screen.dart';
 import '../screens/names_screen.dart';
 import '../screens/quran_screen.dart';
+import '../services/clock.dart';
+import '../services/hadith.dart';
 import '../services/home_widgets.dart';
+import '../services/islamic_events.dart';
+import '../services/prayer_calc.dart';
 import '../services/quran_text.dart';
 
 /// Keeps the home and lock screen widgets fed, and opens the screen a tapped
@@ -33,6 +39,7 @@ class _HomeWidgetSyncState extends State<HomeWidgetSync>
   StreamSubscription<Uri?>? _clicks;
   Timer? _debounce;
   String? _ayahsFor;
+  String? _hadithsFor;
 
   @override
   void initState() {
@@ -83,7 +90,17 @@ class _HomeWidgetSyncState extends State<HomeWidgetSync>
         'dua': l.widgetDua,
         'name': l.namesTitle,
         'empty': l.widgetEmpty,
+        'hadith': l.widgetHadith,
+        'hijri': l.widgetHijri,
+        'tasbih': l.featTasbih,
+        'phrases': [
+          l.widgetSubhanallah,
+          l.widgetAlhamdulillah,
+          l.widgetAllahuAkbar,
+        ],
+        'reset': l.widgetReset,
       },
+      WidgetKeys.hijri: hijriWidgetData(appNow(), _hijriText),
       if (day != null)
         WidgetKeys.prayer: prayerWidgetData(
           day,
@@ -110,7 +127,39 @@ class _HomeWidgetSyncState extends State<HomeWidgetSync>
       } catch (_) {}
     }
     if (!mounted) return;
+    if (_hadithsFor != today) {
+      try {
+        final repo = context.read<HadithRepository>();
+        final books = [for (final b in HadithBook.values) await repo.load(b)];
+        values[WidgetKeys.hadiths] = hadithWidgetData(
+          books,
+          lang: lang,
+          random: _daily(4),
+        );
+        _hadithsFor = today;
+      } catch (_) {}
+    }
+    if (!mounted) return;
     await widgets.update(values);
+  }
+
+  HijriDayText _hijriText(DateTime day) {
+    final l = context.l;
+    final shift = context.read<SettingsCubit>().state.hijriShift;
+    final h = HijriDate.of(day, shift: shift);
+    final hijri = context.isAr
+        ? context.n('${h.day} ${hijriMonthsAr[h.month - 1]} ${h.year} هـ')
+        : '${h.day} ${hijriMonthsEn[h.month - 1]} ${h.year} AH';
+    final next = upcomingEvents(day, shift: shift, count: 1).firstOrNull;
+    String? event;
+    if (next != null) {
+      final (e, _, date) = next;
+      final days = date.difference(day).inDays;
+      event = days == 0
+          ? e.title(l)
+          : l.widgetEventIn(e.title(l), context.n(days));
+    }
+    return (hijri: hijri, civil: context.date(day, 'EEEE d MMMM'), next: event);
   }
 
   void _open(Uri? uri) {
@@ -126,6 +175,12 @@ class _HomeWidgetSyncState extends State<HomeWidgetSync>
         nav.push(HisnScreen.route());
       case 'name':
         nav.push(NamesScreen.route());
+      case 'hadith':
+        nav.push(HadithScreen.route());
+      case 'hijri':
+        nav.push(CalendarScreen.route());
+      case 'tasbih':
+        context.read<TabCubit>().select(AppTab.tasbih);
     }
   }
 
