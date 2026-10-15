@@ -1,2 +1,4 @@
 CFBundleDisplayName = "سبيلك";
 CFBundleName = "سبيلك";
+NSCameraUsageDescription = "تُستخدم الكاميرا لعرض اتجاه القبلة على ما حولك.";
+NSLocationWhenInUseUsageDescription = "يُستخدم موقعك لحساب مواقيت الصلاة واتجاه القبلة بدقة.";

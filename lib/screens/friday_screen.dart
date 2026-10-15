@@ -98,6 +98,7 @@ class FridayScreen extends StatelessWidget {
             child: Column(
               children: [
                 ExtraReminderTile(ExtraKind.kahf),
+                ExtraReminderTile(ExtraKind.salawat),
                 ExtraReminderTile(ExtraKind.fridayHour),
                 ExtraRemindersDenied(),
               ],

@@ -231,11 +231,11 @@ class _WelcomeStep extends StatelessWidget {
                       Text(
                         'السَّلَامُ عَلَيْكُمْ',
                         textDirection: TextDirection.rtl,
-                        style: Fonts.arabic(40, color: Palette.brass),
+                        style: Fonts.arabic(40, color: Palette.greenSoft),
                       ),
                       Text(
                         l.appName,
-                        style: Fonts.display(20, color: Palette.cream),
+                        style: Fonts.display(20, color: Palette.greenSoft),
                       ),
                     ],
                   ),

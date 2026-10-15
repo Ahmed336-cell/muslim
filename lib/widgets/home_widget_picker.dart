@@ -19,7 +19,7 @@ class HomeWidgetPicker extends StatelessWidget {
     try {
       if (await HomeWidget.isRequestPinWidgetSupported() == true) {
         await HomeWidget.requestPinWidget(
-          qualifiedAndroidName: 'com.example.muslim.widgets.$kind',
+          qualifiedAndroidName: 'com.elmoahm.sabeelk.widgets.$kind',
         );
         return;
       }

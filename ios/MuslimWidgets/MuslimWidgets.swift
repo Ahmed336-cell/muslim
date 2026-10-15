@@ -4,7 +4,7 @@ import SwiftUI
 import WidgetKit
 
 // Data is written by lib/services/home_widgets.dart through home_widget.
-private let appGroup = "group.com.example.muslim"
+private let appGroup = "group.com.elmoahm.sabeelk"
 
 private enum Palette {
   static let green = Color(red: 0x1E / 255, green: 0x4D / 255, blue: 0x3A / 255)

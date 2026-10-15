@@ -51,6 +51,7 @@ import 'bloc/zakat_cubit.dart';
 import 'l10n/l10n.dart';
 import 'screens/azkar_screen.dart';
 import 'screens/dhikr_screen.dart';
+import 'screens/friday_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/khatmah_screen.dart';
 import 'screens/more_screen.dart';
@@ -81,6 +82,7 @@ import 'widgets/mini_player.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: kIsWeb
         ? HydratedStorageDirectory.web
@@ -90,9 +92,11 @@ Future<void> main() async {
   );
   try {
     await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.example.muslim.recitation',
+      androidNotificationChannelId: 'com.elmoahm.sabeelk.recitation',
       androidNotificationChannelName: 'Quran recitation',
       androidNotificationOngoing: true,
+      androidNotificationIcon: 'drawable/ic_stat_sabeelak',
+      notificationColor: const Color(0xFF1E4D3A),
     );
   } catch (_) {
     // Playback still works in the foreground.
@@ -470,6 +474,7 @@ class _NotificationTapsState extends State<_NotificationTaps> {
     if (!mounted) return;
     final Route<void>? quran = switch (payload.split(':')) {
       ['kahf'] => MushafScreen.route(18),
+      ['friday'] => FridayScreen.route(),
       ['khatmah'] => KhatmahScreen.route(),
       ['sadaqah'] => SadaqahScreen.route(),
       ['ayah', final s, final a] => MushafScreen.route(
@@ -507,18 +512,49 @@ class _NotificationTapsState extends State<_NotificationTaps> {
 class Shell extends StatelessWidget {
   const Shell({super.key});
 
-  static const _pages = [
-    HomeScreen(),
-    PrayerScreen(),
-    QiblaScreen(),
-    DhikrScreen(),
-    MoreScreen(),
-  ];
+  static Widget _page(AppTab tab) => switch (tab) {
+    AppTab.home => const HomeScreen(),
+    AppTab.prayer => const PrayerScreen(),
+    AppTab.qibla => const QiblaScreen(),
+    AppTab.tasbih => const DhikrScreen(),
+    AppTab.more => const MoreScreen(),
+  };
+
+  static NavigationDestination _destination(AppTab tab, L10n l) =>
+      switch (tab) {
+        AppTab.home => NavigationDestination(
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home_rounded),
+          label: l.navHome,
+        ),
+        AppTab.prayer => NavigationDestination(
+          icon: const Icon(Icons.schedule_outlined),
+          selectedIcon: const Icon(Icons.schedule_rounded),
+          label: l.navPrayer,
+        ),
+        AppTab.qibla => NavigationDestination(
+          icon: const Icon(Icons.explore_outlined),
+          selectedIcon: const Icon(Icons.explore_rounded),
+          label: l.navQibla,
+        ),
+        AppTab.tasbih => NavigationDestination(
+          icon: const Icon(Icons.blur_circular_outlined),
+          selectedIcon: const Icon(Icons.blur_circular_rounded),
+          label: l.navTasbih,
+        ),
+        AppTab.more => NavigationDestination(
+          icon: const Icon(Icons.grid_view_outlined),
+          selectedIcon: const Icon(Icons.grid_view_rounded),
+          label: l.navMore,
+        ),
+      };
 
   @override
   Widget build(BuildContext context) {
     final tab = context.watch<TabCubit>().state;
     final l = context.l;
+    final tabs = AppTab.visible;
+    final index = tabs.contains(tab) ? tabs.indexOf(tab) : 0;
 
     return PopScope(
       canPop: tab == AppTab.home,
@@ -530,7 +566,10 @@ class Shell extends StatelessWidget {
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark,
         child: Scaffold(
-          body: IndexedStack(index: tab.index, children: _pages),
+          body: IndexedStack(
+            index: index,
+            children: [for (final t in tabs) _page(t)],
+          ),
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -542,36 +581,10 @@ class Shell extends StatelessWidget {
                   ),
                 ),
                 child: NavigationBar(
-                  selectedIndex: tab.index,
+                  selectedIndex: index,
                   onDestinationSelected: (i) =>
-                      context.read<TabCubit>().select(AppTab.values[i]),
-                  destinations: [
-                    NavigationDestination(
-                      icon: const Icon(Icons.home_outlined),
-                      selectedIcon: const Icon(Icons.home_rounded),
-                      label: l.navHome,
-                    ),
-                    NavigationDestination(
-                      icon: const Icon(Icons.schedule_outlined),
-                      selectedIcon: const Icon(Icons.schedule_rounded),
-                      label: l.navPrayer,
-                    ),
-                    NavigationDestination(
-                      icon: const Icon(Icons.explore_outlined),
-                      selectedIcon: const Icon(Icons.explore_rounded),
-                      label: l.navQibla,
-                    ),
-                    NavigationDestination(
-                      icon: const Icon(Icons.blur_circular_outlined),
-                      selectedIcon: const Icon(Icons.blur_circular_rounded),
-                      label: l.navTasbih,
-                    ),
-                    NavigationDestination(
-                      icon: const Icon(Icons.grid_view_outlined),
-                      selectedIcon: const Icon(Icons.grid_view_rounded),
-                      label: l.navMore,
-                    ),
-                  ],
+                      context.read<TabCubit>().select(tabs[i]),
+                  destinations: [for (final t in tabs) _destination(t, l)],
                 ),
               ),
             ],

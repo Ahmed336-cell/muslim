@@ -151,6 +151,7 @@ class MoreScreen extends StatelessWidget {
               children: [
                 ExtraReminderTile(ExtraKind.ayah),
                 ExtraReminderTile(ExtraKind.kahf),
+                ExtraReminderTile(ExtraKind.salawat),
                 ExtraReminderTile(ExtraKind.fridayHour),
                 ExtraReminderTile(ExtraKind.suhoor),
                 ExtraRemindersDenied(),

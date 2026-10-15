@@ -71,7 +71,8 @@ class LessonCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     [
-                      l.lessonSteps(context.n(lesson.steps.length)),
+                      if (lesson.steps.length > 1)
+                        l.lessonSteps(context.n(lesson.steps.length)),
                       if (lesson.quiz.isNotEmpty)
                         l.lessonQuestions(context.n(lesson.quiz.length)),
                     ].join(' · '),
@@ -252,17 +253,38 @@ class _StepPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
       children: [
-        Center(
-          child: Container(
-            width: 84,
-            height: 84,
-            decoration: BoxDecoration(
-              color: Palette.greenSoft,
-              shape: BoxShape.circle,
+        if (step.image case final image?)
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: Image.asset(
+                    image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => ColoredBox(
+                      color: Palette.greenSoft,
+                      child: Icon(step.icon, color: Palette.green, size: 48),
+                    ),
+                  ),
+                ),
+              ),
             ),
-            child: Icon(step.icon, color: Palette.green, size: 40),
+          )
+        else
+          Center(
+            child: Container(
+              width: 84,
+              height: 84,
+              decoration: BoxDecoration(
+                color: Palette.greenSoft,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(step.icon, color: Palette.green, size: 40),
+            ),
           ),
-        ),
         const SizedBox(height: 16),
         Text(
           context.l.lessonStepOf(context.n(number), context.n(of)),

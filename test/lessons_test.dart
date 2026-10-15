@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:muslim/bloc/lessons_cubit.dart';
 import 'package:muslim/l10n/l10n.dart';
 import 'package:muslim/screens/lesson_screen.dart';
+import 'package:muslim/services/hajj_lessons.dart';
 import 'package:muslim/services/kids_content.dart';
 import 'package:muslim/services/lessons.dart';
 import 'package:muslim/services/tajweed_lessons.dart';
@@ -15,6 +18,8 @@ import 'helpers.dart';
 final _all = [
   wuduLesson,
   salahLesson,
+  umrahLesson,
+  hajjLesson,
   kidsDuas,
   lettersLesson(),
   ...tajweedLessons,
@@ -36,6 +41,16 @@ void main() {
       }
     }
     expect(arabicLetters, hasLength(28));
+  });
+
+  test('every step image is a bundled asset', () {
+    for (final lesson in _all) {
+      for (final step in lesson.steps) {
+        if (step.image case final image?) {
+          expect(File(image).existsSync(), isTrue, reason: image);
+        }
+      }
+    }
   });
 
   test('stars keep the best result', () {

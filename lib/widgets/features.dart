@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/clock_cubit.dart';
+import '../bloc/friday_cubit.dart';
 import '../bloc/prayer_times/prayer_times_bloc.dart';
 import '../bloc/tab_cubit.dart';
 import '../l10n/l10n.dart';
@@ -27,6 +28,7 @@ import '../screens/sleep_screen.dart';
 import '../screens/tracker_screen.dart';
 import '../screens/travel_screen.dart';
 import '../screens/zakat_screen.dart';
+import '../services/hajj_lessons.dart';
 import '../services/lessons.dart';
 import '../services/tajweed_lessons.dart';
 import '../services/prayer_calc.dart';
@@ -51,6 +53,7 @@ enum Feature {
   hadith(Icons.format_quote_rounded),
   duas(Icons.volunteer_activism_outlined),
   learn(Icons.school_outlined),
+  hajj(Icons.landscape_outlined),
   kids(Icons.child_care_rounded),
   names(Icons.auto_awesome_outlined),
   zakat(Icons.savings_outlined),
@@ -79,6 +82,7 @@ enum Feature {
     hadith => l.featHadith,
     duas => l.featDuas,
     learn => l.featLearn,
+    hajj => l.featHajj,
     kids => l.featKids,
     names => l.featNames,
     zakat => l.featZakat,
@@ -108,6 +112,7 @@ enum Feature {
     hadith => l.featHadithSub,
     duas => l.featDuasSub,
     learn => l.featLearnSub,
+    hajj => l.featHajjSub,
     kids => l.featKidsSub,
     names => l.featNamesSub,
     zakat => l.featZakatSub,
@@ -160,6 +165,11 @@ enum Feature {
           wuduLesson,
           salahLesson,
         ]);
+      case hajj:
+        route = LessonsScreen.route(l.featHajj, const [
+          umrahLesson,
+          hajjLesson,
+        ]);
       case names:
         route = NamesScreen.route();
       case zakat:
@@ -191,20 +201,22 @@ enum Feature {
   }
 }
 
-/// Features for today: Ramadan only in Ramadan and Jumu'ah only on
-/// Friday, each first while it's on.
+/// Features for today: Ramadan only in Ramadan and Jumu'ah from Maghrib
+/// Thursday to Maghrib Friday, each first while it's on.
 List<Feature> visibleFeatures(BuildContext context) {
-  final friday = context.select(
-    (ClockCubit c) => c.state.weekday == DateTime.friday,
-  );
-  final month =
-      context.select((PrayerTimesBloc b) => b.state.day?.hijriMonth) ?? 0;
+  final now = context.watch<ClockCubit>().state;
+  final day = context.select((PrayerTimesBloc b) => b.state.day);
+  final friday = isJumuahMood(now, day: day);
+  final month = day?.hijriMonth ?? 0;
   final ramadan = (month > 0 ? month : HijriDate.of(DateTime.now()).month) == 9;
   return [
     if (ramadan) Feature.ramadan,
     if (friday) Feature.friday,
     for (final f in Feature.values)
-      if (f != Feature.ramadan && f != Feature.friday) f,
+      if (f != Feature.ramadan &&
+          f != Feature.friday &&
+          (qiblaEnabled || f != Feature.qibla))
+        f,
   ];
 }
 

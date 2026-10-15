@@ -1,0 +1,1 @@
+/Users/ahmedmaher/StudioProjects/muslim/packages/whisper_ggml/android/src/whisper/CMakeLists.txt

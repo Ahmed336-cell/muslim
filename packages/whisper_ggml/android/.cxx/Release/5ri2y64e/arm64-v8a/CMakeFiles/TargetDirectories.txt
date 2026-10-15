@@ -1,0 +1,4 @@
+/Users/ahmedmaher/StudioProjects/muslim/packages/whisper_ggml/android/.cxx/Release/5ri2y64e/arm64-v8a/CMakeFiles/whisper.dir
+/Users/ahmedmaher/StudioProjects/muslim/packages/whisper_ggml/android/.cxx/Release/5ri2y64e/arm64-v8a/CMakeFiles/whisper_flutter.dir
+/Users/ahmedmaher/StudioProjects/muslim/packages/whisper_ggml/android/.cxx/Release/5ri2y64e/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/ahmedmaher/StudioProjects/muslim/packages/whisper_ggml/android/.cxx/Release/5ri2y64e/arm64-v8a/CMakeFiles/rebuild_cache.dir

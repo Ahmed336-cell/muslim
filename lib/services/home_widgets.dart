@@ -14,7 +14,7 @@ import 'quran_text.dart';
 /// Keys shared with the native widgets in ios/MuslimWidgets and
 /// android/app/src/main/kotlin/com/example/muslim/widgets.
 abstract final class WidgetKeys {
-  static const appGroup = 'group.com.example.muslim';
+  static const appGroup = 'group.com.elmoahm.sabeelk';
   static const prayer = 'prayer';
   static const ayahs = 'ayahs';
   static const duas = 'duas';
@@ -220,7 +220,7 @@ class HomeWidgetStore implements WidgetStore {
       try {
         await HomeWidget.updateWidget(
           iOSName: kind,
-          qualifiedAndroidName: 'com.example.muslim.widgets.$kind',
+          qualifiedAndroidName: 'com.elmoahm.sabeelk.widgets.$kind',
         );
       } catch (_) {}
     }

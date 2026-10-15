@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -5,15 +6,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/prayer_times/prayer_times_bloc.dart';
+import '../bloc/settings_cubit.dart';
+import '../bloc/tab_cubit.dart';
 import '../format.dart';
 import '../l10n/l10n.dart';
+import '../services/heading.dart';
 import '../theme.dart';
 import '../widgets/city_picker.dart';
 import '../widgets/common.dart';
+import 'qibla_ar_screen.dart';
 
 const cairoQibla = 136.14;
 
-/// Static compass; wire a heading sensor into [_heading] for live use.
+/// Live compass from the heading sensor; dragging the dial is the fallback
+/// on devices without one.
 class QiblaScreen extends StatefulWidget {
   const QiblaScreen({super.key});
 
@@ -21,9 +27,72 @@ class QiblaScreen extends StatefulWidget {
   State<QiblaScreen> createState() => _QiblaScreenState();
 }
 
+enum _Sensor { none, live, weak }
+
 class _QiblaScreenState extends State<QiblaScreen> {
-  double _heading = 0;
+  /// Unwrapped so the dial turns the short way across north.
+  double _dial = 0;
+  double get _heading => _dial % 360;
   bool _wasAligned = false;
+  _Sensor _sensor = _Sensor.none;
+  StreamSubscription<Heading>? _sub;
+
+  /// Android reports magnetic north; iOS already reports true north.
+  double _declination = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _listen(context.read<TabCubit>().state == AppTab.qibla);
+    _loadDeclination();
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
+  /// The tab stays alive in an IndexedStack; only read the sensor on screen.
+  void _listen(bool on) {
+    if (on) {
+      _sub ??= headingStream()?.listen(_onHeading, onError: (_) {});
+    } else {
+      _sub?.cancel();
+      _sub = null;
+    }
+  }
+
+  Future<void> _loadDeclination() async {
+    final place = context.read<SettingsCubit>().state.place;
+    final d = await magneticDeclination(place.lat, place.lon);
+    if (mounted && d != 0) setState(() => _declination = d);
+  }
+
+  /// Hands the sensor to the AR view while it is open.
+  Future<void> _openAr() async {
+    _listen(false);
+    await Navigator.of(context).push(QiblaArScreen.route());
+    if (mounted) _listen(context.read<TabCubit>().state == AppTab.qibla);
+  }
+
+  void _onHeading(Heading e) {
+    final (raw, accuracy) = e;
+    // Android reports -180..180; % maps it onto 0..360.
+    final h = (raw + _declination) % 360;
+    setState(() {
+      _sensor = accuracy != null && accuracy > 30 ? _Sensor.weak : _Sensor.live;
+      _dial += turnTo(h, _heading);
+    });
+  }
+
+  String _hint(L10n l) => switch (_sensor) {
+    _Sensor.none => l.dragHint,
+    _Sensor.live => l.compassHold,
+    _Sensor.weak => l.compassCalibrate,
+  };
+
+  bool get _manual => _sensor == _Sensor.none;
 
   String _direction(L10n l, double deg) {
     final names = [
@@ -39,104 +108,140 @@ class _QiblaScreenState extends State<QiblaScreen> {
     final day = context.select((PrayerTimesBloc b) => b.state.day);
     final qibla = day?.qiblaDegrees ?? cairoQibla;
     final km = day?.qiblaKm;
-    final off = ((qibla - _heading + 540) % 360) - 180;
+    final off = turnTo(qibla, _heading);
     final aligned = off.abs() < 4;
     if (aligned && !_wasAligned) HapticFeedback.mediumImpact();
     _wasAligned = aligned;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l.qiblaTitle),
-        actions: const [CityChip(), SizedBox(width: 12)],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(0, 4, 0, 24),
-        children: [
-          AppCard(
-            child: Row(
-              children: [
-                Expanded(
-                  child: _Stat(
-                    icon: Icons.near_me_outlined,
-                    value: '${context.n(qibla.round())}°',
-                    label: _direction(l, qibla),
-                  ),
-                ),
-                Container(width: .7, height: 40, color: Palette.rule),
-                Expanded(
-                  child: _Stat(
-                    icon: Icons.straighten_rounded,
-                    value: km == null ? '—' : context.n(money(km)),
-                    label: l.kmToKaaba,
-                  ),
-                ),
-              ],
+    return BlocListener<TabCubit, AppTab>(
+      listener: (_, tab) => _listen(tab == AppTab.qibla),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l.qiblaTitle),
+          actions: [
+            IconButton(
+              tooltip: l.qiblaAr,
+              onPressed: _openAr,
+              icon: const Icon(Icons.view_in_ar_rounded),
             ),
-          ),
-          const SizedBox(height: 28),
-          Center(
-            child: GestureDetector(
-              onPanUpdate: (d) =>
-                  setState(() => _heading = (_heading - d.delta.dx * .6) % 360),
-              child: SizedBox(
-                width: 300,
-                height: 300,
-                child: TweenAnimationBuilder<double>(
-                  tween: Tween(end: -_heading),
-                  duration: const Duration(milliseconds: 120),
-                  builder: (_, a, _) => Transform.rotate(
-                    angle: a * math.pi / 180,
-                    child: CustomPaint(
-                      painter: _DialPainter(
-                        qibla: qibla,
-                        aligned: aligned,
-                        labels: [
-                          l.compassN,
-                          l.compassE,
-                          l.compassS,
-                          l.compassW,
-                        ],
+            const CityChip(),
+            const SizedBox(width: 12),
+          ],
+        ),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(0, 4, 0, 24),
+          children: [
+            AppCard(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _Stat(
+                      icon: Icons.near_me_outlined,
+                      value: '${context.n(qibla.round())}°',
+                      label: _direction(l, qibla),
+                    ),
+                  ),
+                  Container(width: .7, height: 40, color: Palette.rule),
+                  Expanded(
+                    child: _Stat(
+                      icon: Icons.straighten_rounded,
+                      value: km == null ? '—' : context.n(money(km)),
+                      label: l.kmToKaaba,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 4),
+            // Fixed marker for where the phone points; line the Kaaba up with it.
+            Icon(
+              Icons.arrow_drop_down_rounded,
+              size: 40,
+              color: aligned ? Palette.green : Palette.brass,
+            ),
+            Center(
+              child: GestureDetector(
+                onPanUpdate: _manual
+                    ? (d) => setState(() => _dial -= d.delta.dx * .6)
+                    : null,
+                child: SizedBox(
+                  width: 300,
+                  height: 300,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(end: -_dial),
+                    duration: const Duration(milliseconds: 120),
+                    builder: (_, a, _) => Transform.rotate(
+                      angle: a * math.pi / 180,
+                      child: CustomPaint(
+                        painter: _DialPainter(
+                          qibla: qibla,
+                          aligned: aligned,
+                          labels: [
+                            l.compassN,
+                            l.compassE,
+                            l.compassS,
+                            l.compassW,
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 28),
-          Center(
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: aligned ? Palette.green : Palette.card,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: aligned ? Palette.green : Palette.rule,
+            const SizedBox(height: 28),
+            Center(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: aligned ? Palette.green : Palette.card,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: aligned ? Palette.green : Palette.rule,
+                  ),
+                ),
+                child: Text(
+                  aligned
+                      ? l.facingQibla
+                      : (off > 0
+                            ? l.turnRight(context.n(off.round()))
+                            : l.turnLeft(context.n((-off).round()))),
+                  style: Fonts.body(
+                    16,
+                    weight: FontWeight.w600,
+                    color: aligned ? Palette.cream : Palette.ink,
+                  ),
                 ),
               ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Text(
-                aligned
-                    ? l.facingQibla
-                    : (off > 0
-                          ? l.turnRight(context.n(off.round()))
-                          : l.turnLeft(context.n((-off).round()))),
+                _hint(l),
+                textAlign: TextAlign.center,
                 style: Fonts.body(
-                  16,
-                  weight: FontWeight.w600,
-                  color: aligned ? Palette.cream : Palette.ink,
+                  13,
+                  color: _sensor == _Sensor.weak
+                      ? Palette.clay
+                      : Palette.inkSoft,
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Center(
-            child: Text(
-              l.dragHint,
-              style: Fonts.body(13, color: Palette.inkSoft),
+            const SizedBox(height: 16),
+            Center(
+              child: OutlinedButton.icon(
+                onPressed: _openAr,
+                icon: const Icon(Icons.view_in_ar_rounded),
+                label: Text(l.qiblaAr),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

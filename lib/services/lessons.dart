@@ -15,9 +15,13 @@ class LessonStep {
     this.arabic,
     this.translit,
     this.meaning,
+    this.image,
   });
 
   final IconData icon;
+
+  /// Illustration under assets/lessons/, shown instead of [icon].
+  final String? image;
   final Tr title;
   final Tr body;
 
@@ -75,6 +79,7 @@ const wuduLesson = Lesson(
   steps: [
     LessonStep(
       icon: Icons.favorite_border_rounded,
+      image: 'assets/lessons/wudu_intention.jpg',
       title: (en: 'Intention', ar: 'النية'),
       body: (
         en:
@@ -88,6 +93,7 @@ const wuduLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.back_hand_outlined,
+      image: 'assets/lessons/wudu_hands.jpg',
       title: (en: 'Hands', ar: 'الكفّان'),
       body: (
         en: 'Wash both hands up to the wrists three times, between the fingers.',
@@ -96,6 +102,7 @@ const wuduLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.water_rounded,
+      image: 'assets/lessons/wudu_mouth.jpg',
       title: (en: 'Mouth and nose', ar: 'المضمضة والاستنشاق'),
       body: (
         en:
@@ -106,6 +113,7 @@ const wuduLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.face_outlined,
+      image: 'assets/lessons/wudu_face.jpg',
       title: (en: 'Face', ar: 'الوجه'),
       body: (
         en:
@@ -118,6 +126,7 @@ const wuduLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.front_hand_outlined,
+      image: 'assets/lessons/wudu_arms.jpg',
       title: (en: 'Arms', ar: 'اليدان'),
       body: (
         en:
@@ -128,6 +137,7 @@ const wuduLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.person_outline_rounded,
+      image: 'assets/lessons/wudu_head.jpg',
       title: (en: 'Head', ar: 'مسح الرأس'),
       body: (
         en:
@@ -138,6 +148,7 @@ const wuduLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.hearing_outlined,
+      image: 'assets/lessons/wudu_ears.jpg',
       title: (en: 'Ears', ar: 'الأذنان'),
       body: (
         en:
@@ -148,6 +159,7 @@ const wuduLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.directions_walk_rounded,
+      image: 'assets/lessons/wudu_feet.jpg',
       title: (en: 'Feet', ar: 'القدمان'),
       body: (
         en:
@@ -158,6 +170,7 @@ const wuduLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.auto_awesome_outlined,
+      image: 'assets/lessons/wudu_after.jpg',
       title: (en: 'After wudu', ar: 'بعد الوضوء'),
       body: (
         en:
@@ -248,6 +261,7 @@ const salahLesson = Lesson(
   steps: [
     LessonStep(
       icon: Icons.explore_outlined,
+      image: 'assets/lessons/salah_qibla.jpg',
       title: (en: 'Face the qibla', ar: 'استقبال القبلة'),
       body: (
         en:
@@ -258,6 +272,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.pan_tool_outlined,
+      image: 'assets/lessons/salah_takbir.jpg',
       title: (en: 'Opening takbir', ar: 'تكبيرة الإحرام'),
       body: (
         en:
@@ -273,6 +288,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.menu_book_outlined,
+      image: 'assets/lessons/salah_qiyam.jpg',
       title: (en: 'Opening dua', ar: 'دعاء الاستفتاح'),
       body: (
         en: 'Quietly, in the first rak\'ah only.',
@@ -290,6 +306,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.auto_stories_outlined,
+      image: 'assets/lessons/salah_qiyam.jpg',
       title: (en: 'Al-Fatiha', ar: 'الفاتحة'),
       body: (
         en:
@@ -304,6 +321,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.accessibility_new_rounded,
+      image: 'assets/lessons/salah_ruku.jpg',
       title: (en: 'Bowing (ruku\')', ar: 'الركوع'),
       body: (
         en:
@@ -317,6 +335,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.accessibility_rounded,
+      image: 'assets/lessons/salah_rising.jpg',
       title: (en: 'Rising', ar: 'الرفع من الركوع'),
       body: (
         en: 'Rise saying the first phrase; once standing, say the second.',
@@ -328,6 +347,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.south_rounded,
+      image: 'assets/lessons/salah_sujud.jpg',
       title: (en: 'Prostration (sujud)', ar: 'السجود'),
       body: (
         en:
@@ -343,6 +363,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.airline_seat_legroom_normal_rounded,
+      image: 'assets/lessons/salah_sitting.jpg',
       title: (en: 'Sitting', ar: 'الجلسة بين السجدتين'),
       body: (
         en:
@@ -356,6 +377,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.replay_rounded,
+      image: 'assets/lessons/salah_qiyam.jpg',
       title: (en: 'Second rak\'ah', ar: 'الركعة الثانية'),
       body: (
         en:
@@ -368,6 +390,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.chair_alt_outlined,
+      image: 'assets/lessons/salah_tashahhud.jpg',
       title: (en: 'Tashahhud', ar: 'التشهد'),
       body: (
         en: 'After the second rak\'ah, sit and recite, pointing your right index finger:',
@@ -386,6 +409,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.star_outline_rounded,
+      image: 'assets/lessons/salah_tashahhud.jpg',
       title: (en: 'Blessings on the Prophet ﷺ', ar: 'الصلاة الإبراهيمية'),
       body: (
         en: 'In the final sitting, continue with:',
@@ -403,6 +427,7 @@ const salahLesson = Lesson(
     ),
     LessonStep(
       icon: Icons.waving_hand_outlined,
+      image: 'assets/lessons/salah_taslim.jpg',
       title: (en: 'Ending (taslim)', ar: 'التسليم'),
       body: (
         en: 'Turn your head to the right and say it, then to the left.',

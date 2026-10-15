@@ -14,6 +14,7 @@ import '../services/quran_text.dart';
 enum ExtraKind {
   ayah(8 * 60),
   kahf(null),
+  salawat(11 * 60),
   fridayHour(null),
   suhoor(null),
   wird(21 * 60),
@@ -25,9 +26,16 @@ enum ExtraKind {
   final int? defaultTime;
 }
 
+/// Kahf, salawat and the last hour — on by default for new installs.
+const _fridayOnByDefault = {
+  ExtraKind.kahf,
+  ExtraKind.salawat,
+  ExtraKind.fridayHour,
+};
+
 final class ExtraReminders extends Equatable {
   const ExtraReminders({
-    this.on = const {},
+    this.on = _fridayOnByDefault,
     this.times = const {},
     this.denied = false,
   });
@@ -48,8 +56,8 @@ final class ExtraReminders extends Equatable {
   List<Object?> get props => [on, times, denied];
 }
 
-/// Ayah of the day, daily Quran wird, Surah al-Kahf and sadaqah on Friday,
-/// the last hour of Friday and, in Ramadan, suhoor.
+/// Ayah of the day, daily Quran wird, Friday Kahf / salawat / last-hour
+/// dua, sadaqah on Friday and, in Ramadan, suhoor.
 class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
   ExtraRemindersCubit({
     required this._notifier,
@@ -201,6 +209,21 @@ class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
           );
         }
       }
+      if (state.on.contains(ExtraKind.salawat) &&
+          date.weekday == DateTime.friday) {
+        final when = at(d, state.timeOf(ExtraKind.salawat));
+        if (when.isAfter(local)) {
+          out.add(
+            ExtraReminder(
+              id: extraIdBase + 120 + d,
+              at: when.toUtc(),
+              title: l.salawatReminderTitle,
+              body: l.salawatReminderBody,
+              payload: 'friday',
+            ),
+          );
+        }
+      }
     }
 
     final day = _day;
@@ -233,6 +256,7 @@ class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
                 at: when,
                 title: l.fridayHourTitle,
                 body: l.fridayHourBody,
+                payload: 'friday',
               ),
             );
           }

@@ -2,8 +2,23 @@ import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../services/clock.dart';
+import '../services/islamic_api.dart';
 
 String _dayKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
+
+/// Islamic day of Jumu'ah: Maghrib Thursday → Maghrib Friday.
+/// Without prayer times, Maghrib is taken as 18:00.
+bool isJumuahMood(DateTime now, {PrayerDay? day}) {
+  final clock = day?.cityNow(now) ?? now;
+  final maghrib =
+      day?.prayers.where((p) => p.name == 'Maghrib').firstOrNull?.on(clock) ??
+      DateTime(clock.year, clock.month, clock.day, 18);
+  return switch (clock.weekday) {
+    DateTime.thursday => !clock.isBefore(maghrib),
+    DateTime.friday => clock.isBefore(maghrib),
+    _ => false,
+  };
+}
 
 /// Friday's deeds, most important first.
 enum FridayDeed { prayer, ghusl, kahf, salawat, early, clothes, dua }

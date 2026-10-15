@@ -2998,7 +2998,7 @@ abstract class L10n {
   /// No description provided for @kahfReminderBody.
   ///
   /// In en, this message translates to:
-  /// **'Read Surah Al-Kahf and send plenty of salawat on the Prophet ﷺ.'**
+  /// **'Read Surah Al-Kahf today — a light between two Fridays.'**
   String get kahfReminderBody;
 
   /// No description provided for @fridayHourTitle.
@@ -3010,7 +3010,7 @@ abstract class L10n {
   /// No description provided for @fridayHourBody.
   ///
   /// In en, this message translates to:
-  /// **'An hour in which du\'a is answered — until Maghrib.'**
+  /// **'Last hour before Maghrib — make du\'a.\n\nرَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ\n\nOur Lord, give us good in this world and the Hereafter, and protect us from the Fire.'**
   String get fridayHourBody;
 
   /// No description provided for @fridayHourRange.
@@ -4553,6 +4553,84 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Recite them as you lie down to sleep'**
   String get azkarSleepSub;
+
+  /// No description provided for @compassHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold your phone flat and turn until the Kaaba points up'**
+  String get compassHold;
+
+  /// No description provided for @compassCalibrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Low accuracy — move your phone in a figure 8 and keep it away from metal'**
+  String get compassCalibrate;
+
+  /// No description provided for @qiblaAr.
+  ///
+  /// In en, this message translates to:
+  /// **'AR Qibla'**
+  String get qiblaAr;
+
+  /// No description provided for @qiblaArHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold your phone upright and turn until the prayer mat faces the Kaaba'**
+  String get qiblaArHint;
+
+  /// No description provided for @qiblaArNoCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera unavailable. Allow camera access to see the Qibla around you.'**
+  String get qiblaArNoCamera;
+
+  /// No description provided for @kaaba.
+  ///
+  /// In en, this message translates to:
+  /// **'Kaaba'**
+  String get kaaba;
+
+  /// No description provided for @qiblaArPray.
+  ///
+  /// In en, this message translates to:
+  /// **'You can start your prayer'**
+  String get qiblaArPray;
+
+  /// No description provided for @featHajj.
+  ///
+  /// In en, this message translates to:
+  /// **'Hajj & Umrah'**
+  String get featHajj;
+
+  /// No description provided for @featHajjSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Rites step by step, with pictures'**
+  String get featHajjSub;
+
+  /// No description provided for @salawatReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday · Salawat'**
+  String get salawatReminderTitle;
+
+  /// No description provided for @salawatReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Send salawat on the Prophet ﷺ today.\n\nاللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ'**
+  String get salawatReminderBody;
+
+  /// No description provided for @salawatReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Salawat on Friday'**
+  String get salawatReminder;
+
+  /// No description provided for @salawatReminderSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday at 11:00 AM'**
+  String get salawatReminderSub;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

@@ -60,8 +60,8 @@
         <receiver android:name=".widgets.TasbihWidget" android:exported="false" android:label="@string/widget_tasbih">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.example.muslim.TASBIH_TAP" />
-                <action android:name="com.example.muslim.TASBIH_RESET" />
+                <action android:name="com.elmoahm.sabeelk.TASBIH_TAP" />
+                <action android:name="com.elmoahm.sabeelk.TASBIH_RESET" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_tasbih_info" />
         </receiver>

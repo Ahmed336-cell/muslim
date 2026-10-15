@@ -35,20 +35,49 @@ void main() {
     expect(dailyHadith.every((h) => h.ar.isNotEmpty && h.en.isNotEmpty), true);
   });
 
-  test('Friday reminders: Kahf at 10 and an hour before Maghrib', () async {
+  test('Jumu\'ah mood is Maghrib Thursday to Maghrib Friday', () {
+    final thu = DateTime(2026, 10, 15); // Thursday
+    final fri = DateTime(2026, 10, 16);
+    final day = calc.today(cairo, DateTime.utc(2026, 10, 15, 9));
+    final maghrib = day.prayers.firstWhere((p) => p.name == 'Maghrib');
+    final at = maghrib.on(thu);
+    expect(
+      isJumuahMood(at.subtract(const Duration(minutes: 1)), day: day),
+      false,
+    );
+    expect(isJumuahMood(at, day: day), true);
+    expect(
+      isJumuahMood(DateTime(fri.year, fri.month, fri.day, 10), day: day),
+      true,
+    );
+    final friMaghrib = maghrib.on(fri);
+    expect(
+      isJumuahMood(friMaghrib.subtract(const Duration(minutes: 1)), day: day),
+      true,
+    );
+    expect(isJumuahMood(friMaghrib, day: day), false);
+    expect(isJumuahMood(DateTime(2026, 10, 14, 20)), false);
+  });
+
+  test('Friday reminders: Kahf, salawat and last-hour dua', () async {
     // Thursday noon in Cairo.
     final now = DateTime.utc(2026, 10, 15, 9);
     final day = calc.today(cairo, now);
     final notifier = _FakeNotifier();
     final cubit = ExtraRemindersCubit(notifier: notifier, now: () => now);
     await cubit.sync(day, 'en');
-    await cubit.setEnabled(ExtraKind.kahf, true);
-    await cubit.setEnabled(ExtraKind.fridayHour, true);
 
     final kahf = notifier.scheduled.where((r) => r.payload == 'kahf').toList();
     expect(kahf, hasLength(1));
     expect(kahf.single.at.toLocal().weekday, DateTime.friday);
     expect(kahf.single.at.toLocal().hour, 10);
+
+    final salawat = notifier.scheduled
+        .where((r) => r.payload == 'friday' && r.id >= extraIdBase + 120)
+        .single;
+    expect(salawat.at.toLocal().weekday, DateTime.friday);
+    expect(salawat.at.toLocal().hour, 11);
+    expect(salawat.body, contains('مُحَمَّدٍ'));
 
     final hour = notifier.scheduled
         .where((r) => r.id >= extraIdBase + 40 && r.id < extraIdBase + 60)
@@ -65,14 +94,22 @@ void main() {
         maghrib.minute,
       ).subtract(const Duration(hours: 1)),
     );
-    expect(notifier.scheduled.map((r) => r.id).toSet(), hasLength(2));
+    expect(hour.body, contains('رَبَّنَا آتِنَا'));
+    expect(notifier.scheduled.map((r) => r.id).toSet(), hasLength(3));
   });
+
+  Future<void> only(ExtraRemindersCubit cubit, Set<ExtraKind> kinds) async {
+    for (final k in ExtraKind.values) {
+      final want = kinds.contains(k);
+      if (cubit.state.on.contains(k) != want) await cubit.setEnabled(k, want);
+    }
+  }
 
   test('suhoor reminders only in Ramadan', () async {
     final notifier = _FakeNotifier();
     var now = DateTime.utc(2026, 10, 12, 9);
     final cubit = ExtraRemindersCubit(notifier: notifier, now: () => now);
-    await cubit.setEnabled(ExtraKind.suhoor, true);
+    await only(cubit, {ExtraKind.suhoor});
     await cubit.sync(calc.today(cairo, now), 'ar');
     expect(notifier.scheduled, isEmpty);
 
@@ -88,7 +125,7 @@ void main() {
     final notifier = _FakeNotifier();
     final now = DateTime(2026, 10, 12, 6);
     final cubit = ExtraRemindersCubit(notifier: notifier, now: () => now);
-    await cubit.setEnabled(ExtraKind.ayah, true);
+    await only(cubit, {ExtraKind.ayah});
     expect(notifier.scheduled, hasLength(8));
     final (s, a) = ayahOfDay(now);
     expect(notifier.scheduled.first.payload, 'ayah:$s:$a');

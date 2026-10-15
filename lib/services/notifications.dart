@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -8,6 +9,10 @@ import 'package:timezone/timezone.dart' as tz;
 import 'adhan.dart';
 import 'hisn.dart';
 import 'islamic_api.dart';
+
+/// White silhouette; Android tints it and rejects full-colour icons.
+const _icon = 'ic_stat_sabeelak';
+const _brand = Color(0xFF1E4D3A);
 
 class PrayerReminder {
   const PrayerReminder({
@@ -158,7 +163,7 @@ class PrayerNotifier {
     tzdata.initializeTimeZones();
     await _plugin.initialize(
       settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings(_icon),
         iOS: DarwinInitializationSettings(
           requestAlertPermission: false,
           requestBadgePermission: false,
@@ -221,6 +226,8 @@ class PrayerNotifier {
               'prayer_times',
               'Prayer times',
               channelDescription: 'A reminder when each prayer time begins',
+              icon: _icon,
+              color: _brand,
               importance: Importance.high,
               priority: Priority.high,
             )
@@ -228,6 +235,8 @@ class PrayerNotifier {
               voice.channel,
               'Adhan · ${voice.english}',
               channelDescription: 'The adhan when each prayer time begins',
+              icon: _icon,
+              color: _brand,
               importance: Importance.max,
               priority: Priority.max,
               sound: RawResourceAndroidNotificationSound(voice.sound),
@@ -269,6 +278,8 @@ class PrayerNotifier {
         'azkar',
         'Morning & evening adhkar',
         channelDescription: 'A daily reminder to read the adhkar',
+        icon: _icon,
+        color: _brand,
         importance: Importance.high,
         priority: Priority.high,
       ),
@@ -296,6 +307,8 @@ class PrayerNotifier {
         'daily',
         'Daily ayah, Friday & Ramadan',
         channelDescription: 'Ayah of the day, Friday and suhoor reminders',
+        icon: _icon,
+        color: _brand,
         importance: Importance.high,
         priority: Priority.high,
       ),

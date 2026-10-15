@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/clock_cubit.dart';
 import '../bloc/duas/dua_of_day_cubit.dart';
+import '../bloc/friday_cubit.dart';
 import '../bloc/fasting/fasting_bloc.dart';
 import '../bloc/names/names_bloc.dart';
 import '../bloc/prayer_log_cubit.dart';
@@ -419,7 +420,7 @@ class _Occasion extends StatelessWidget {
         child: RamadanCard(),
       );
     }
-    if (now.weekday != DateTime.friday) return const SizedBox.shrink();
+    if (!isJumuahMood(now, day: day)) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: AppCard(

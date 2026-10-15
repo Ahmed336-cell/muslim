@@ -1,4 +1,6 @@
 import ActivityKit
+import CoreLocation
+import CoreMotion
 import Flutter
 import UIKit
 
@@ -20,6 +22,120 @@ import UIKit
         name: "muslim/live_activity", binaryMessenger: registrar.messenger())
       channel.setMethodCallHandler(LiveActivityChannel.handle)
     }
+    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "Heading") {
+      FlutterEventChannel(name: "sabeelak/heading", binaryMessenger: registrar.messenger())
+        .setStreamHandler(HeadingStream.shared)
+      FlutterEventChannel(
+        name: "sabeelak/camera_heading", binaryMessenger: registrar.messenger()
+      )
+      .setStreamHandler(CameraHeadingStream())
+    }
+  }
+}
+
+/// Where the back camera points, as [degrees from north, accuracy], for the
+/// AR Qibla view. CLHeading follows the top edge, which is meaningless when the
+/// phone is held upright, so this reads the device attitude instead.
+final class CameraHeadingStream: NSObject, FlutterStreamHandler {
+  private let motion = CMMotionManager()
+
+  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+    -> FlutterError?
+  {
+    guard motion.isDeviceMotionAvailable else {
+      events(nil)
+      return nil
+    }
+    let frames = CMMotionManager.availableAttitudeReferenceFrames()
+    let status = CLLocationManager().authorizationStatus
+    let located = status == .authorizedWhenInUse || status == .authorizedAlways
+    let frame: CMAttitudeReferenceFrame =
+      located && frames.contains(.xTrueNorthZVertical)
+      ? .xTrueNorthZVertical : .xMagneticNorthZVertical
+    motion.deviceMotionUpdateInterval = 1.0 / 30
+    motion.startDeviceMotionUpdates(using: frame, to: .main) { data, _ in
+      guard let data else { return }
+      // Rows are the device axes in the reference frame (X north, Y west,
+      // Z up); the camera looks along the device's -Z.
+      let m = data.attitude.rotationMatrix
+      var degrees = atan2(m.m32, -m.m31) * 180 / .pi
+      degrees = (degrees + 360).truncatingRemainder(dividingBy: 360)
+      let accuracy: Double =
+        switch data.magneticField.accuracy {
+        case .high: 10
+        case .medium: 20
+        case .low: 40
+        default: -1
+        }
+      events([degrees, accuracy])
+    }
+    return nil
+  }
+
+  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    motion.stopDeviceMotionUpdates()
+    return nil
+  }
+}
+
+/// Compass heading for lib/screens/qibla_screen.dart as [degrees, accuracy].
+/// True north needs location updates on the same manager; without location
+/// access it falls back to magnetic north instead of reporting -1.
+final class HeadingStream: NSObject, FlutterStreamHandler, CLLocationManagerDelegate {
+  static let shared = HeadingStream()
+
+  private let manager = CLLocationManager()
+  private var sink: FlutterEventSink?
+
+  override init() {
+    super.init()
+    manager.delegate = self
+    manager.headingFilter = 0.5
+    manager.desiredAccuracy = kCLLocationAccuracyKilometer
+  }
+
+  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+    -> FlutterError?
+  {
+    sink = events
+    guard CLLocationManager.headingAvailable() else {
+      events(nil)
+      return nil
+    }
+    startLocationIfAllowed()
+    manager.startUpdatingHeading()
+    return nil
+  }
+
+  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    manager.stopUpdatingHeading()
+    manager.stopUpdatingLocation()
+    sink = nil
+    return nil
+  }
+
+  private func startLocationIfAllowed() {
+    switch manager.authorizationStatus {
+    case .authorizedWhenInUse, .authorizedAlways: manager.startUpdatingLocation()
+    default: break
+    }
+  }
+
+  func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+    if sink != nil { startLocationIfAllowed() }
+  }
+
+  func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
+    guard heading.headingAccuracy >= 0 else { return }
+    var degrees = heading.trueHeading >= 0 ? heading.trueHeading : heading.magneticHeading
+    let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+    switch scene?.interfaceOrientation {
+    case .landscapeLeft: degrees -= 90
+    case .landscapeRight: degrees += 90
+    case .portraitUpsideDown: degrees += 180
+    default: break
+    }
+    sink?([(degrees + 360).truncatingRemainder(dividingBy: 360), heading.headingAccuracy])
   }
 }
 

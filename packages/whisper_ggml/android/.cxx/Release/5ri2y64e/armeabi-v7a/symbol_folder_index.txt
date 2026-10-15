@@ -1,0 +1,1 @@
+/Users/ahmedmaher/StudioProjects/muslim/build/whisper_ggml/intermediates/cxx/Release/5ri2y64e/obj/armeabi-v7a

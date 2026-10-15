@@ -38,6 +38,11 @@ class ExtraReminderTile extends StatelessWidget {
         l.kahfReminder,
         l.kahfReminderSub,
       ),
+      ExtraKind.salawat => (
+        Icons.favorite_outline_rounded,
+        l.salawatReminder,
+        l.salawatReminderSub,
+      ),
       ExtraKind.fridayHour => (
         Icons.hourglass_bottom_rounded,
         l.fridayHourReminder,

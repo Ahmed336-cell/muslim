@@ -1637,13 +1637,14 @@ class L10nAr extends L10n {
   String get kahfReminderTitle => 'الجمعة · سورة الكهف';
 
   @override
-  String get kahfReminderBody => 'اقرأ سورة الكهف وأكثر من الصلاة على النبي ﷺ.';
+  String get kahfReminderBody => 'اقرأ سورة الكهف اليوم — نور بين جمعتين.';
 
   @override
   String get fridayHourTitle => 'آخر ساعة من يوم الجمعة';
 
   @override
-  String get fridayHourBody => 'ساعة يُرجى فيها إجابة الدعاء — حتى المغرب.';
+  String get fridayHourBody =>
+      'آخر ساعة قبل المغرب — أكثر من الدعاء.\n\nرَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ';
 
   @override
   String fridayHourRange(String from, String to) {
@@ -2527,4 +2528,48 @@ class L10nAr extends L10n {
 
   @override
   String get azkarSleepSub => 'اقرأها إذا أويت إلى فراشك';
+
+  @override
+  String get compassHold =>
+      'أمسك الهاتف مستوياً ودُر حتى تشير الكعبة إلى الأعلى';
+
+  @override
+  String get compassCalibrate =>
+      'الدقة منخفضة — حرّك الهاتف على شكل رقم 8 وأبعده عن المعادن';
+
+  @override
+  String get qiblaAr => 'القبلة بالواقع المعزز';
+
+  @override
+  String get qiblaArHint =>
+      'أمسك الهاتف رأسياً ودُر حتى يتجه المصلّى نحو الكعبة';
+
+  @override
+  String get qiblaArNoCamera =>
+      'الكاميرا غير متاحة. اسمح بالوصول إلى الكاميرا لترى القبلة من حولك.';
+
+  @override
+  String get kaaba => 'الكعبة';
+
+  @override
+  String get qiblaArPray => 'يمكنك البدء في الصلاة';
+
+  @override
+  String get featHajj => 'الحج والعمرة';
+
+  @override
+  String get featHajjSub => 'المناسك خطوة بخطوة بالصور';
+
+  @override
+  String get salawatReminderTitle => 'الجمعة · الصلاة على النبي';
+
+  @override
+  String get salawatReminderBody =>
+      'أكثر اليوم من الصلاة على النبي ﷺ.\n\nاللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ';
+
+  @override
+  String get salawatReminder => 'الصلاة على النبي يوم الجمعة';
+
+  @override
+  String get salawatReminderSub => 'يوم الجمعة الساعة ١١ صباحًا';
 }

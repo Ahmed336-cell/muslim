@@ -911,9 +911,9 @@
   "featFridaySub": "Al-Kahf, salawat and the last hour",
   "dailyAyahTitle": "Ayah of the day",
   "kahfReminderTitle": "Friday · Surah Al-Kahf",
-  "kahfReminderBody": "Read Surah Al-Kahf and send plenty of salawat on the Prophet ﷺ.",
+  "kahfReminderBody": "Read Surah Al-Kahf today — a light between two Fridays.",
   "fridayHourTitle": "The last hour of Friday",
-  "fridayHourBody": "An hour in which du'a is answered — until Maghrib.",
+  "fridayHourBody": "Last hour before Maghrib — make du'a.\n\nرَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ\n\nOur Lord, give us good in this world and the Hereafter, and protect us from the Fire.",
   "fridayHourRange": "From {from} until Maghrib at {to}",
   "@fridayHourRange": {
     "placeholders": {
@@ -1541,5 +1541,18 @@
     }
   },
   "showLess": "Show less",
-  "azkarSleepSub": "Recite them as you lie down to sleep"
+  "azkarSleepSub": "Recite them as you lie down to sleep",
+  "compassHold": "Hold your phone flat and turn until the Kaaba points up",
+  "compassCalibrate": "Low accuracy — move your phone in a figure 8 and keep it away from metal",
+  "qiblaAr": "AR Qibla",
+  "qiblaArHint": "Hold your phone upright and turn until the prayer mat faces the Kaaba",
+  "qiblaArNoCamera": "Camera unavailable. Allow camera access to see the Qibla around you.",
+  "kaaba": "Kaaba",
+  "qiblaArPray": "You can start your prayer",
+  "featHajj": "Hajj & Umrah",
+  "featHajjSub": "Rites step by step, with pictures",
+  "salawatReminderTitle": "Friday · Salawat",
+  "salawatReminderBody": "Send salawat on the Prophet ﷺ today.\n\nاللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ",
+  "salawatReminder": "Salawat on Friday",
+  "salawatReminderSub": "Friday at 11:00 AM"
 }

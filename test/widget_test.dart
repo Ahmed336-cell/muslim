@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslim/bloc/onboarding_cubit.dart';
 import 'package:muslim/bloc/settings_cubit.dart';
+import 'package:muslim/bloc/tab_cubit.dart';
 import 'package:muslim/data.dart';
 import 'package:muslim/l10n/l10n.dart';
 import 'package:muslim/main.dart';
@@ -142,7 +143,8 @@ void main() {
     ) async {
       await pumpApp(tester, 'en');
       expect(find.text('Home'), findsOneWidget);
-      expect(find.text('Qibla'), findsWidgets);
+      expect(find.text('Prayer'), findsWidgets);
+      expect(find.text('Qibla'), qiblaEnabled ? findsWidgets : findsNothing);
       expect(find.text('الرئيسية'), findsNothing);
       final dir = Directionality.of(tester.element(find.byType(Shell)));
       expect(dir, TextDirection.ltr);

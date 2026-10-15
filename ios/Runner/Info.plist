@@ -31,6 +31,8 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<key>NSCameraUsageDescription</key>
+		<string>The camera shows the Qibla direction over your surroundings.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Your location is used to calculate accurate prayer times and the Qibla direction.</string>
 		<key>NSMicrophoneUsageDescription</key>
@@ -78,7 +80,7 @@
 		<array>
 			<dict>
 				<key>CFBundleURLName</key>
-				<string>com.example.muslim.widget</string>
+				<string>com.elmoahm.sabeelk.widget</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>muslim</string>
