@@ -26,6 +26,13 @@ void main() {
   final cairo = cityById('cairo').place;
   setUp(useMemoryStorage);
 
+  Future<void> only(ExtraRemindersCubit cubit, Set<ExtraKind> kinds) async {
+    for (final k in ExtraKind.values) {
+      final want = kinds.contains(k);
+      if (cubit.state.on.contains(k) != want) await cubit.setEnabled(k, want);
+    }
+  }
+
   test('daily ayah and hadith change by day and stay in range', () {
     final a = DateTime(2026, 10, 12);
     final b = DateTime(2026, 10, 13);
@@ -65,6 +72,11 @@ void main() {
     final day = calc.today(cairo, now);
     final notifier = _FakeNotifier();
     final cubit = ExtraRemindersCubit(notifier: notifier, now: () => now);
+    await only(cubit, {
+      ExtraKind.kahf,
+      ExtraKind.salawat,
+      ExtraKind.fridayHour,
+    });
     await cubit.sync(day, 'en');
 
     final kahf = notifier.scheduled.where((r) => r.payload == 'kahf').toList();
@@ -97,13 +109,6 @@ void main() {
     expect(hour.body, contains('رَبَّنَا آتِنَا'));
     expect(notifier.scheduled.map((r) => r.id).toSet(), hasLength(3));
   });
-
-  Future<void> only(ExtraRemindersCubit cubit, Set<ExtraKind> kinds) async {
-    for (final k in ExtraKind.values) {
-      final want = kinds.contains(k);
-      if (cubit.state.on.contains(k) != want) await cubit.setEnabled(k, want);
-    }
-  }
 
   test('suhoor reminders only in Ramadan', () async {
     final notifier = _FakeNotifier();

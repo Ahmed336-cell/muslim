@@ -43,6 +43,17 @@ const _credits = <_Credit>[
     licence: null,
   ),
   (
+    titleEn: 'Tawashih',
+    titleAr: 'التواشيح',
+    bodyEn:
+        'Munshid catalogues and tracks from public Archive.org items '
+        '(Naqshabandee, Tawashih, classic ibtihal collections).',
+    bodyAr:
+        'منشدون ومقاطع من مجموعات Archive.org العامة '
+        '(النقشبندي، تواشيح، إبتهالات كلاسيكية).',
+    licence: null,
+  ),
+  (
     titleEn: 'Hisn al-Muslim',
     titleAr: 'حصن المسلم',
     bodyEn: "Sa'id ibn Wahf al-Qahtani, from hisnmuslim.com, with its audio.",

@@ -173,6 +173,7 @@ class CityChip extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: 40),
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
+          color: Palette.paperDeep.withValues(alpha: .45),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: color.withValues(alpha: .3)),
         ),

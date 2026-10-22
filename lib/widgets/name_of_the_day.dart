@@ -7,6 +7,7 @@ import '../l10n/l10n.dart';
 import '../screens/names_screen.dart';
 import '../theme.dart';
 import 'common.dart';
+import 'share_card.dart';
 import 'shimmer.dart';
 import 'star_pattern.dart';
 
@@ -44,7 +45,7 @@ class NameOfTheDay extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(18, 16, 18, 4),
+              padding: const EdgeInsets.fromLTRB(18, 16, 8, 4),
               child: Row(
                 children: [
                   StarMark(size: 9, color: Palette.clay),
@@ -53,6 +54,26 @@ class NameOfTheDay extends StatelessWidget {
                   Text(
                     context.n(name.number),
                     style: Fonts.mono(12, color: Palette.inkSoft),
+                  ),
+                  IconButton(
+                    tooltip: l.shareImage,
+                    onPressed: () => showShareCard(
+                      context,
+                      sheetTitle: l.shareName,
+                      eyebrow: l.featNames,
+                      arabic: name.arabic,
+                      subtitle: ar ? null : name.transliteration,
+                      meaning: name.translation,
+                      description: name.meaning.isEmpty ? null : name.meaning,
+                      citation:
+                          '${context.n(name.number)} / ${context.n(99)}',
+                      allowHideMeaning: name.translation.isNotEmpty,
+                    ),
+                    icon: Icon(
+                      Icons.ios_share_rounded,
+                      size: 20,
+                      color: Palette.inkSoft,
+                    ),
                   ),
                 ],
               ),

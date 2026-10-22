@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../bloc/clock_cubit.dart';
 import '../data.dart';
@@ -12,6 +11,7 @@ import '../theme.dart';
 import 'ayah_share.dart';
 import 'common.dart';
 import 'quran_text.dart';
+import 'share_card.dart';
 import 'shimmer.dart';
 import 'star_pattern.dart';
 
@@ -163,28 +163,21 @@ class HadithCard extends StatelessWidget {
               StarMark(size: 9, color: Palette.clay),
               const SizedBox(width: 8),
               Expanded(child: Caption(l.hadithTitle)),
-              Builder(
-                builder: (context) => IconButton(
-                  tooltip: l.share,
-                  onPressed: () {
-                    final box = context.findRenderObject() as RenderBox?;
-                    SharePlus.instance.share(
-                      ShareParams(
-                        text:
-                            '${h.ar}\n\n'
-                            '${lang == 'ar' ? '' : '${h.en}\n\n'}'
-                            '— ${h.source(lang)}',
-                        sharePositionOrigin: box == null
-                            ? null
-                            : box.localToGlobal(Offset.zero) & box.size,
-                      ),
-                    );
-                  },
-                  icon: Icon(
-                    Icons.ios_share_rounded,
-                    size: 20,
-                    color: Palette.inkSoft,
-                  ),
+              IconButton(
+                tooltip: l.shareImage,
+                onPressed: () => showShareCard(
+                  context,
+                  sheetTitle: l.shareHadith,
+                  eyebrow: l.hadithTitle,
+                  arabic: h.ar,
+                  meaning: lang == 'ar' ? null : h.en,
+                  citation: h.source(lang),
+                  allowHideMeaning: lang != 'ar',
+                ),
+                icon: Icon(
+                  Icons.ios_share_rounded,
+                  size: 20,
+                  color: Palette.inkSoft,
                 ),
               ),
             ],

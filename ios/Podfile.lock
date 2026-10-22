@@ -33,6 +33,11 @@ PODS:
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
+  - url_launcher_ios (0.0.1):
+    - Flutter
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - whisper_ggml (1.0.1):
     - Flutter
 
@@ -52,6 +57,8 @@ DEPENDENCIES:
   - record_ios (from `.symlinks/plugins/record_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
   - whisper_ggml (from `.symlinks/plugins/whisper_ggml/ios`)
 
 EXTERNAL SOURCES:
@@ -85,6 +92,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/share_plus/ios"
   sqflite_darwin:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
   whisper_ggml:
     :path: ".symlinks/plugins/whisper_ggml/ios"
 
@@ -104,6 +115,8 @@ SPEC CHECKSUMS:
   record_ios: 390a30c7caaf8b5d0fb1cb1d2fd5064b48b4520c
   share_plus: eccd7beb7cea61271aeed1800e8ccb2b952c0c7f
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
+  url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
+  webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
   whisper_ggml: e49d353bd4736293ca18f7a1e90accec56d9b57d
 
 PODFILE CHECKSUM: 187556c577288362f623f90c161df5a849f9cb01

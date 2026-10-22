@@ -22,6 +22,10 @@ import UIKit
         name: "muslim/live_activity", binaryMessenger: registrar.messenger())
       channel.setMethodCallHandler(LiveActivityChannel.handle)
     }
+    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "Links") {
+      FlutterMethodChannel(name: "muslim/links", binaryMessenger: registrar.messenger())
+        .setMethodCallHandler(LinksChannel.handle)
+    }
     if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "Heading") {
       FlutterEventChannel(name: "sabeelak/heading", binaryMessenger: registrar.messenger())
         .setStreamHandler(HeadingStream.shared)
@@ -29,6 +33,22 @@ import UIKit
         name: "sabeelak/camera_heading", binaryMessenger: registrar.messenger()
       )
       .setStreamHandler(CameraHeadingStream())
+    }
+  }
+}
+
+/// Opens https links in Safari — reliable when url_launcher's pigeon channel is down.
+enum LinksChannel {
+  static func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    switch call.method {
+    case "open":
+      guard let raw = call.arguments as? String, let url = URL(string: raw) else {
+        result(false)
+        return
+      }
+      UIApplication.shared.open(url, options: [:]) { result($0) }
+    default:
+      result(FlutterMethodNotImplemented)
     }
   }
 }

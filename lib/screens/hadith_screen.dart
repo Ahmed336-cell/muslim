@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../bloc/hadith_saved_cubit.dart';
 import '../l10n/l10n.dart';
 import '../services/hadith.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/share_card.dart';
 import '../widgets/shimmer.dart';
 
 /// Hadith collections: Nawawi's Forty, Forty Qudsi and Riyad as-Salihin.
@@ -331,26 +331,38 @@ class HadithCard extends StatelessWidget {
                     size: 19,
                   ),
                 ),
-                Builder(
-                  builder: (context) => IconButton(
-                    visualDensity: VisualDensity.compact,
-                    tooltip: l.share,
-                    onPressed: () {
-                      final box = context.findRenderObject() as RenderBox?;
-                      SharePlus.instance.share(
-                        ShareParams(
-                          text: _text(context),
-                          sharePositionOrigin: box == null
-                              ? null
-                              : box.localToGlobal(Offset.zero) & box.size,
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.ios_share_rounded,
-                      color: Palette.inkSoft,
-                      size: 19,
-                    ),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: l.shareImage,
+                  onPressed: () {
+                    final ar = context.isAr;
+                    final book = switch (hadith.book) {
+                      HadithBook.nawawi =>
+                        ar ? 'الأربعون النووية' : "Nawawi's Forty",
+                      HadithBook.qudsi =>
+                        ar ? 'الأربعون القدسية' : 'Forty Qudsi',
+                      HadithBook.riyad =>
+                        ar ? 'رياض الصالحين' : 'Riyad as-Salihin',
+                    };
+                    showShareCard(
+                      context,
+                      sheetTitle: l.shareHadith,
+                      eyebrow: l.featHadith,
+                      arabic: hadith.arabic,
+                      subtitle: ar || hadith.narrator.isEmpty
+                          ? null
+                          : hadith.narrator,
+                      meaning: ar || hadith.english.isEmpty
+                          ? null
+                          : hadith.english,
+                      citation: '$book · ${context.n(hadith.number)}',
+                      allowHideMeaning: !ar && hadith.english.isNotEmpty,
+                    );
+                  },
+                  icon: Icon(
+                    Icons.ios_share_rounded,
+                    color: Palette.inkSoft,
+                    size: 19,
                   ),
                 ),
               ],

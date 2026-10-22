@@ -27,7 +27,7 @@ class DhikrCard extends StatelessWidget {
     final l = context.l;
     final ar = context.isAr;
     final audioKey = 'hisn:${dhikr.id}';
-    final playing = context.select((AudioCubit c) => c.state == audioKey);
+    final playing = context.select((AudioCubit c) => c.isPlaying(audioKey));
 
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 250),

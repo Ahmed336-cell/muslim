@@ -15,6 +15,9 @@ enum RecitationKind {
 
   /// Whole surahs from a reciter's recording.
   surahs,
+
+  /// Prophetic praise (تواشيح) queue from a munshid.
+  tawashih,
 }
 
 final class RecitationState extends Equatable {
@@ -254,6 +257,45 @@ class RecitationCubit extends Cubit<RecitationState> {
       ),
     );
     await _load(tracks, state.index);
+  }
+
+  /// Queues [tracks] from a tawashih munshid, starting at [index].
+  /// [local] maps 1-based track numbers to downloaded files.
+  /// [recording] is a stable negative id (see [tawashihRecordingId]).
+  Future<void> playTawashih({
+    required int recording,
+    required String artist,
+    required List<({String id, Uri uri, String title})> tracks,
+    required int index,
+    Map<int, Uri> local = const {},
+  }) async {
+    _reciter = null;
+    if (tracks.isEmpty) return;
+    final queue = [
+      for (var i = 0; i < tracks.length; i++)
+        Track(
+          id: 'tawashih:$recording:${tracks[i].id}',
+          uri: local[i + 1] ?? tracks[i].uri,
+          title: tracks[i].title,
+          artist: artist,
+          // Slot index for next/prev / sleep-after-track; not a Quran surah.
+          surah: i + 1,
+        ),
+    ];
+    final start = index.clamp(0, queue.length - 1);
+    emit(
+      RecitationState(
+        kind: RecitationKind.tawashih,
+        tracks: queue,
+        index: start,
+        buffering: true,
+        playing: true,
+        recording: recording,
+        sleepAt: state.sleepAt,
+        sleepAfterSurah: state.sleepAfterSurah,
+      ),
+    );
+    await _load(queue, start);
   }
 
   Future<void> _load(List<Track> tracks, int index) async {

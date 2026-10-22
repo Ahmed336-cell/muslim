@@ -2,6 +2,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:muslim/bloc/fasting/fasting_bloc.dart';
 import 'package:muslim/services/islamic_api.dart';
+import 'package:muslim/services/islamic_events.dart';
+import 'package:muslim/services/places.dart';
+import 'package:muslim/services/prayer_calc.dart';
 
 Map<String, dynamic> _payload({
   String sahur = '05:28',
@@ -23,20 +26,10 @@ Map<String, dynamic> _payload({
   'white_days': {'status': 'next_month', 'days': white},
 };
 
-class _FakeRepo extends IslamicApi {
-  _FakeRepo(this.result) : super(apiKey: 'test');
-
-  final Object result;
-
-  @override
-  Future<FastingDay> fetchFasting(Place place, {DateTime? today}) async {
-    if (result is FastingDay) return result as FastingDay;
-    throw result;
-  }
-}
-
 void main() {
   final today = DateTime(2026, 10, 11);
+  const calc = PrayerCalculator();
+  final cairo = cityById('cairo').place;
 
   test('parses times and duration', () {
     final f = FastingDay.fromJson(_payload(), today: today);
@@ -84,18 +77,46 @@ void main() {
     expect(f.whiteDays.first, DateTime(2026, 10, 10));
   });
 
+  test('local white days match Umm al-Qura 13–15', () {
+    final days = upcomingWhiteDays(DateTime(2026, 10, 11));
+    expect(days, hasLength(3));
+    expect(days[1].difference(days[0]).inDays, 1);
+    expect(days[2].difference(days[1]).inDays, 1);
+    for (final d in days) {
+      expect(HijriDate.of(d).day, inInclusiveRange(13, 15));
+    }
+  });
+
+  test('local fasting matches Fajr / Maghrib', () {
+    final now = DateTime.utc(2026, 10, 15, 9);
+    final prayer = calc.today(cairo, now);
+    final fajr = prayer.prayers.firstWhere((p) => p.name == 'Fajr');
+    final maghrib = prayer.prayers.firstWhere((p) => p.name == 'Maghrib');
+    final f = FastingDay.local(
+      fajr: fajr,
+      maghrib: maghrib,
+      whiteDays: upcomingWhiteDays(prayer.cityNow(now)),
+    );
+    expect(f.sahur.hour, fajr.hour);
+    expect(f.sahur.minute, fajr.minute);
+    expect(f.iftar.hour, maghrib.hour);
+    expect(f.iftar.minute, maghrib.minute);
+    expect(f.whiteDays, hasLength(3));
+  });
+
   blocTest<FastingBloc, FastingState>(
-    'emits failure with API message',
+    'loads from on-device prayer times',
     build: () => FastingBloc(
-      repository: _FakeRepo(const ApiException('Unable to fetch fasting time')),
+      place: cairo,
+      clock: () => DateTime.utc(2026, 10, 15, 9),
     ),
     act: (b) => b.add(const FastingRequested()),
-    expect: () => const [
-      FastingState(status: FastingStatus.loading),
-      FastingState(
-        status: FastingStatus.failure,
-        error: 'Unable to fetch fasting time',
-      ),
-    ],
+    verify: (b) {
+      expect(b.state.status, FastingStatus.success);
+      expect(b.state.day, isNotNull);
+      expect(b.state.day!.sahur.name, 'Sahur');
+      expect(b.state.day!.iftar.name, 'Iftar');
+      expect(b.state.day!.whiteDays, hasLength(3));
+    },
   );
 }

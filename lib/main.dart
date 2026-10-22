@@ -18,6 +18,7 @@ import 'bloc/duas/dua_library_bloc.dart';
 import 'bloc/duas/dua_of_day_cubit.dart';
 import 'bloc/extra_reminders_cubit.dart';
 import 'bloc/fasting/fasting_bloc.dart';
+import 'bloc/feature_news_cubit.dart';
 import 'bloc/friday_cubit.dart';
 import 'bloc/hadith_saved_cubit.dart';
 import 'bloc/qada_cubit.dart';
@@ -47,6 +48,7 @@ import 'bloc/ruqyah/ruqyah_bloc.dart';
 import 'bloc/settings_cubit.dart';
 import 'bloc/tab_cubit.dart';
 import 'bloc/tasbih_cubit.dart';
+import 'bloc/tawashih/recent_tawashih_cubit.dart';
 import 'bloc/zakat_cubit.dart';
 import 'l10n/l10n.dart';
 import 'screens/azkar_screen.dart';
@@ -60,6 +62,7 @@ import 'screens/onboarding_screen.dart';
 import 'screens/prayer_screen.dart';
 import 'screens/qibla_screen.dart';
 import 'screens/sadaqah_screen.dart';
+import 'screens/sleep_screen.dart';
 import 'services/ambient.dart';
 import 'services/clock.dart';
 import 'services/hadith.dart';
@@ -246,6 +249,7 @@ class _Blocs extends StatelessWidget {
         BlocProvider(create: (_) => FridayCubit()),
         BlocProvider(create: (_) => AzkarCubit()),
         BlocProvider(create: (_) => TabCubit()),
+        BlocProvider(create: (_) => FeatureNewsCubit()),
         BlocProvider(create: (_) => ClockCubit()),
         BlocProvider(
           lazy: false,
@@ -261,7 +265,7 @@ class _Blocs extends StatelessWidget {
         ),
         BlocProvider(
           create: (c) =>
-              FastingBloc(repository: api(c), place: settings.place)
+              FastingBloc(place: settings.place)
                 ..add(const FastingRequested()),
         ),
         BlocProvider(create: (_) => PrayerLogCubit()),
@@ -288,6 +292,7 @@ class _Blocs extends StatelessWidget {
           create: (c) => AmbientCubit(engine: c.read<AmbientEngine>()),
         ),
         BlocProvider(create: (_) => RecentRecitersCubit()),
+        BlocProvider(create: (_) => RecentTawashihCubit()),
         BlocProvider(
           create: (c) =>
               NisabBloc(api: api(c), currency: settings.city.currency)
@@ -329,8 +334,8 @@ class _SettingsSync extends StatelessWidget {
     return MultiBlocListener(
       listeners: [
         // Clips and recitation never play over each other.
-        BlocListener<AudioCubit, String?>(
-          listenWhen: (a, b) => b != null,
+        BlocListener<AudioCubit, AudioSession?>(
+          listenWhen: (a, b) => b != null && b.playing,
           listener: (context, _) => context.read<RecitationCubit>().pause(),
         ),
         BlocListener<RecitationCubit, RecitationState>(
@@ -472,6 +477,17 @@ class _NotificationTapsState extends State<_NotificationTaps> {
 
   void _open(String payload) {
     if (!mounted) return;
+    if (payload == 'prayer') {
+      Navigator.of(context).popUntil((r) => r.isFirst);
+      context.read<TabCubit>().select(AppTab.prayer);
+      return;
+    }
+    if (payload == 'sleep') {
+      Navigator.of(context)
+        ..popUntil((r) => r.isFirst)
+        ..push(SleepScreen.route());
+      return;
+    }
     final Route<void>? quran = switch (payload.split(':')) {
       ['kahf'] => MushafScreen.route(18),
       ['friday'] => FridayScreen.route(),

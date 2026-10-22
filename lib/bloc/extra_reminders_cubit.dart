@@ -16,6 +16,9 @@ enum ExtraKind {
   kahf(null),
   salawat(11 * 60),
   fridayHour(null),
+  tahajjud(null),
+  sleepAzkar(null),
+  duha(null),
   suhoor(null),
   wird(21 * 60),
   sadaqah(12 * 60);
@@ -26,12 +29,17 @@ enum ExtraKind {
   final int? defaultTime;
 }
 
-/// Kahf, salawat and the last hour — on by default for new installs.
+/// Kahf / Friday + night routine — on by default for new installs.
 const _fridayOnByDefault = {
   ExtraKind.kahf,
   ExtraKind.salawat,
   ExtraKind.fridayHour,
+  ExtraKind.tahajjud,
+  ExtraKind.sleepAzkar,
 };
+
+/// Minutes after Isha before the sleep-adhkar nudge.
+const sleepAzkarAfterIsha = Duration(minutes: 45);
 
 final class ExtraReminders extends Equatable {
   const ExtraReminders({
@@ -71,6 +79,9 @@ class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
 
   /// Suhoor reminder this long before Fajr.
   static const suhoorLead = Duration(minutes: 45);
+
+  /// Duha reminder this long after sunrise.
+  static const duhaAfterSunrise = Duration(minutes: 20);
 
   final PrayerNotifier _notifier;
   final QuranText? _text;
@@ -290,6 +301,108 @@ class ExtraRemindersCubit extends HydratedCubit<ExtraReminders> {
                 ),
               ),
             );
+          }
+        }
+      }
+
+      if (state.on.contains(ExtraKind.duha)) {
+        if (find('Sunrise') case final s?) {
+          final when = cityInstant(
+            day,
+            cityNow,
+            d,
+            s.hour,
+            s.minute,
+          ).add(duhaAfterSunrise);
+          if (when.isAfter(now.toUtc())) {
+            out.add(
+              ExtraReminder(
+                id: extraIdBase + 140 + d,
+                at: when,
+                title: l.duhaTitle,
+                body: l.duhaBody,
+                payload: 'prayer',
+              ),
+            );
+          }
+        }
+      }
+
+      if (state.on.contains(ExtraKind.sleepAzkar)) {
+        if (find('Isha') case final i?) {
+          final when = cityInstant(
+            day,
+            cityNow,
+            d,
+            i.hour,
+            i.minute,
+          ).add(sleepAzkarAfterIsha);
+          if (when.isAfter(now.toUtc())) {
+            out.add(
+              ExtraReminder(
+                id: extraIdBase + 180 + d,
+                at: when,
+                title: l.sleepAzkarTitle,
+                body: l.sleepAzkarBody,
+                payload: 'sleep',
+              ),
+            );
+          }
+        }
+      }
+
+      if (state.on.contains(ExtraKind.tahajjud) &&
+          d < day.following.length) {
+        final maghrib = find('Maghrib');
+        final nextFajr = day.following[d]
+            .where((p) => p.name == 'Fajr')
+            .firstOrNull;
+        if (maghrib != null && nextFajr != null) {
+          final maghribAt = cityInstant(
+            day,
+            cityNow,
+            d,
+            maghrib.hour,
+            maghrib.minute,
+          );
+          final fajrAt = cityInstant(
+            day,
+            cityNow,
+            d + 1,
+            nextFajr.hour,
+            nextFajr.minute,
+          );
+          final night = fajrAt.difference(maghribAt);
+          if (night.inMinutes > 60) {
+            // Start of the last third: Maghrib + 2/3 of the night.
+            final when = maghribAt.add(
+              Duration(seconds: (night.inSeconds * 2 / 3).round()),
+            );
+            if (when.isAfter(now.toUtc())) {
+              final (surah, ayah) = ayahOfDay(
+                DateTime(cityDate.year, cityDate.month, cityDate.day),
+              );
+              var body = l.tahajjudBody;
+              try {
+                final a = await _text?.ayah(surah, ayah, Mushaf.simple);
+                if (a != null && a.text.isNotEmpty) {
+                  final s = surahs[surah - 1];
+                  final ref = _language == 'ar'
+                      ? '﴿${s.arabic} ${arabicDigits('$ayah')}﴾'
+                      : '(${s.name} $surah:$ayah)';
+                  body = '${a.text}\n$ref\n\n$body';
+                }
+              } catch (_) {}
+              out.add(
+                ExtraReminder(
+                  id: extraIdBase + 160 + d,
+                  at: when,
+                  title: l.tahajjudTitle,
+                  body: body,
+                  payload: 'ayah:$surah:$ayah',
+                ),
+              );
+            }
           }
         }
       }

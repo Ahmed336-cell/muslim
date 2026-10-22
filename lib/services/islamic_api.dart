@@ -379,6 +379,19 @@ class FastingDay {
         (iftar.hour * 60 + iftar.minute) - (sahur.hour * 60 + sahur.minute),
   );
 
+  /// Sahur = Fajr, iftar = Maghrib — same source as on-device prayer times.
+  factory FastingDay.local({
+    required Prayer fajr,
+    required Prayer maghrib,
+    required List<DateTime> whiteDays,
+    bool whiteDaysEstimated = false,
+  }) => FastingDay(
+    sahur: Prayer('Sahur', 'السحور', fajr.hour, fajr.minute),
+    iftar: Prayer('Iftar', 'الإفطار', maghrib.hour, maghrib.minute),
+    whiteDays: whiteDays,
+    whiteDaysEstimated: whiteDaysEstimated,
+  );
+
   factory FastingDay.fromJson(
     Map<String, dynamic> data, {
     required DateTime today,

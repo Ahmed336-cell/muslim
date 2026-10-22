@@ -130,13 +130,19 @@ class _AdhanVoices extends StatelessWidget {
                 tooltip: l.previewTip,
                 color: Palette.green,
                 icon: Icon(
-                  playing == key
+                  playing?.key == key
                       ? Icons.stop_circle_outlined
                       : Icons.play_circle_outline_rounded,
                   size: 30,
                 ),
-                onPressed: () =>
-                    context.read<AudioCubit>().toggle(key, Uri.parse(v.url)),
+                onPressed: () {
+                  final audio = context.read<AudioCubit>();
+                  if (audio.isActive(key)) {
+                    audio.stop();
+                  } else {
+                    audio.toggle(key, Uri.parse(v.url));
+                  }
+                },
               ),
       );
     }

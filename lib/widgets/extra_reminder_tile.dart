@@ -48,6 +48,21 @@ class ExtraReminderTile extends StatelessWidget {
         l.fridayHourReminder,
         l.fridayHourReminderSub,
       ),
+      ExtraKind.tahajjud => (
+        Icons.nightlight_round,
+        l.tahajjudReminder,
+        l.tahajjudReminderSub,
+      ),
+      ExtraKind.sleepAzkar => (
+        Icons.bedtime_outlined,
+        l.sleepAzkarReminder,
+        l.sleepAzkarReminderSub,
+      ),
+      ExtraKind.duha => (
+        Icons.wb_sunny_outlined,
+        l.duhaReminder,
+        l.duhaReminderSub,
+      ),
       ExtraKind.suhoor => (
         Icons.wb_twilight_rounded,
         l.suhoorReminder,

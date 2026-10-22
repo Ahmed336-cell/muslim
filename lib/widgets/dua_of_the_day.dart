@@ -7,6 +7,7 @@ import '../screens/dua_screen.dart';
 import '../screens/duas_screen.dart';
 import '../theme.dart';
 import 'common.dart';
+import 'share_card.dart';
 import 'shimmer.dart';
 import 'star_pattern.dart';
 
@@ -38,7 +39,36 @@ class DuaOfTheDay extends StatelessWidget {
                         children: [
                           StarMark(size: 9, color: Palette.clay),
                           const SizedBox(width: 8),
-                          Caption(l.duaOfDay),
+                          Expanded(child: Caption(l.duaOfDay)),
+                          IconButton(
+                            visualDensity: VisualDensity.compact,
+                            tooltip: l.shareImage,
+                            onPressed: () {
+                              final ar = context.isAr;
+                              final showTr =
+                                  dua.translation.isNotEmpty &&
+                                  dua.translation.trim() != dua.arabic.trim();
+                              showShareCard(
+                                context,
+                                sheetTitle: l.shareDua,
+                                eyebrow: dua.title,
+                                arabic: dua.arabic,
+                                subtitle: ar || dua.transliteration.isEmpty
+                                    ? null
+                                    : dua.transliteration,
+                                meaning: showTr ? dua.translation : null,
+                                citation: dua.reference.isEmpty
+                                    ? null
+                                    : dua.reference,
+                                allowHideMeaning: showTr,
+                              );
+                            },
+                            icon: Icon(
+                              Icons.ios_share_rounded,
+                              size: 20,
+                              color: Palette.inkSoft,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 10),

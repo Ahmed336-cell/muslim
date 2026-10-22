@@ -152,6 +152,15 @@
   "dirW": "West",
   "dirNW": "Northwest",
   "tasbihTitle": "Tasbih",
+  "sebhaCustomize": "Sebha look",
+  "sebhaCustomizeSub": "Pick a bead style and color.",
+  "sebhaType": "Type",
+  "sebhaColor": "Color",
+  "sebhaStyleWood": "Wood",
+  "sebhaStyleAmber": "Amber",
+  "sebhaStyleStone": "Stone",
+  "sebhaStylePearl": "Pearl",
+  "sebhaStyleDigital": "Digital",
   "reset": "Reset",
   "afterSalah": "After salah · {i} of {n}",
   "@afterSalah": {
@@ -1005,6 +1014,9 @@
   "deedJuz": "A juz read",
   "ramadanTrackerHint": "Tap a day to tick its fast, taraweeh and juz.",
   "shareAyah": "Share ayah",
+  "shareHadith": "Share hadith",
+  "shareName": "Share name",
+  "shareDua": "Share dua",
   "shareImage": "Share as image",
   "includeTranslation": "Include translation",
   "share": "Share",
@@ -1554,5 +1566,91 @@
   "salawatReminderTitle": "Friday · Salawat",
   "salawatReminderBody": "Send salawat on the Prophet ﷺ today.\n\nاللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ",
   "salawatReminder": "Salawat on Friday",
-  "salawatReminderSub": "Friday at 11:00 AM"
+  "salawatReminderSub": "Friday at 11:00 AM",
+  "featTawashih": "Tawashih",
+  "featTawashihSub": "Munshids and prophetic praise",
+  "badgeNew": "New",
+  "tawashihIntro": "Prophetic praise by classic munshids. Pick a voice, then a track.",
+  "rawatibTitle": "Sunnah rawatib",
+  "rawatibBefore": "{n} rak'ahs before",
+  "@rawatibBefore": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "rawatibAfter": "{n} rak'ahs after",
+  "@rawatibAfter": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "rawatibNone": "No confirmed rawatib for this prayer.",
+  "rawatibHint": "After the fard, pray the sunnah rawatib.",
+  "tahajjudReminder": "Tahajjud",
+  "tahajjudReminderSub": "Start of the last third of the night",
+  "tahajjudTitle": "Time for tahajjud",
+  "tahajjudBody": "The last third of the night has begun — a blessed time to stand in prayer.",
+  "duhaReminder": "Duha",
+  "duhaReminderSub": "About 20 minutes after sunrise",
+  "duhaTitle": "Time for Duha",
+  "duhaBody": "Sunrise has passed — pray Duha before Dhuhr.",
+  "iqamaTitle": "Iqama countdown",
+  "iqamaIntro": "Set how long until iqama. When it ends, the family stands for prayer together.",
+  "iqamaMinutes": "{n} min",
+  "@iqamaMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "iqamaStart": "Start countdown",
+  "iqamaCancel": "Cancel",
+  "iqamaUntil": "until iqama",
+  "iqamaStanding": "Stand for prayer",
+  "iqamaAgain": "Set again",
+  "iqamaOpen": "Iqama for the family",
+  "comfortReading": "Comfortable reading",
+  "comfortReadingSub": "Large Arabic text for easy reading",
+  "trackCount": "{n} tracks",
+  "@trackCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "allMunshids": "All munshids",
+  "popularMunshids": "Popular munshids",
+  "prayerIn": "{name} in",
+  "@prayerIn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "midnight": "Midnight",
+  "lastThird": "Last third",
+  "sleepAzkarReminder": "Sleep adhkar",
+  "sleepAzkarReminderSub": "About 45 minutes after Isha",
+  "sleepAzkarTitle": "Time for sleep adhkar",
+  "sleepAzkarBody": "End your day with remembrance before you sleep.",
+  "featBooks": "Books",
+  "featBooksSub": "Free Arabic Islamic library",
+  "booksIntro": "Classic Arabic Islamic books — read free inside the app.",
+  "booksFree": "Free",
+  "booksOpenFail": "Could not load the book.",
+  "booksOpenExternal": "Open in browser",
+  "booksSource": "Source: IslamHouse — free for personal use.",
+  "booksCatAqidah": "Aqidah",
+  "booksCatTafsir": "Tafsir",
+  "booksCatHadith": "Hadith",
+  "booksCatSeerah": "Seerah",
+  "booksCatAdhkar": "Adhkar",
+  "booksCatFiqh": "Fiqh"
 }

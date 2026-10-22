@@ -191,37 +191,57 @@ class ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.cloud_off_rounded, size: 32, color: Palette.inkSoft),
-          const SizedBox(height: 10),
-          Text(
-            context.error(error),
-            textAlign: TextAlign.center,
-            style: Fonts.body(14, color: Palette.inkSoft),
+    // Fits full-page and tight cards (e.g. fasting error in 120px).
+    return LayoutBuilder(
+      builder: (context, c) {
+        final tight = c.maxHeight.isFinite && c.maxHeight < 140;
+        return Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: tight ? 8 : 32,
+            vertical: tight ? 0 : 16,
           ),
-          const SizedBox(height: 12),
-          FilledButton.tonal(
-            onPressed: onRetry,
-            style: FilledButton.styleFrom(
-              backgroundColor: Palette.greenSoft,
-              foregroundColor: Palette.green,
-              minimumSize: const Size(140, 44),
-            ),
-            child: Text(
-              context.l.retry,
-              style: Fonts.body(
-                14,
-                color: Palette.green,
-                weight: FontWeight.w600,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (!tight) ...[
+                Icon(Icons.cloud_off_rounded, size: 32, color: Palette.inkSoft),
+                const SizedBox(height: 10),
+              ],
+              Text(
+                context.error(error),
+                textAlign: TextAlign.center,
+                maxLines: tight ? 2 : null,
+                overflow: tight ? TextOverflow.ellipsis : TextOverflow.visible,
+                style: Fonts.body(tight ? 12.5 : 14, color: Palette.inkSoft),
               ),
-            ),
+              SizedBox(height: tight ? 6 : 12),
+              FilledButton.tonal(
+                onPressed: onRetry,
+                style: FilledButton.styleFrom(
+                  backgroundColor: Palette.greenSoft,
+                  foregroundColor: Palette.green,
+                  minimumSize: Size(tight ? 120 : 140, tight ? 36 : 44),
+                  tapTargetSize: tight
+                      ? MaterialTapTargetSize.shrinkWrap
+                      : MaterialTapTargetSize.padded,
+                  visualDensity: tight
+                      ? VisualDensity.compact
+                      : VisualDensity.standard,
+                ),
+                child: Text(
+                  context.l.retry,
+                  style: Fonts.body(
+                    tight ? 13 : 14,
+                    color: Palette.green,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

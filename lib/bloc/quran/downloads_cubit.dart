@@ -39,17 +39,21 @@ class DownloadsCubit extends Cubit<Downloads> {
   }
 
   /// Returns false if the download failed.
-  Future<bool> download(Recording recording, int surah) async {
-    final key = (recording.id, surah);
+  Future<bool> download(Recording recording, int surah) =>
+      downloadUrl(recording.id, surah, recording.surahUrl(surah));
+
+  /// Download any URL into the offline store (Quran surahs or tawashih).
+  Future<bool> downloadUrl(int recording, int surah, Uri url) async {
+    final key = (recording, surah);
     if (state.saved.contains(key) || state.progress.containsKey(key)) {
       return true;
     }
     _progress(key, 0);
     try {
       await _store.download(
-        recording.id,
+        recording,
         surah,
-        recording.surahUrl(surah),
+        url,
         onProgress: (p) => _progress(key, p),
       );
       emit(

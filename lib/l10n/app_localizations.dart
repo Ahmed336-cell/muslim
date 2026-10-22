@@ -655,6 +655,60 @@ abstract class L10n {
   /// **'Tasbih'**
   String get tasbihTitle;
 
+  /// No description provided for @sebhaCustomize.
+  ///
+  /// In en, this message translates to:
+  /// **'Sebha look'**
+  String get sebhaCustomize;
+
+  /// No description provided for @sebhaCustomizeSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a bead style and color.'**
+  String get sebhaCustomizeSub;
+
+  /// No description provided for @sebhaType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get sebhaType;
+
+  /// No description provided for @sebhaColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get sebhaColor;
+
+  /// No description provided for @sebhaStyleWood.
+  ///
+  /// In en, this message translates to:
+  /// **'Wood'**
+  String get sebhaStyleWood;
+
+  /// No description provided for @sebhaStyleAmber.
+  ///
+  /// In en, this message translates to:
+  /// **'Amber'**
+  String get sebhaStyleAmber;
+
+  /// No description provided for @sebhaStyleStone.
+  ///
+  /// In en, this message translates to:
+  /// **'Stone'**
+  String get sebhaStyleStone;
+
+  /// No description provided for @sebhaStylePearl.
+  ///
+  /// In en, this message translates to:
+  /// **'Pearl'**
+  String get sebhaStylePearl;
+
+  /// No description provided for @sebhaStyleDigital.
+  ///
+  /// In en, this message translates to:
+  /// **'Digital'**
+  String get sebhaStyleDigital;
+
   /// No description provided for @reset.
   ///
   /// In en, this message translates to:
@@ -3289,6 +3343,24 @@ abstract class L10n {
   /// **'Share ayah'**
   String get shareAyah;
 
+  /// No description provided for @shareHadith.
+  ///
+  /// In en, this message translates to:
+  /// **'Share hadith'**
+  String get shareHadith;
+
+  /// No description provided for @shareName.
+  ///
+  /// In en, this message translates to:
+  /// **'Share name'**
+  String get shareName;
+
+  /// No description provided for @shareDua.
+  ///
+  /// In en, this message translates to:
+  /// **'Share dua'**
+  String get shareDua;
+
   /// No description provided for @shareImage.
   ///
   /// In en, this message translates to:
@@ -4631,6 +4703,312 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Friday at 11:00 AM'**
   String get salawatReminderSub;
+
+  /// No description provided for @featTawashih.
+  ///
+  /// In en, this message translates to:
+  /// **'Tawashih'**
+  String get featTawashih;
+
+  /// No description provided for @featTawashihSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Munshids and prophetic praise'**
+  String get featTawashihSub;
+
+  /// No description provided for @badgeNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get badgeNew;
+
+  /// No description provided for @tawashihIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Prophetic praise by classic munshids. Pick a voice, then a track.'**
+  String get tawashihIntro;
+
+  /// No description provided for @rawatibTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunnah rawatib'**
+  String get rawatibTitle;
+
+  /// No description provided for @rawatibBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} rak\'ahs before'**
+  String rawatibBefore(String n);
+
+  /// No description provided for @rawatibAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} rak\'ahs after'**
+  String rawatibAfter(String n);
+
+  /// No description provided for @rawatibNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No confirmed rawatib for this prayer.'**
+  String get rawatibNone;
+
+  /// No description provided for @rawatibHint.
+  ///
+  /// In en, this message translates to:
+  /// **'After the fard, pray the sunnah rawatib.'**
+  String get rawatibHint;
+
+  /// No description provided for @tahajjudReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Tahajjud'**
+  String get tahajjudReminder;
+
+  /// No description provided for @tahajjudReminderSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Start of the last third of the night'**
+  String get tahajjudReminderSub;
+
+  /// No description provided for @tahajjudTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for tahajjud'**
+  String get tahajjudTitle;
+
+  /// No description provided for @tahajjudBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The last third of the night has begun — a blessed time to stand in prayer.'**
+  String get tahajjudBody;
+
+  /// No description provided for @duhaReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Duha'**
+  String get duhaReminder;
+
+  /// No description provided for @duhaReminderSub.
+  ///
+  /// In en, this message translates to:
+  /// **'About 20 minutes after sunrise'**
+  String get duhaReminderSub;
+
+  /// No description provided for @duhaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for Duha'**
+  String get duhaTitle;
+
+  /// No description provided for @duhaBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise has passed — pray Duha before Dhuhr.'**
+  String get duhaBody;
+
+  /// No description provided for @iqamaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Iqama countdown'**
+  String get iqamaTitle;
+
+  /// No description provided for @iqamaIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Set how long until iqama. When it ends, the family stands for prayer together.'**
+  String get iqamaIntro;
+
+  /// No description provided for @iqamaMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} min'**
+  String iqamaMinutes(String n);
+
+  /// No description provided for @iqamaStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start countdown'**
+  String get iqamaStart;
+
+  /// No description provided for @iqamaCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get iqamaCancel;
+
+  /// No description provided for @iqamaUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'until iqama'**
+  String get iqamaUntil;
+
+  /// No description provided for @iqamaStanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Stand for prayer'**
+  String get iqamaStanding;
+
+  /// No description provided for @iqamaAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Set again'**
+  String get iqamaAgain;
+
+  /// No description provided for @iqamaOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Iqama for the family'**
+  String get iqamaOpen;
+
+  /// No description provided for @comfortReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfortable reading'**
+  String get comfortReading;
+
+  /// No description provided for @comfortReadingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Large Arabic text for easy reading'**
+  String get comfortReadingSub;
+
+  /// No description provided for @trackCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} tracks'**
+  String trackCount(String n);
+
+  /// No description provided for @allMunshids.
+  ///
+  /// In en, this message translates to:
+  /// **'All munshids'**
+  String get allMunshids;
+
+  /// No description provided for @popularMunshids.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular munshids'**
+  String get popularMunshids;
+
+  /// No description provided for @prayerIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} in'**
+  String prayerIn(String name);
+
+  /// No description provided for @midnight.
+  ///
+  /// In en, this message translates to:
+  /// **'Midnight'**
+  String get midnight;
+
+  /// No description provided for @lastThird.
+  ///
+  /// In en, this message translates to:
+  /// **'Last third'**
+  String get lastThird;
+
+  /// No description provided for @sleepAzkarReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep adhkar'**
+  String get sleepAzkarReminder;
+
+  /// No description provided for @sleepAzkarReminderSub.
+  ///
+  /// In en, this message translates to:
+  /// **'About 45 minutes after Isha'**
+  String get sleepAzkarReminderSub;
+
+  /// No description provided for @sleepAzkarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for sleep adhkar'**
+  String get sleepAzkarTitle;
+
+  /// No description provided for @sleepAzkarBody.
+  ///
+  /// In en, this message translates to:
+  /// **'End your day with remembrance before you sleep.'**
+  String get sleepAzkarBody;
+
+  /// No description provided for @featBooks.
+  ///
+  /// In en, this message translates to:
+  /// **'Books'**
+  String get featBooks;
+
+  /// No description provided for @featBooksSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Arabic Islamic library'**
+  String get featBooksSub;
+
+  /// No description provided for @booksIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic Arabic Islamic books — read free inside the app.'**
+  String get booksIntro;
+
+  /// No description provided for @booksFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get booksFree;
+
+  /// No description provided for @booksOpenFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the book.'**
+  String get booksOpenFail;
+
+  /// No description provided for @booksOpenExternal.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in browser'**
+  String get booksOpenExternal;
+
+  /// No description provided for @booksSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: IslamHouse — free for personal use.'**
+  String get booksSource;
+
+  /// No description provided for @booksCatAqidah.
+  ///
+  /// In en, this message translates to:
+  /// **'Aqidah'**
+  String get booksCatAqidah;
+
+  /// No description provided for @booksCatTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Tafsir'**
+  String get booksCatTafsir;
+
+  /// No description provided for @booksCatHadith.
+  ///
+  /// In en, this message translates to:
+  /// **'Hadith'**
+  String get booksCatHadith;
+
+  /// No description provided for @booksCatSeerah.
+  ///
+  /// In en, this message translates to:
+  /// **'Seerah'**
+  String get booksCatSeerah;
+
+  /// No description provided for @booksCatAdhkar.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhkar'**
+  String get booksCatAdhkar;
+
+  /// No description provided for @booksCatFiqh.
+  ///
+  /// In en, this message translates to:
+  /// **'Fiqh'**
+  String get booksCatFiqh;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

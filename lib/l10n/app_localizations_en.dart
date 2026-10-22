@@ -306,6 +306,33 @@ class L10nEn extends L10n {
   String get tasbihTitle => 'Tasbih';
 
   @override
+  String get sebhaCustomize => 'Sebha look';
+
+  @override
+  String get sebhaCustomizeSub => 'Pick a bead style and color.';
+
+  @override
+  String get sebhaType => 'Type';
+
+  @override
+  String get sebhaColor => 'Color';
+
+  @override
+  String get sebhaStyleWood => 'Wood';
+
+  @override
+  String get sebhaStyleAmber => 'Amber';
+
+  @override
+  String get sebhaStyleStone => 'Stone';
+
+  @override
+  String get sebhaStylePearl => 'Pearl';
+
+  @override
+  String get sebhaStyleDigital => 'Digital';
+
+  @override
   String get reset => 'Reset';
 
   @override
@@ -1796,6 +1823,15 @@ class L10nEn extends L10n {
   String get shareAyah => 'Share ayah';
 
   @override
+  String get shareHadith => 'Share hadith';
+
+  @override
+  String get shareName => 'Share name';
+
+  @override
+  String get shareDua => 'Share dua';
+
+  @override
   String get shareImage => 'Share as image';
 
   @override
@@ -2585,4 +2621,172 @@ class L10nEn extends L10n {
 
   @override
   String get salawatReminderSub => 'Friday at 11:00 AM';
+
+  @override
+  String get featTawashih => 'Tawashih';
+
+  @override
+  String get featTawashihSub => 'Munshids and prophetic praise';
+
+  @override
+  String get badgeNew => 'New';
+
+  @override
+  String get tawashihIntro =>
+      'Prophetic praise by classic munshids. Pick a voice, then a track.';
+
+  @override
+  String get rawatibTitle => 'Sunnah rawatib';
+
+  @override
+  String rawatibBefore(String n) {
+    return '$n rak\'ahs before';
+  }
+
+  @override
+  String rawatibAfter(String n) {
+    return '$n rak\'ahs after';
+  }
+
+  @override
+  String get rawatibNone => 'No confirmed rawatib for this prayer.';
+
+  @override
+  String get rawatibHint => 'After the fard, pray the sunnah rawatib.';
+
+  @override
+  String get tahajjudReminder => 'Tahajjud';
+
+  @override
+  String get tahajjudReminderSub => 'Start of the last third of the night';
+
+  @override
+  String get tahajjudTitle => 'Time for tahajjud';
+
+  @override
+  String get tahajjudBody =>
+      'The last third of the night has begun — a blessed time to stand in prayer.';
+
+  @override
+  String get duhaReminder => 'Duha';
+
+  @override
+  String get duhaReminderSub => 'About 20 minutes after sunrise';
+
+  @override
+  String get duhaTitle => 'Time for Duha';
+
+  @override
+  String get duhaBody => 'Sunrise has passed — pray Duha before Dhuhr.';
+
+  @override
+  String get iqamaTitle => 'Iqama countdown';
+
+  @override
+  String get iqamaIntro =>
+      'Set how long until iqama. When it ends, the family stands for prayer together.';
+
+  @override
+  String iqamaMinutes(String n) {
+    return '$n min';
+  }
+
+  @override
+  String get iqamaStart => 'Start countdown';
+
+  @override
+  String get iqamaCancel => 'Cancel';
+
+  @override
+  String get iqamaUntil => 'until iqama';
+
+  @override
+  String get iqamaStanding => 'Stand for prayer';
+
+  @override
+  String get iqamaAgain => 'Set again';
+
+  @override
+  String get iqamaOpen => 'Iqama for the family';
+
+  @override
+  String get comfortReading => 'Comfortable reading';
+
+  @override
+  String get comfortReadingSub => 'Large Arabic text for easy reading';
+
+  @override
+  String trackCount(String n) {
+    return '$n tracks';
+  }
+
+  @override
+  String get allMunshids => 'All munshids';
+
+  @override
+  String get popularMunshids => 'Popular munshids';
+
+  @override
+  String prayerIn(String name) {
+    return '$name in';
+  }
+
+  @override
+  String get midnight => 'Midnight';
+
+  @override
+  String get lastThird => 'Last third';
+
+  @override
+  String get sleepAzkarReminder => 'Sleep adhkar';
+
+  @override
+  String get sleepAzkarReminderSub => 'About 45 minutes after Isha';
+
+  @override
+  String get sleepAzkarTitle => 'Time for sleep adhkar';
+
+  @override
+  String get sleepAzkarBody =>
+      'End your day with remembrance before you sleep.';
+
+  @override
+  String get featBooks => 'Books';
+
+  @override
+  String get featBooksSub => 'Free Arabic Islamic library';
+
+  @override
+  String get booksIntro =>
+      'Classic Arabic Islamic books — read free inside the app.';
+
+  @override
+  String get booksFree => 'Free';
+
+  @override
+  String get booksOpenFail => 'Could not load the book.';
+
+  @override
+  String get booksOpenExternal => 'Open in browser';
+
+  @override
+  String get booksSource => 'Source: IslamHouse — free for personal use.';
+
+  @override
+  String get booksCatAqidah => 'Aqidah';
+
+  @override
+  String get booksCatTafsir => 'Tafsir';
+
+  @override
+  String get booksCatHadith => 'Hadith';
+
+  @override
+  String get booksCatSeerah => 'Seerah';
+
+  @override
+  String get booksCatAdhkar => 'Adhkar';
+
+  @override
+  String get booksCatFiqh => 'Fiqh';
 }

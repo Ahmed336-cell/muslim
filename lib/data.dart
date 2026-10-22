@@ -56,6 +56,32 @@ class Prayer {
   );
 }
 
+/// Midnight and start of the last third for tonight (Maghrib → next Fajr).
+({DateTime midnight, DateTime lastThird, Duration night})? nightMarks(
+  List<Prayer> today,
+  List<Prayer>? tomorrow,
+  DateTime now,
+) {
+  final maghrib = today.where((p) => p.name == 'Maghrib').firstOrNull;
+  final fajr = tomorrow?.where((p) => p.name == 'Fajr').firstOrNull ??
+      today.where((p) => p.name == 'Fajr').firstOrNull;
+  if (maghrib == null || fajr == null) return null;
+  final maghribAt = maghrib.on(now);
+  var fajrAt = fajr.on(now);
+  if (!fajrAt.isAfter(maghribAt)) {
+    fajrAt = fajr.on(now.add(const Duration(days: 1)));
+  }
+  final night = fajrAt.difference(maghribAt);
+  if (night.inMinutes < 60) return null;
+  return (
+    midnight: maghribAt.add(night ~/ 2),
+    lastThird: maghribAt.add(
+      Duration(seconds: (night.inSeconds * 2 / 3).round()),
+    ),
+    night: night,
+  );
+}
+
 class Surah {
   const Surah(
     this.number,

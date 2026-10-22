@@ -6,6 +6,7 @@ import '../bloc/audio_cubit.dart';
 import '../l10n/l10n.dart';
 import '../services/duas.dart';
 import '../theme.dart';
+import '../widgets/share_card.dart';
 import '../widgets/star_pattern.dart';
 
 class DuaScreen extends StatelessWidget {
@@ -42,7 +43,7 @@ class DuaScreen extends StatelessWidget {
     final l = context.l;
     final ar = context.isAr;
     final key = 'dua:${dua.id}';
-    final playing = context.watch<AudioCubit>().state == key;
+    final playing = context.watch<AudioCubit>().isPlaying(key);
 
     return PopScope(
       onPopInvokedWithResult: (_, _) {
@@ -55,6 +56,22 @@ class DuaScreen extends StatelessWidget {
               tooltip: l.copy,
               onPressed: () => _copy(context),
               icon: const Icon(Icons.copy_rounded, size: 22),
+            ),
+            IconButton(
+              tooltip: l.shareImage,
+              onPressed: () => showShareCard(
+                context,
+                sheetTitle: l.shareDua,
+                eyebrow: dua.title,
+                arabic: dua.arabic,
+                subtitle: ar || dua.transliteration.isEmpty
+                    ? null
+                    : dua.transliteration,
+                meaning: _showTranslation(context) ? dua.translation : null,
+                citation: dua.reference.isEmpty ? null : dua.reference,
+                allowHideMeaning: _showTranslation(context),
+              ),
+              icon: const Icon(Icons.ios_share_rounded, size: 22),
             ),
             const SizedBox(width: 4),
           ],

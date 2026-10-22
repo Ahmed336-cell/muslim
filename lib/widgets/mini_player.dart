@@ -7,6 +7,7 @@ import '../data.dart';
 import '../l10n/l10n.dart';
 import '../screens/now_playing_screen.dart';
 import '../theme.dart';
+import 'gramophone_disc.dart';
 import 'listen_style.dart';
 import 'reciter_art.dart';
 
@@ -59,12 +60,18 @@ class MiniPlayer extends StatelessWidget {
                   padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 4, 6),
                   child: Row(
                     children: [
-                      ReciterArt(
-                        name: track.artist,
-                        size: 42,
-                        label: surahs[track.surah - 1].arabic,
-                        photo: track.art,
-                      ),
+                      s.kind == RecitationKind.tawashih
+                          ? GramophoneDisc(
+                              name: track.artist,
+                              spinning: s.playing,
+                              size: 42,
+                            )
+                          : ReciterArt(
+                              name: track.artist,
+                              size: 42,
+                              label: surahs[track.surah - 1].arabic,
+                              photo: track.art,
+                            ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(

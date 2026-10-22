@@ -13,8 +13,9 @@ final class QuranPrefs extends Equatable {
   });
 
   static const defaultFontSize = 26.0;
+  static const comfortFontSize = 36.0;
   static const minFontSize = 20.0;
-  static const maxFontSize = 40.0;
+  static const maxFontSize = 56.0;
 
   final Mushaf mushaf;
 

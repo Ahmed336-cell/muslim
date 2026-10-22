@@ -7,6 +7,7 @@ import '../l10n/l10n.dart';
 import '../services/names.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/share_card.dart';
 import '../widgets/shimmer.dart';
 import '../widgets/star_pattern.dart';
 
@@ -181,7 +182,7 @@ class _NameSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l;
     final key = 'name:${name.number}';
-    final playing = context.watch<AudioCubit>().state == key;
+    final playing = context.watch<AudioCubit>().isPlaying(key);
     final ar = context.isAr;
 
     return SafeArea(
@@ -234,8 +235,25 @@ class _NameSheet extends StatelessWidget {
                     name.meaning,
                     style: Fonts.body(15).copyWith(height: 1.6),
                   ),
+                  const SizedBox(height: 18),
+                  OutlinedButton.icon(
+                    onPressed: () => showShareCard(
+                      context,
+                      sheetTitle: l.shareName,
+                      eyebrow: l.featNames,
+                      arabic: name.arabic,
+                      subtitle: ar ? null : name.transliteration,
+                      meaning: name.translation,
+                      description: name.meaning.isEmpty ? null : name.meaning,
+                      citation:
+                          '${context.n(name.number)} / ${context.n(99)}',
+                      allowHideMeaning: name.translation.isNotEmpty,
+                    ),
+                    icon: const Icon(Icons.ios_share_rounded),
+                    label: Text(l.shareImage),
+                  ),
                   if (name.audioUrl != null) ...[
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 12),
                     FilledButton.icon(
                       onPressed: () => context.read<AudioCubit>().toggle(
                         key,

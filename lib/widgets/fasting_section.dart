@@ -21,8 +21,9 @@ class FastingSection extends StatelessWidget {
     if (day != null) return _Body(day: day);
     if (state.status != FastingStatus.failure) return const SkeletonCard();
     return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: SizedBox(
-        height: 120,
+        height: 100,
         child: Center(
           child: ErrorState(
             error: state.error,

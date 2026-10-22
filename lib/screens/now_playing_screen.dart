@@ -9,6 +9,7 @@ import '../data.dart';
 import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../widgets/ambient_mixer.dart';
+import '../widgets/gramophone_disc.dart';
 import '../widgets/listen_style.dart';
 import '../widgets/reciter_art.dart';
 import '../widgets/sleep_timer.dart';
@@ -55,7 +56,10 @@ class NowPlayingScreen extends StatelessWidget {
 
     final (light, _) = coverColors(track.artist);
     final ayah = s.ayah;
-    final surah = surahs[track.surah - 1];
+    final tawashih = s.kind == RecitationKind.tawashih;
+    final Surah? surah = tawashih || track.surah < 1 || track.surah > surahs.length
+        ? null
+        : surahs[track.surah - 1];
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
@@ -99,7 +103,11 @@ class NowPlayingScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                ayah != null ? l.fromMushaf : track.artist,
+                                ayah != null
+                                    ? l.fromMushaf
+                                    : tawashih
+                                    ? l.featTawashih
+                                    : track.artist,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: Fonts.body(
@@ -135,23 +143,31 @@ class NowPlayingScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 18),
                     Center(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: .45),
-                              blurRadius: 36,
-                              offset: const Offset(0, 16),
+                      child: tawashih
+                          ? GramophoneDisc(
+                              name: track.artist,
+                              spinning: s.playing,
+                              size: art,
+                            )
+                          : DecoratedBox(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: .45),
+                                    blurRadius: 36,
+                                    offset: const Offset(0, 16),
+                                  ),
+                                ],
+                              ),
+                              child: ReciterArt(
+                                name: track.artist,
+                                size: art,
+                                label: surah != null
+                                    ? 'سورة ${surah.arabic}'
+                                    : null,
+                                photo: track.art,
+                              ),
                             ),
-                          ],
-                        ),
-                        child: ReciterArt(
-                          name: track.artist,
-                          size: art,
-                          label: 'سورة ${surah.arabic}',
-                          photo: track.art,
-                        ),
-                      ),
                     ),
                     const SizedBox(height: 28),
                     Row(

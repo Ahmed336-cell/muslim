@@ -81,7 +81,7 @@ class _ReciteTab extends StatelessWidget {
     final current = state.current;
     final entries = current.data;
     final programKey = 'ruqyah:${state.program.name}';
-    final playing = context.watch<AudioCubit>().state == programKey;
+    final playing = context.watch<AudioCubit>().isPlaying(programKey);
 
     return CustomScrollView(
       slivers: [

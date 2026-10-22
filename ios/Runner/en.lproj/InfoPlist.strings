@@ -2,3 +2,4 @@ CFBundleDisplayName = "Sabeelak";
 CFBundleName = "Sabeelak";
 NSCameraUsageDescription = "The camera shows the Qibla direction over your surroundings.";
 NSLocationWhenInUseUsageDescription = "Your location is used to calculate accurate prayer times and the Qibla direction.";
+NSMicrophoneUsageDescription = "The microphone records your recitation so it can be checked on your device. Audio never leaves your phone.";

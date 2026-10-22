@@ -306,6 +306,33 @@ class L10nAr extends L10n {
   String get tasbihTitle => 'التسبيح';
 
   @override
+  String get sebhaCustomize => 'شكل المسبحة';
+
+  @override
+  String get sebhaCustomizeSub => 'اختر نوع الخرز واللون.';
+
+  @override
+  String get sebhaType => 'النوع';
+
+  @override
+  String get sebhaColor => 'اللون';
+
+  @override
+  String get sebhaStyleWood => 'خشب';
+
+  @override
+  String get sebhaStyleAmber => 'كهرمان';
+
+  @override
+  String get sebhaStyleStone => 'حجر';
+
+  @override
+  String get sebhaStylePearl => 'لؤلؤ';
+
+  @override
+  String get sebhaStyleDigital => 'رقمي';
+
+  @override
   String get reset => 'إعادة';
 
   @override
@@ -1799,6 +1826,15 @@ class L10nAr extends L10n {
   String get shareAyah => 'مشاركة الآية';
 
   @override
+  String get shareHadith => 'مشاركة الحديث';
+
+  @override
+  String get shareName => 'مشاركة الاسم';
+
+  @override
+  String get shareDua => 'مشاركة الدعاء';
+
+  @override
   String get shareImage => 'مشاركة كصورة';
 
   @override
@@ -2572,4 +2608,170 @@ class L10nAr extends L10n {
 
   @override
   String get salawatReminderSub => 'يوم الجمعة الساعة ١١ صباحًا';
+
+  @override
+  String get featTawashih => 'تواشيح';
+
+  @override
+  String get featTawashihSub => 'منشدون ومدائح نبوية';
+
+  @override
+  String get badgeNew => 'جديد';
+
+  @override
+  String get tawashihIntro =>
+      'تواشيح ومدائح بصوت كبار المنشدين. اختر منشدًا ثم مقطعًا.';
+
+  @override
+  String get rawatibTitle => 'السنن الرواتب';
+
+  @override
+  String rawatibBefore(String n) {
+    return '$n ركعات قبلها';
+  }
+
+  @override
+  String rawatibAfter(String n) {
+    return '$n ركعات بعدها';
+  }
+
+  @override
+  String get rawatibNone => 'لا راتبة مؤكدة لهذه الصلاة.';
+
+  @override
+  String get rawatibHint => 'بعد الفرض صلِّ السنن الرواتب.';
+
+  @override
+  String get tahajjudReminder => 'التهجد';
+
+  @override
+  String get tahajjudReminderSub => 'بداية الثلث الأخير من الليل';
+
+  @override
+  String get tahajjudTitle => 'حان وقت التهجد';
+
+  @override
+  String get tahajjudBody => 'بدأ الثلث الأخير من الليل — وقت مبارك للقيام.';
+
+  @override
+  String get duhaReminder => 'الضحى';
+
+  @override
+  String get duhaReminderSub => 'بعد الشروق بنحو ٢٠ دقيقة';
+
+  @override
+  String get duhaTitle => 'حان وقت صلاة الضحى';
+
+  @override
+  String get duhaBody => 'مضى الشروق — صلِّ الضحى قبل الظهر.';
+
+  @override
+  String get iqamaTitle => 'عدّاد الإقامة';
+
+  @override
+  String get iqamaIntro =>
+      'حدد المدة حتى الإقامة. عند انتهائها تقوم الأسرة للصلاة معًا.';
+
+  @override
+  String iqamaMinutes(String n) {
+    return '$n د';
+  }
+
+  @override
+  String get iqamaStart => 'بدء العدّ';
+
+  @override
+  String get iqamaCancel => 'إلغاء';
+
+  @override
+  String get iqamaUntil => 'حتى الإقامة';
+
+  @override
+  String get iqamaStanding => 'قوموا إلى الصلاة';
+
+  @override
+  String get iqamaAgain => 'إعادة';
+
+  @override
+  String get iqamaOpen => 'إقامة الأسرة';
+
+  @override
+  String get comfortReading => 'قراءة مريحة';
+
+  @override
+  String get comfortReadingSub => 'خط عربي كبير لراحة العين';
+
+  @override
+  String trackCount(String n) {
+    return '$n مقطع';
+  }
+
+  @override
+  String get allMunshids => 'كل المنشدين';
+
+  @override
+  String get popularMunshids => 'الأكثر استماعًا';
+
+  @override
+  String prayerIn(String name) {
+    return '$name بعد';
+  }
+
+  @override
+  String get midnight => 'منتصف الليل';
+
+  @override
+  String get lastThird => 'الثلث الأخير';
+
+  @override
+  String get sleepAzkarReminder => 'أذكار النوم';
+
+  @override
+  String get sleepAzkarReminderSub => 'بعد العشاء بنحو ٤٥ دقيقة';
+
+  @override
+  String get sleepAzkarTitle => 'حان وقت أذكار النوم';
+
+  @override
+  String get sleepAzkarBody => 'اختم يومك بذكر الله قبل أن تنام.';
+
+  @override
+  String get featBooks => 'كتب';
+
+  @override
+  String get featBooksSub => 'مكتبة إسلامية عربية مجانية';
+
+  @override
+  String get booksIntro =>
+      'كتب إسلامية عربية كلاسيكية — اقرأها مجانًا داخل التطبيق.';
+
+  @override
+  String get booksFree => 'مجاني';
+
+  @override
+  String get booksOpenFail => 'تعذر تحميل الكتاب.';
+
+  @override
+  String get booksOpenExternal => 'فتح في المتصفح';
+
+  @override
+  String get booksSource => 'المصدر: إسلام هاوس — مجاني للاستخدام الشخصي.';
+
+  @override
+  String get booksCatAqidah => 'عقيدة';
+
+  @override
+  String get booksCatTafsir => 'تفسير';
+
+  @override
+  String get booksCatHadith => 'حديث';
+
+  @override
+  String get booksCatSeerah => 'سيرة';
+
+  @override
+  String get booksCatAdhkar => 'أذكار';
+
+  @override
+  String get booksCatFiqh => 'فقه';
 }

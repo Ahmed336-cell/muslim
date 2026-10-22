@@ -14,6 +14,8 @@ import '../widgets/common.dart';
 import '../widgets/shimmer.dart';
 import '../widgets/fasting_section.dart';
 import 'calendar_screen.dart';
+import '../services/rawatib.dart';
+import 'iqama_screen.dart';
 import 'tracker_screen.dart';
 import 'travel_screen.dart';
 
@@ -68,6 +70,27 @@ class PrayerScreen extends StatelessWidget {
                     child: Text(
                       l.trackerHint,
                       style: Fonts.body(12, color: Palette.inkSoft),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  AppCard(
+                    onTap: () =>
+                        Navigator.of(context).push(IqamaScreen.route()),
+                    child: Row(
+                      children: [
+                        Icon(Icons.timer_outlined, color: Palette.green),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(
+                            l.iqamaOpen,
+                            style: Fonts.body(15, weight: FontWeight.w600),
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          color: Palette.inkSoft,
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -277,8 +300,11 @@ class _PrayerRow extends StatelessWidget {
           ),
           if (prayer.isObligatory)
             IconButton(
-              onPressed: () =>
-                  context.read<PrayerLogCubit>().toggle(prayer.name),
+              onPressed: () {
+                final wasPrayed = prayed;
+                context.read<PrayerLogCubit>().toggle(prayer.name);
+                if (!wasPrayed) _showRawatib(context, prayer.name);
+              },
               icon: AnimatedContainer(
                 duration: const Duration(milliseconds: 160),
                 width: 24,
@@ -303,6 +329,22 @@ class _PrayerRow extends StatelessWidget {
           else
             const SizedBox(width: 48),
         ],
+      ),
+    );
+  }
+
+  void _showRawatib(BuildContext context, String prayer) {
+    final raw = rawatibFor(prayer);
+    if (raw == null || raw.isEmpty) return;
+    final l = context.l;
+    final parts = <String>[
+      if (raw.before > 0) l.rawatibBefore(context.n(raw.before)),
+      if (raw.after > 0) l.rawatibAfter(context.n(raw.after)),
+    ];
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${l.rawatibHint}\n${parts.join(' · ')}'),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }

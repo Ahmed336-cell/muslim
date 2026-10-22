@@ -494,8 +494,8 @@ class _PageBody extends StatelessWidget {
     ],
   ];
 
-  /// Largest font up to [maxFont] that fits, then lines spread out to fill
-  /// the frame like a printed page.
+  /// Uses the user's [maxFont] as-is. If the page is taller than the frame,
+  /// it scrolls; if shorter, line height stretches a little like print.
   _Fit _fit(
     MushafPage page,
     List<List<Ayah>> blocks,
@@ -547,10 +547,8 @@ class _PageBody extends StatelessWidget {
         return total;
       }
 
-      var fs = maxFont;
-      while (fs > _minFont && measure(fs, _baseLine) > height) {
-        fs -= 1;
-      }
+      // Honour the reading-size slider; never shrink past the user's choice.
+      final fs = maxFont.clamp(_minFont, QuranPrefs.maxFontSize);
       final used = measure(fs, _baseLine);
       if (used > height) {
         return (fontSize: fs, lineHeight: _baseLine, overflows: true);
@@ -640,17 +638,29 @@ class ReadingSettingsPanel extends StatelessWidget {
             Text('ا', style: Fonts.mushaf(16, color: Palette.inkSoft)),
             Expanded(
               child: Slider(
-                value: p.fontSize,
+                value: p.fontSize.clamp(
+                  QuranPrefs.minFontSize,
+                  QuranPrefs.maxFontSize,
+                ),
                 min: QuranPrefs.minFontSize,
                 max: QuranPrefs.maxFontSize,
-                divisions: 10,
+                divisions: 18,
                 activeColor: Palette.green,
                 inactiveColor: Palette.rule,
                 onChanged: prefs.setFontSize,
               ),
             ),
-            Text('ا', style: Fonts.mushaf(28, color: Palette.inkSoft)),
+            Text('ا', style: Fonts.mushaf(36, color: Palette.inkSoft)),
           ],
+        ),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: TextButton.icon(
+            onPressed: () =>
+                prefs.setFontSize(QuranPrefs.comfortFontSize),
+            icon: const Icon(Icons.chrome_reader_mode_outlined, size: 18),
+            label: Text(l.comfortReading),
+          ),
         ),
         Text(
           'ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ',
@@ -882,20 +892,27 @@ class _TafsirSheetState extends State<_TafsirSheet> {
             ),
             const SizedBox(height: 6),
             if (s.verse case final v?)
-              Text.rich(
-                TextSpan(
-                  children: [
-                    ...ayahSpans(v.text, cubit.mushaf),
-                    const TextSpan(text: '\u00A0'),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: AyahMarker(s.ayah, size: 30),
+              Builder(
+                builder: (context) {
+                  final fs = context.select(
+                    (QuranPrefsCubit c) => c.state.fontSize,
+                  );
+                  return Text.rich(
+                    TextSpan(
+                      children: [
+                        ...ayahSpans(v.text, cubit.mushaf),
+                        const TextSpan(text: '\u00A0'),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: AyahMarker(s.ayah, size: fs * 1.25),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
-                style: Fonts.mushaf(24),
+                    textAlign: TextAlign.center,
+                    textDirection: TextDirection.rtl,
+                    style: Fonts.mushaf(fs),
+                  );
+                },
               )
             else
               const Shimmer(
