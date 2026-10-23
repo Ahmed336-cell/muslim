@@ -14,7 +14,7 @@ val keyProperties = Properties().apply {
 android {
     namespace = "com.elmoahm.sabeelk"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "29.0.13113456"
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true

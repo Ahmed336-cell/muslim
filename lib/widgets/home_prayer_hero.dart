@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/clock_cubit.dart';
 import '../bloc/prayer_log_cubit.dart';
 import '../bloc/prayer_times/prayer_times_bloc.dart';
-import '../bloc/tab_cubit.dart';
 import '../data.dart';
 import '../l10n/l10n.dart';
 import '../services/islamic_api.dart';
