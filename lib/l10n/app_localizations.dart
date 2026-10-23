@@ -4716,6 +4716,30 @@ abstract class L10n {
   /// **'Munshids and prophetic praise'**
   String get featTawashihSub;
 
+  /// No description provided for @featRadio.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran Radio'**
+  String get featRadio;
+
+  /// No description provided for @featRadioSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Live recitation from Cairo'**
+  String get featRadioSub;
+
+  /// No description provided for @radioLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get radioLive;
+
+  /// No description provided for @radioCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Cairo'**
+  String get radioCity;
+
   /// No description provided for @badgeNew.
   ///
   /// In en, this message translates to:

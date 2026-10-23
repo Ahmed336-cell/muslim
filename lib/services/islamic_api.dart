@@ -104,6 +104,20 @@ class PrayerDay {
   /// Offset of the city's timezone; null = assume the device's.
   final Duration? utcOffset;
 
+  PrayerDay withQibla(double degrees) => PrayerDay(
+    prayers: prayers,
+    following: following,
+    city: city,
+    hijriDay: hijriDay,
+    hijriMonthAr: hijriMonthAr,
+    hijriMonthEn: hijriMonthEn,
+    hijriYear: hijriYear,
+    hijriMonth: hijriMonth,
+    qiblaDegrees: degrees,
+    qiblaKm: qiblaKm,
+    utcOffset: utcOffset,
+  );
+
   String get hijriAr =>
       '${toArabicDigits(hijriDay)} $hijriMonthAr ${toArabicDigits(hijriYear)}';
 

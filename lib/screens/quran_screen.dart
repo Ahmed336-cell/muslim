@@ -299,11 +299,16 @@ class _LastRead extends StatelessWidget {
   final Surah surah;
   final int ayah;
 
+  /// Stays dark in both themes. [Palette.ink] flips to near-white in dark
+  /// mode and washes out the cream text.
+  static const _fill = Color(0xFF1F2A24);
+  static const _brass = Color(0xFFB0812F);
+
   @override
   Widget build(BuildContext context) {
     final l = context.l;
     return AppCard(
-      color: Palette.ink,
+      color: _fill,
       padding: EdgeInsets.zero,
       onTap: () => Navigator.of(
         context,
@@ -321,13 +326,13 @@ class _LastRead extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
             child: Row(
               children: [
-                Icon(Icons.bookmark_rounded, color: Palette.brass),
+                const Icon(Icons.bookmark_rounded, color: _brass),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Caption(l.lastRead, color: Palette.brass),
+                      Caption(l.lastRead, color: _brass),
                       const SizedBox(height: 4),
                       Text(
                         context.isAr ? surah.arabic : surah.name,
@@ -346,7 +351,7 @@ class _LastRead extends StatelessWidget {
                 if (!context.isAr)
                   Text(
                     surah.arabic,
-                    style: Fonts.arabic(26, color: Palette.brass),
+                    style: Fonts.arabic(26, color: _brass),
                   ),
               ],
             ),

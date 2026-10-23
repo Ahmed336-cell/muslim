@@ -74,6 +74,7 @@ import 'services/location.dart';
 import 'services/notifications.dart';
 import 'services/offline_cache.dart';
 import 'services/player.dart';
+import 'services/qibla_api.dart';
 import 'services/quran.dart';
 import 'services/quran_text.dart';
 import 'services/recitation.dart';
@@ -260,7 +261,7 @@ class _Blocs extends StatelessWidget {
         ),
         BlocProvider(
           create: (c) =>
-              PrayerTimesBloc(place: settings.place)
+              PrayerTimesBloc(place: settings.place, qibla: QiblaApi())
                 ..add(const PrayerTimesRequested()),
         ),
         BlocProvider(

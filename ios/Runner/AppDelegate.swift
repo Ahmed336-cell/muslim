@@ -99,63 +99,62 @@ final class CameraHeadingStream: NSObject, FlutterStreamHandler {
 }
 
 /// Compass heading for lib/screens/qibla_screen.dart as [degrees, accuracy].
-/// True north needs location updates on the same manager; without location
-/// access it falls back to magnetic north instead of reporting -1.
-final class HeadingStream: NSObject, FlutterStreamHandler, CLLocationManagerDelegate {
+/// Device motion, not CLHeading: the location heading pauses unless the phone
+/// is held flat, so the dial would ignore turns made at an angle.
+final class HeadingStream: NSObject, FlutterStreamHandler {
   static let shared = HeadingStream()
 
-  private let manager = CLLocationManager()
+  private let motion = CMMotionManager()
   private var sink: FlutterEventSink?
-
-  override init() {
-    super.init()
-    manager.delegate = self
-    manager.headingFilter = 0.5
-    manager.desiredAccuracy = kCLLocationAccuracyKilometer
-  }
 
   func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
     -> FlutterError?
   {
     sink = events
-    guard CLLocationManager.headingAvailable() else {
+    guard motion.isDeviceMotionAvailable else {
       events(nil)
       return nil
     }
-    startLocationIfAllowed()
-    manager.startUpdatingHeading()
+    let frames = CMMotionManager.availableAttitudeReferenceFrames()
+    let status = CLLocationManager().authorizationStatus
+    let located = status == .authorizedWhenInUse || status == .authorizedAlways
+    let frame: CMAttitudeReferenceFrame =
+      located && frames.contains(.xTrueNorthZVertical)
+      ? .xTrueNorthZVertical : .xMagneticNorthZVertical
+    motion.deviceMotionUpdateInterval = 1.0 / 30
+    motion.startDeviceMotionUpdates(using: frame, to: .main) { [weak self] data, _ in
+      guard let self, let data, let sink = self.sink else { return }
+      let m = data.attitude.rotationMatrix
+      // Rows are the device axes in the reference frame (X north, Y west, Z up).
+      // The top of the phone is +Y. When that points at the ceiling, follow the
+      // camera (-Z) so a turn while the phone is upright still moves the dial.
+      let yFlat = hypot(m.m21, m.m22)
+      let north = yFlat > 0.35 ? m.m21 : -m.m31
+      let west = yFlat > 0.35 ? m.m22 : -m.m32
+      var degrees = atan2(-west, north) * 180 / .pi
+      let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+      switch scene?.interfaceOrientation {
+      case .landscapeLeft: degrees -= 90
+      case .landscapeRight: degrees += 90
+      case .portraitUpsideDown: degrees += 180
+      default: break
+      }
+      let accuracy: Double =
+        switch data.magneticField.accuracy {
+        case .high: 8
+        case .medium: 18
+        case .low: 35
+        default: -1
+        }
+      sink([(degrees + 360).truncatingRemainder(dividingBy: 360), accuracy])
+    }
     return nil
   }
 
   func onCancel(withArguments arguments: Any?) -> FlutterError? {
-    manager.stopUpdatingHeading()
-    manager.stopUpdatingLocation()
+    motion.stopDeviceMotionUpdates()
     sink = nil
     return nil
-  }
-
-  private func startLocationIfAllowed() {
-    switch manager.authorizationStatus {
-    case .authorizedWhenInUse, .authorizedAlways: manager.startUpdatingLocation()
-    default: break
-    }
-  }
-
-  func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-    if sink != nil { startLocationIfAllowed() }
-  }
-
-  func locationManager(_ manager: CLLocationManager, didUpdateHeading heading: CLHeading) {
-    guard heading.headingAccuracy >= 0 else { return }
-    var degrees = heading.trueHeading >= 0 ? heading.trueHeading : heading.magneticHeading
-    let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-    switch scene?.interfaceOrientation {
-    case .landscapeLeft: degrees -= 90
-    case .landscapeRight: degrees += 90
-    case .portraitUpsideDown: degrees += 180
-    default: break
-    }
-    sink?([(degrees + 360).truncatingRemainder(dividingBy: 360), heading.headingAccuracy])
   }
 }
 

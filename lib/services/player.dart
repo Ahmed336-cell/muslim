@@ -62,7 +62,7 @@ abstract class AudioEngine {
   Stream<Duration> get position;
   Stream<Duration?> get duration;
 
-  Future<void> load(List<Track> tracks, int index);
+  Future<void> load(List<Track> tracks, int index, {bool live = false});
   Future<void> append(List<Track> tracks);
   Future<void> play();
   Future<void> pause();
@@ -130,7 +130,16 @@ class JustAudioEngine implements AudioEngine {
   Stream<Duration?> get duration => _player.durationStream;
 
   @override
-  Future<void> load(List<Track> tracks, int index) async {
+  Future<void> load(List<Track> tracks, int index, {bool live = false}) async {
+    await usePlaybackSession();
+    await _player.setVolume(1);
+    if (live) {
+      // A live mount never reports a duration. Waiting for one leaves the
+      // player spinning with no sound.
+      await _player.setAudioSource(_source(tracks[index]), preload: false);
+      await _player.play();
+      return;
+    }
     await _player.setAudioSources([
       for (final t in tracks) _source(t),
     ], initialIndex: index);

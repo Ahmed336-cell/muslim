@@ -60,7 +60,8 @@ class MiniPlayer extends StatelessWidget {
                   padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 4, 6),
                   child: Row(
                     children: [
-                      s.kind == RecitationKind.tawashih
+                      s.kind == RecitationKind.tawashih ||
+                              s.kind == RecitationKind.radio
                           ? GramophoneDisc(
                               name: track.artist,
                               spinning: s.playing,

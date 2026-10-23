@@ -26,6 +26,15 @@ private const val CREAM_SOFT = 0xD9F4EFE6.toInt()
 
 private fun arabicDevice() = Locale.getDefault().language == "ar"
 
+/** Mirrors the widget for Arabic. The launcher ignores the app locale, so set it here. */
+private fun RemoteViews.direction(rtl: Boolean) {
+    setInt(
+        R.id.root,
+        "setLayoutDirection",
+        if (rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR,
+    )
+}
+
 private fun open(context: Context, host: String): PendingIntent =
     HomeWidgetLaunchIntent.getActivity(
         context,
@@ -97,6 +106,7 @@ class PrayerWidget : HomeWidgetProvider() {
     ): RemoteViews {
         val labels = WidgetData.labels(prefs, arabicDevice())
         val views = RemoteViews(context.packageName, R.layout.widget_prayer)
+        views.direction(labels.rtl)
         views.setOnClickPendingIntent(R.id.root, open(context, "prayer"))
         views.setTextViewText(R.id.caption, labels.next)
         val around = WidgetData.prayers(prefs)?.let { info -> info.around(now)?.let { info to it } }
@@ -178,6 +188,7 @@ abstract class ItemWidget(
                 context.packageName,
                 if (isName) R.layout.widget_name else R.layout.widget_item,
             )
+            views.direction(labels.rtl)
             views.setOnClickPendingIntent(R.id.root, open(context, host))
             views.setTextViewText(R.id.caption, title(labels))
             views.setTextViewText(R.id.text, item?.text ?: labels.empty)
@@ -221,6 +232,7 @@ class HijriWidget : HomeWidgetProvider() {
         val day = WidgetData.hijri(widgetData, now)
         for (id in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_hijri)
+            views.direction(labels.rtl)
             views.setOnClickPendingIntent(R.id.root, open(context, "hijri"))
             views.setTextViewText(R.id.caption, day?.civil ?: labels.hijri)
             views.setTextViewText(R.id.text, day?.hijri ?: labels.empty)
@@ -264,6 +276,7 @@ class TasbihWidget : HomeWidgetProvider() {
         val shown = if (labels.rtl) toArabicDigits(count.toString()) else count.toString()
         for (id in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_tasbih)
+            views.direction(labels.rtl)
             views.setOnClickPendingIntent(R.id.root, broadcast(context, TAP))
             views.setOnClickPendingIntent(R.id.reset, broadcast(context, RESET))
             views.setTextViewText(R.id.caption, phrase)

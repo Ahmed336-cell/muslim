@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Qibla is hidden until the compass direction is verified on devices.
-const qiblaEnabled = false;
+/// Qibla tab in the bottom bar and the Explore grid.
+const qiblaEnabled = true;
 
 enum AppTab {
   home,

@@ -10,8 +10,8 @@ const _compassChannel = MethodChannel('sabeelak/compass');
 const _headingChannel = EventChannel('sabeelak/heading');
 const _cameraChannel = EventChannel('sabeelak/camera_heading');
 
-/// Where the top of the phone points (held flat). iOS uses its own stream:
-/// flutter_compass reports -1 there whenever true north is unavailable.
+/// Where the top of the phone points. iOS follows device motion, so the dial
+/// turns as the phone turns even when it is not held flat.
 Stream<Heading>? headingStream() => defaultTargetPlatform == TargetPlatform.iOS
     ? _native(_headingChannel)
     : _flutterCompass();

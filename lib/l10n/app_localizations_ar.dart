@@ -2616,6 +2616,18 @@ class L10nAr extends L10n {
   String get featTawashihSub => 'منشدون ومدائح نبوية';
 
   @override
+  String get featRadio => 'إذاعة القرآن الكريم';
+
+  @override
+  String get featRadioSub => 'بث مباشر من القاهرة';
+
+  @override
+  String get radioLive => 'مباشر';
+
+  @override
+  String get radioCity => 'القاهرة';
+
+  @override
   String get badgeNew => 'جديد';
 
   @override

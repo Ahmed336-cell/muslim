@@ -68,10 +68,10 @@ class _RecitersScreenState extends State<RecitersScreen> {
                 ? TextField(
                     autofocus: true,
                     cursorColor: Listen.accent,
-                    style: Fonts.body(16, color: Colors.black),
+                    style: Fonts.body(16, color: Palette.ink),
                     decoration: InputDecoration(
                       hintText: l.recitersSearch,
-                      hintStyle: Fonts.body(16, color: Colors.black),
+                      hintStyle: Fonts.body(16, color: Palette.inkSoft),
                       border: InputBorder.none,
                     ),
                     onChanged: (v) => setState(() => _query = v),

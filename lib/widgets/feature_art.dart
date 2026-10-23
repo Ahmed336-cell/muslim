@@ -60,6 +60,8 @@ class _GlyphPainter extends CustomPainter {
       case Feature.reciters:
       case Feature.tawashih:
         _headphones(canvas, c, s, music: feature == Feature.tawashih);
+      case Feature.radio:
+        _radio(canvas, c, s);
       case Feature.hadith:
       case Feature.books:
       case Feature.duas:
@@ -168,6 +170,43 @@ class _GlyphPainter extends CustomPainter {
       ),
       Paint()..color = const Color(0xFFF5E6B8),
     );
+  }
+
+  void _radio(Canvas canvas, Offset c, double s) {
+    final body = Paint()..color = const Color(0xFF1E4D3A);
+    final gold = Paint()..color = const Color(0xFFB0812F);
+    final cream = Paint()..color = const Color(0xFFF5E6B8);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: c.translate(0, s * .08),
+          width: s * .5,
+          height: s * .32,
+        ),
+        Radius.circular(s * .06),
+      ),
+      body,
+    );
+    canvas.drawCircle(c.translate(-s * .1, s * .08), s * .07, cream);
+    canvas.drawCircle(c.translate(-s * .1, s * .08), s * .03, gold);
+    final wave = Paint()
+      ..color = const Color(0xFFE0B860)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = s * .025
+      ..strokeCap = StrokeCap.round;
+    for (var i = 1; i <= 3; i++) {
+      canvas.drawArc(
+        Rect.fromCenter(
+          center: c.translate(s * .06, s * .02),
+          width: s * .1 * i,
+          height: s * .12 * i,
+        ),
+        -0.9,
+        1.8,
+        false,
+        wave,
+      );
+    }
   }
 
   void _compass(Canvas canvas, Offset c, double s) {

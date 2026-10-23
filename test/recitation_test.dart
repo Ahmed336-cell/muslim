@@ -18,6 +18,7 @@ import 'package:muslim/screens/reciters_screen.dart';
 import 'package:muslim/widgets/mini_player.dart';
 import 'package:muslim/services/ambient.dart';
 import 'package:muslim/services/islamic_api.dart' show ApiException;
+import 'package:muslim/services/quran_radio.dart';
 import 'package:muslim/services/recitation.dart';
 
 import 'fake_audio.dart';
@@ -219,6 +220,22 @@ void main() {
       expect(engine.queue[1].uri, local);
       expect(engine.queue[0].uri.toString(), 'https://server.test/r5/001.mp3');
       expect(c.state.current!.artist, 'Test Reciter');
+    });
+
+    test('quran radio plays the Cairo stream and a second call resumes', () async {
+      final engine = FakeEngine();
+      final c = RecitationCubit(engine: engine);
+      await c.playRadio(title: 'إذاعة القرآن الكريم', artist: 'القاهرة');
+      await _settle();
+      expect(c.state.kind, RecitationKind.radio);
+      expect(c.state.current!.uri.toString(), quranRadioStream);
+      expect(c.state.playing, isTrue);
+
+      await c.pause();
+      await c.playRadio(title: 'إذاعة القرآن الكريم', artist: 'القاهرة');
+      await _settle();
+      expect(engine.loads, 1);
+      expect(c.state.playing, isTrue);
     });
   });
 

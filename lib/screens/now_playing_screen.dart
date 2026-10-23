@@ -57,7 +57,9 @@ class NowPlayingScreen extends StatelessWidget {
     final (light, _) = coverColors(track.artist);
     final ayah = s.ayah;
     final tawashih = s.kind == RecitationKind.tawashih;
-    final Surah? surah = tawashih || track.surah < 1 || track.surah > surahs.length
+    final radio = s.kind == RecitationKind.radio;
+    final Surah? surah =
+        tawashih || radio || track.surah < 1 || track.surah > surahs.length
         ? null
         : surahs[track.surah - 1];
 
@@ -105,6 +107,8 @@ class NowPlayingScreen extends StatelessWidget {
                               Text(
                                 ayah != null
                                     ? l.fromMushaf
+                                    : radio
+                                    ? l.radioLive
                                     : tawashih
                                     ? l.featTawashih
                                     : track.artist,
@@ -143,7 +147,7 @@ class NowPlayingScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 18),
                     Center(
-                      child: tawashih
+                      child: tawashih || radio
                           ? GramophoneDisc(
                               name: track.artist,
                               spinning: s.playing,
@@ -212,7 +216,20 @@ class NowPlayingScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 14),
-                    _SeekBar(cubit: cubit),
+                    if (radio)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 18),
+                        child: Text(
+                          l.radioLive,
+                          style: Fonts.body(
+                            14,
+                            color: Listen.accent,
+                            weight: FontWeight.w700,
+                          ),
+                        ),
+                      )
+                    else
+                      _SeekBar(cubit: cubit),
                     if (s.error)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 6),
@@ -246,33 +263,23 @@ class _Controls extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l;
     final s = state;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-          tooltip: l.repeatTip,
-          color: s.repeat ? Listen.accent : Listen.textSoft,
-          icon: Icon(
-            s.repeat ? Icons.repeat_one_rounded : Icons.repeat_rounded,
-          ),
-          onPressed: cubit.toggleRepeat,
-        ),
-        IconButton(
-          tooltip: l.previousTip,
-          iconSize: 40,
-          color: Listen.text,
-          disabledColor: Listen.textFaint,
-          icon: const Icon(Icons.skip_previous_rounded),
-          onPressed: s.hasPrevious ? cubit.previous : null,
-        ),
-        SizedBox.square(
+    final rtl = context.isAr;
+    // Keep slots fixed, then swap skip buttons for Arabic so "next" sits
+    // on the leading side and the arrows point with the reading direction.
+    Widget mirror(IconData icon) => Transform.flip(
+      flipX: rtl,
+      child: Icon(icon),
+    );
+    if (s.kind == RecitationKind.radio) {
+      return Center(
+        child: SizedBox.square(
           dimension: 68,
           child: Material(
             color: Listen.text,
             shape: const CircleBorder(),
             child: s.buffering && s.playing
                 ? Padding(
-                    padding: EdgeInsets.all(22),
+                    padding: const EdgeInsets.all(22),
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
                       color: Listen.bg,
@@ -291,17 +298,72 @@ class _Controls extends StatelessWidget {
                   ),
           ),
         ),
-        IconButton(
-          tooltip: l.nextTip,
-          iconSize: 40,
-          color: Listen.text,
-          disabledColor: Listen.textFaint,
-          icon: const Icon(Icons.skip_next_rounded),
-          onPressed: s.hasNext ? cubit.next : null,
-        ),
-        // Balances the repeat button.
-        const SizedBox(width: 48),
-      ],
+      );
+    }
+    final skipBack = IconButton(
+      tooltip: l.previousTip,
+      iconSize: 40,
+      color: Listen.text,
+      disabledColor: Listen.textFaint,
+      icon: mirror(Icons.skip_previous_rounded),
+      onPressed: s.hasPrevious ? cubit.previous : null,
+    );
+    final skipForward = IconButton(
+      tooltip: l.nextTip,
+      iconSize: 40,
+      color: Listen.text,
+      disabledColor: Listen.textFaint,
+      icon: mirror(Icons.skip_next_rounded),
+      onPressed: s.hasNext ? cubit.next : null,
+    );
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            tooltip: l.repeatTip,
+            color: s.repeat ? Listen.accent : Listen.textSoft,
+            icon: Icon(
+              s.repeat ? Icons.repeat_one_rounded : Icons.repeat_rounded,
+            ),
+            onPressed: cubit.toggleRepeat,
+          ),
+          rtl ? skipForward : skipBack,
+          SizedBox.square(
+            dimension: 68,
+            child: Material(
+              color: Listen.text,
+              shape: const CircleBorder(),
+              child: s.buffering && s.playing
+                  ? Padding(
+                      padding: EdgeInsets.all(22),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Listen.bg,
+                      ),
+                    )
+                  : IconButton(
+                      tooltip: s.playing ? l.pauseTip : l.playTip,
+                      iconSize: 38,
+                      color: Listen.bg,
+                      icon: Transform.flip(
+                        flipX: rtl && !s.playing,
+                        child: Icon(
+                          s.playing
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                        ),
+                      ),
+                      onPressed: cubit.toggle,
+                    ),
+            ),
+          ),
+          rtl ? skipBack : skipForward,
+          // Balances the repeat button.
+          const SizedBox(width: 48),
+        ],
+      ),
     );
   }
 }

@@ -2629,6 +2629,18 @@ class L10nEn extends L10n {
   String get featTawashihSub => 'Munshids and prophetic praise';
 
   @override
+  String get featRadio => 'Quran Radio';
+
+  @override
+  String get featRadioSub => 'Live recitation from Cairo';
+
+  @override
+  String get radioLive => 'Live';
+
+  @override
+  String get radioCity => 'Cairo';
+
+  @override
   String get badgeNew => 'New';
 
   @override

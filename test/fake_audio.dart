@@ -28,7 +28,7 @@ class FakeEngine implements AudioEngine {
   Stream<Duration?> get duration => Stream.value(null);
 
   @override
-  Future<void> load(List<Track> tracks, int index) async {
+  Future<void> load(List<Track> tracks, int index, {bool live = false}) async {
     loads++;
     if (failLoad) throw Exception('no network');
     queue = [...tracks];

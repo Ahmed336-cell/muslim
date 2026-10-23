@@ -161,10 +161,19 @@ extension View {
     }
   }
 
+  /// App language, not the phone language.
+  @ViewBuilder
   fileprivate func direction(_ labels: Labels) -> some View {
-    environment(\.layoutDirection, labels.rtl ? .rightToLeft : .leftToRight)
+    widgetLocale(labels.rtl)
+  }
+
+  fileprivate func widgetLocale(_ rtl: Bool) -> some View {
+    environment(\.layoutDirection, rtl ? .rightToLeft : .leftToRight)
   }
 }
+
+/// Timer text under an Arabic numbering locale prints 9.0:31.0:27.0.
+private let clockLocale = Locale(identifier: "en_US_POSIX")
 
 private func link(_ host: String) -> URL { URL(string: "muslim://\(host)?homeWidget")! }
 
@@ -283,7 +292,9 @@ struct PrayerView: View {
 
   func countdown(_ at: Date) -> some View {
     Text(timerInterval: entry.date...max(at, entry.date), countsDown: true)
-      .multilineTextAlignment(entry.labels.rtl ? .trailing : .leading)
+      .environment(\.locale, clockLocale)
+      .multilineTextAlignment(.leading)
+      .frame(maxWidth: .infinity, alignment: .leading)
   }
 
   func summary(_ next: PrayerTime, city: String) -> some View {
@@ -766,15 +777,18 @@ struct PrayerLiveActivity: Widget {
               .lineLimit(1).minimumScaleFactor(0.6)
           }
           .padding(.leading, 4)
+          .widgetLocale(a.rtl)
         }
         DynamicIslandExpandedRegion(.trailing) {
           VStack(alignment: .trailing, spacing: 2) {
             Text(s.clock).font(.system(size: 13)).foregroundStyle(.secondary)
             remaining(s, now: a.now)
               .font(.system(size: 20, weight: .semibold).monospacedDigit())
+              .environment(\.locale, clockLocale)
               .foregroundStyle(Palette.brass)
           }
           .padding(.trailing, 4)
+          .widgetLocale(a.rtl)
         }
         DynamicIslandExpandedRegion(.bottom) {
           ProgressView(timerInterval: s.since...max(s.at, s.since), countsDown: false) {
@@ -790,8 +804,10 @@ struct PrayerLiveActivity: Widget {
       } compactTrailing: {
         remaining(s, now: a.now)
           .monospacedDigit()
+          .environment(\.locale, clockLocale)
           .frame(maxWidth: 56)
           .foregroundStyle(Palette.brass)
+          .widgetLocale(a.rtl)
       } minimal: {
         Image(systemName: "moon.stars.fill").foregroundStyle(Palette.brass)
       }
@@ -827,6 +843,7 @@ struct PrayerLockView: View {
         VStack(alignment: .trailing, spacing: 2) {
           (context.isStale ? Text(a.now) : remaining(s, now: a.now))
             .font(.system(size: 26, weight: .semibold).monospacedDigit())
+            .environment(\.locale, clockLocale)
             .foregroundStyle(Palette.cream)
             .multilineTextAlignment(.trailing)
           Text(s.clock).font(.system(size: 13)).foregroundStyle(Palette.cream.opacity(0.75))

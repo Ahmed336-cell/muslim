@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data.dart';
 import '../../l10n/l10n.dart' show arabicDigits;
 import '../../services/player.dart';
+import '../../services/quran_radio.dart';
 import '../../services/recitation.dart';
 import '../../services/reciter_photos.dart';
 
@@ -18,6 +19,9 @@ enum RecitationKind {
 
   /// Prophetic praise (تواشيح) queue from a munshid.
   tawashih,
+
+  /// Live إذاعة القرآن الكريم stream.
+  radio,
 }
 
 final class RecitationState extends Equatable {
@@ -298,10 +302,42 @@ class RecitationCubit extends Cubit<RecitationState> {
     await _load(queue, start);
   }
 
-  Future<void> _load(List<Track> tracks, int index) async {
+  /// Starts the Cairo Quran radio stream. A second call resumes it.
+  Future<void> playRadio({
+    required String title,
+    required String artist,
+  }) async {
+    _reciter = null;
+    if (state.kind == RecitationKind.radio &&
+        state.current?.id == quranRadioId) {
+      if (!state.playing) await toggle();
+      return;
+    }
+    final track = Track(
+      id: quranRadioId,
+      uri: Uri.parse(quranRadioStream),
+      title: title,
+      artist: artist,
+      surah: 0,
+    );
+    emit(
+      RecitationState(
+        kind: RecitationKind.radio,
+        tracks: [track],
+        buffering: true,
+        playing: true,
+        sleepAt: state.sleepAt,
+        sleepAfterSurah: state.sleepAfterSurah,
+      ),
+    );
+    await _load([track], 0, live: true);
+  }
+
+  Future<void> _load(List<Track> tracks, int index, {bool live = false}) async {
     try {
-      await _engine.setRepeat(state.repeat);
-      await _engine.load(tracks, index);
+      if (!live) await _engine.setRepeat(state.repeat);
+      await _engine.setVolume(1);
+      await _engine.load(tracks, index, live: live);
     } catch (_) {
       if (identical(state.tracks, tracks)) {
         emit(state._copy(playing: false, buffering: false, error: true));
@@ -360,7 +396,11 @@ class RecitationCubit extends Cubit<RecitationState> {
       await _engine.pause();
     } else if (state.error) {
       emit(state._copy(error: false, buffering: true, playing: true));
-      await _load(state.tracks, state.index);
+      await _load(
+        state.tracks,
+        state.index,
+        live: state.kind == RecitationKind.radio,
+      );
     } else {
       emit(state._copy(playing: true));
       await _engine.play();

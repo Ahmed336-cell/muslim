@@ -21,6 +21,7 @@ import '../screens/lesson_screen.dart';
 import '../screens/names_screen.dart';
 import '../screens/qada_screen.dart';
 import '../screens/quran_screen.dart';
+import '../screens/radio_screen.dart';
 import '../screens/ramadan_screen.dart';
 import '../screens/reciters_screen.dart';
 import '../screens/ruqyah_screen.dart';
@@ -49,6 +50,7 @@ enum Feature {
   tajweed(Icons.record_voice_over_rounded),
   reciters(Icons.headphones_rounded),
   tawashih(Icons.music_note_rounded, highlight: 'tawashih-2026-10'),
+  radio(Icons.radio_rounded, highlight: 'radio-2026-10'),
   qibla(Icons.explore_rounded),
   travel(Icons.flight_takeoff_rounded),
   tasbih(Icons.blur_circular_rounded),
@@ -89,6 +91,7 @@ enum Feature {
     quran => l.featQuran,
     reciters => l.featReciters,
     tawashih => l.featTawashih,
+    radio => l.featRadio,
     qibla => l.featQibla,
     travel => l.featTravel,
     tasbih => l.featTasbih,
@@ -121,6 +124,7 @@ enum Feature {
     quran => l.featQuranSub,
     reciters => l.featRecitersSub,
     tawashih => l.featTawashihSub,
+    radio => l.featRadioSub,
     qibla => l.featQiblaSub,
     travel => l.featTravelSub,
     tasbih => l.featTasbihSub,
@@ -179,6 +183,8 @@ enum Feature {
         route = RecitersScreen.route();
       case tawashih:
         route = TawashihScreen.route();
+      case radio:
+        route = RadioScreen.route();
       case duas:
         route = DuasScreen.route();
       case kids:
@@ -314,21 +320,22 @@ class _FeatureTile extends StatelessWidget {
         onTap: () => feature.open(context),
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
+          padding: const EdgeInsets.fromLTRB(4, 10, 4, 6),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _FeatureGlyph(feature: feature, size: 44),
-              const SizedBox(height: 6),
-              Text(
-                feature.title(context.l),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: Fonts.body(
-                  11.5,
-                  weight: FontWeight.w500,
-                ).copyWith(height: 1.15),
+              const SizedBox(height: 4),
+              Expanded(
+                child: Text(
+                  feature.title(context.l),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: Fonts.body(
+                    11.5,
+                    weight: FontWeight.w500,
+                  ).copyWith(height: 1.15),
+                ),
               ),
             ],
           ),
@@ -357,7 +364,7 @@ class _FeatureGlyph extends StatelessWidget {
     }
     return SizedBox(
       width: size + 12,
-      height: size + 10,
+      height: size,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
@@ -368,7 +375,7 @@ class _FeatureGlyph extends StatelessWidget {
           ),
           if (showNew)
             Positioned(
-              top: 0,
+              top: -8,
               child: _NewBadge(label: context.l.badgeNew),
             ),
         ],

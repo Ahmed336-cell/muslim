@@ -169,7 +169,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
                   height: 300,
                   child: TweenAnimationBuilder<double>(
                     tween: Tween(end: -_dial),
-                    duration: const Duration(milliseconds: 120),
+                    duration: const Duration(milliseconds: 32),
                     builder: (_, a, _) => Transform.rotate(
                       angle: a * math.pi / 180,
                       child: CustomPaint(
