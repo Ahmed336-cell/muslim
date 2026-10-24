@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'bloc/audio_cubit.dart';
 import 'bloc/azkar_cubit.dart';
@@ -83,9 +84,25 @@ import 'theme.dart';
 import 'widgets/home_widget_sync.dart';
 import 'widgets/live_activity_sync.dart';
 import 'widgets/mini_player.dart';
+import 'widgets/store_gate.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final env = await _loadEnv();
+  if (env.sentryDsn.isEmpty) {
+    await _start(env.apiKey);
+    return;
+  }
+  await SentryFlutter.init((options) {
+    options.dsn = env.sentryDsn;
+    options.environment = kReleaseMode ? 'production' : 'development';
+    options.sendDefaultPii = false;
+    options.tracesSampleRate = 0;
+  }, appRunner: () => _start(env.apiKey));
+}
+
+Future<void> _start(String apiKey) async {
+  if (Sentry.isEnabled) Bloc.observer = _SentryBlocObserver();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: kIsWeb
@@ -106,18 +123,42 @@ Future<void> main() async {
     // Playback still works in the foreground.
   }
   await usePlaybackSession();
-  runApp(MuslimApp(apiKey: await _loadApiKey()));
+  runApp(MuslimApp(apiKey: apiKey));
+}
+
+class _Env {
+  const _Env({required this.apiKey, required this.sentryDsn});
+
+  final String apiKey;
+  final String sentryDsn;
 }
 
 /// `--dart-define` wins; otherwise the bundled assets/env/env.json.
-Future<String> _loadApiKey() async {
-  const defined = String.fromEnvironment('ISLAMIC_API_KEY');
-  if (defined.isNotEmpty) return defined;
-  try {
-    final json = jsonDecode(await rootBundle.loadString('assets/env/env.json'));
-    return (json as Map<String, dynamic>)['ISLAMIC_API_KEY'] as String? ?? '';
-  } catch (_) {
-    return '';
+Future<_Env> _loadEnv() async {
+  const definedKey = String.fromEnvironment('ISLAMIC_API_KEY');
+  const definedDsn = String.fromEnvironment('SENTRY_DSN');
+  var apiKey = definedKey;
+  var sentryDsn = definedDsn;
+  if (apiKey.isEmpty || sentryDsn.isEmpty) {
+    try {
+      final json = jsonDecode(
+        await rootBundle.loadString('assets/env/env.json'),
+      );
+      final map = json as Map<String, dynamic>;
+      if (apiKey.isEmpty) {
+        apiKey = map['ISLAMIC_API_KEY'] as String? ?? '';
+      }
+      if (sentryDsn.isEmpty) sentryDsn = map['SENTRY_DSN'] as String? ?? '';
+    } catch (_) {}
+  }
+  return _Env(apiKey: apiKey, sentryDsn: sentryDsn);
+}
+
+class _SentryBlocObserver extends BlocObserver {
+  @override
+  void onError(BlocBase<dynamic> bloc, Object error, StackTrace stackTrace) {
+    Sentry.captureException(error, stackTrace: stackTrace);
+    super.onError(bloc, error, stackTrace);
   }
 }
 
@@ -266,8 +307,7 @@ class _Blocs extends StatelessWidget {
         ),
         BlocProvider(
           create: (c) =>
-              FastingBloc(place: settings.place)
-                ..add(const FastingRequested()),
+              FastingBloc(place: settings.place)..add(const FastingRequested()),
         ),
         BlocProvider(create: (_) => PrayerLogCubit()),
         BlocProvider(create: (_) => TasbihCubit()),
@@ -437,6 +477,7 @@ class _App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
       locale: Locale(lang),
+      navigatorObservers: [if (Sentry.isEnabled) SentryNavigatorObserver()],
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         L10n.delegate,
@@ -444,11 +485,17 @@ class _App extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: context.select((OnboardingCubit c) => c.state.done)
-          ? const _NotificationTaps(
-              child: HomeWidgetSync(child: LiveActivitySync(child: Shell())),
-            )
-          : const OnboardingScreen(),
+      home: StoreGate(
+        child: context.select((OnboardingCubit c) => c.state.done)
+            ? const ReviewPrompt(
+                child: _NotificationTaps(
+                  child: HomeWidgetSync(
+                    child: LiveActivitySync(child: Shell()),
+                  ),
+                ),
+              )
+            : const OnboardingScreen(),
+      ),
     );
   }
 }

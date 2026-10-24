@@ -221,6 +221,7 @@ class PrivacyScreen extends StatelessWidget {
     final l = context.l;
     final sections = [
       (l.privacyNoAccountTitle, l.privacyNoAccount),
+      (l.privacyCrashesTitle, l.privacyCrashes),
       (l.privacyLocationTitle, l.privacyLocation),
       (l.privacyNetworkTitle, l.privacyNetwork),
       (l.privacyNotificationsTitle, l.privacyNotifications),

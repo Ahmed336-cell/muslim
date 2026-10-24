@@ -949,6 +949,22 @@ class L10nAr extends L10n {
   String get replayTour => 'عرض جولة الترحيب';
 
   @override
+  String get rateApp => 'قيّم التطبيق';
+
+  @override
+  String get rateAppSub => 'تقييمك على Google Play يساعد غيرك على إيجاد سبيلك.';
+
+  @override
+  String get forceUpdateTitle => 'التحديث مطلوب';
+
+  @override
+  String get forceUpdateBody =>
+      'صدر إصدار جديد على متجر Play. حدّث التطبيق لمتابعة استخدام سبيلك.';
+
+  @override
+  String get forceUpdateAction => 'تحديث';
+
+  @override
   String get featReciters => 'القرّاء';
 
   @override
@@ -1261,14 +1277,21 @@ class L10nAr extends L10n {
   String get privacyPolicy => 'سياسة الخصوصية';
 
   @override
-  String get privacyPolicySub => 'بلا حساب ولا تتبّع';
+  String get privacyPolicySub => 'بلا حساب ولا إعلانات';
 
   @override
-  String get privacyNoAccountTitle => 'بلا حساب ولا تتبّع';
+  String get privacyNoAccountTitle => 'بلا حساب ولا إعلانات';
 
   @override
   String get privacyNoAccount =>
-      'لا يوجد في التطبيق تسجيل دخول ولا إعلانات ولا تحليلات. سجل صلواتك وعدّاد التسبيح والعلامات وتقدّم الختمة والإعدادات محفوظة على هذا الجهاز فقط، وتُحذف بحذف التطبيق.';
+      'لا يوجد في التطبيق تسجيل دخول ولا إعلانات. سجل صلواتك وعدّاد التسبيح والعلامات وتقدّم الختمة والإعدادات محفوظة على هذا الجهاز فقط، وتُحذف بحذف التطبيق.';
+
+  @override
+  String get privacyCrashesTitle => 'تقارير الأعطال';
+
+  @override
+  String get privacyCrashes =>
+      'إذا توقف التطبيق أو حدث خطأ، يُرسل تقرير إلى Sentry‏ (sentry.io): نص الخطأ، وتتبع المكدس، وإصدار التطبيق، ونوع الجهاز. لا يتضمن اسمك ولا موقعك ولا سجل صلواتك ولا ما تكتبه.';
 
   @override
   String get privacyLocationTitle => 'الموقع';

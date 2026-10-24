@@ -1789,6 +1789,36 @@ abstract class L10n {
   /// **'Show the welcome tour'**
   String get replayTour;
 
+  /// No description provided for @rateApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the app'**
+  String get rateApp;
+
+  /// No description provided for @rateAppSub.
+  ///
+  /// In en, this message translates to:
+  /// **'A rating on Google Play helps others find Sabeelak.'**
+  String get rateAppSub;
+
+  /// No description provided for @forceUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update required'**
+  String get forceUpdateTitle;
+
+  /// No description provided for @forceUpdateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version is on the Play Store. Update to keep using Sabeelak.'**
+  String get forceUpdateBody;
+
+  /// No description provided for @forceUpdateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get forceUpdateAction;
+
   /// No description provided for @featReciters.
   ///
   /// In en, this message translates to:
@@ -2374,20 +2404,32 @@ abstract class L10n {
   /// No description provided for @privacyPolicySub.
   ///
   /// In en, this message translates to:
-  /// **'No account, no tracking'**
+  /// **'No account, no ads'**
   String get privacyPolicySub;
 
   /// No description provided for @privacyNoAccountTitle.
   ///
   /// In en, this message translates to:
-  /// **'No account, no tracking'**
+  /// **'No account, no ads'**
   String get privacyNoAccountTitle;
 
   /// No description provided for @privacyNoAccount.
   ///
   /// In en, this message translates to:
-  /// **'The app has no sign-in, ads or analytics. Your prayer log, tasbih counts, bookmarks, Khatmah progress and settings are stored only on this device and are deleted with the app.'**
+  /// **'The app has no sign-in or ads. Your prayer log, tasbih counts, bookmarks, Khatmah progress and settings are stored only on this device and are deleted with the app.'**
   String get privacyNoAccount;
+
+  /// No description provided for @privacyCrashesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crash reports'**
+  String get privacyCrashesTitle;
+
+  /// No description provided for @privacyCrashes.
+  ///
+  /// In en, this message translates to:
+  /// **'If the app crashes or hits an error, a report is sent to Sentry (sentry.io): the error, a stack trace, the app version and the device type. It does not include your name, location, prayer log or anything you typed.'**
+  String get privacyCrashes;
 
   /// No description provided for @privacyLocationTitle.
   ///

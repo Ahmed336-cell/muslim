@@ -8,6 +8,7 @@ import '../bloc/quran/quran_prefs_cubit.dart';
 import '../bloc/settings_cubit.dart';
 import '../l10n/l10n.dart';
 import '../services/live_activity.dart';
+import '../services/store_review.dart';
 import '../theme.dart';
 import '../widgets/calculation_settings.dart';
 import 'credits_screen.dart';
@@ -235,6 +236,23 @@ class MoreScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 const Divider(),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: StoreReview.openListing,
+                  leading: Icon(
+                    Icons.star_outline_rounded,
+                    color: Palette.green,
+                  ),
+                  title: Text(l.rateApp, style: Fonts.body(15)),
+                  subtitle: Text(
+                    l.rateAppSub,
+                    style: Fonts.body(13, color: Palette.inkSoft),
+                  ),
+                  trailing: Icon(
+                    Icons.chevron_right_rounded,
+                    color: Palette.inkSoft,
+                  ),
+                ),
                 for (final (icon, title, sub, route) in [
                   (
                     Icons.volunteer_activism_outlined,

@@ -487,6 +487,11 @@
   "defaultTafsir": "Default tafsir",
   "quranReading": "Quran reading",
   "replayTour": "Show the welcome tour",
+  "rateApp": "Rate the app",
+  "rateAppSub": "A rating on Google Play helps others find Sabeelak.",
+  "forceUpdateTitle": "Update required",
+  "forceUpdateBody": "A new version is on the Play Store. Update to keep using Sabeelak.",
+  "forceUpdateAction": "Update",
   "@reminderTitle": {
     "placeholders": {
       "prayer": {
@@ -663,9 +668,11 @@
   "creditsPhotosSub": "Wikimedia Commons; the author and licence also appear under each photo.",
   "openSourceLicences": "Open-source licences",
   "privacyPolicy": "Privacy policy",
-  "privacyPolicySub": "No account, no tracking",
-  "privacyNoAccountTitle": "No account, no tracking",
-  "privacyNoAccount": "The app has no sign-in, ads or analytics. Your prayer log, tasbih counts, bookmarks, Khatmah progress and settings are stored only on this device and are deleted with the app.",
+  "privacyPolicySub": "No account, no ads",
+  "privacyNoAccountTitle": "No account, no ads",
+  "privacyNoAccount": "The app has no sign-in or ads. Your prayer log, tasbih counts, bookmarks, Khatmah progress and settings are stored only on this device and are deleted with the app.",
+  "privacyCrashesTitle": "Crash reports",
+  "privacyCrashes": "If the app crashes or hits an error, a report is sent to Sentry (sentry.io): the error, a stack trace, the app version and the device type. It does not include your name, location, prayer log or anything you typed.",
   "privacyLocationTitle": "Location",
   "privacyLocation": "If you choose \"my location\", your position is used on the device to calculate prayer times and the qibla. It is rounded to about 100 m and is only sent to islamicapi.com to fetch fasting times. It is never stored on a server by us.",
   "privacyNetworkTitle": "Online content",

@@ -939,6 +939,23 @@ class L10nEn extends L10n {
   String get replayTour => 'Show the welcome tour';
 
   @override
+  String get rateApp => 'Rate the app';
+
+  @override
+  String get rateAppSub =>
+      'A rating on Google Play helps others find Sabeelak.';
+
+  @override
+  String get forceUpdateTitle => 'Update required';
+
+  @override
+  String get forceUpdateBody =>
+      'A new version is on the Play Store. Update to keep using Sabeelak.';
+
+  @override
+  String get forceUpdateAction => 'Update';
+
+  @override
   String get featReciters => 'Reciters';
 
   @override
@@ -1254,14 +1271,21 @@ class L10nEn extends L10n {
   String get privacyPolicy => 'Privacy policy';
 
   @override
-  String get privacyPolicySub => 'No account, no tracking';
+  String get privacyPolicySub => 'No account, no ads';
 
   @override
-  String get privacyNoAccountTitle => 'No account, no tracking';
+  String get privacyNoAccountTitle => 'No account, no ads';
 
   @override
   String get privacyNoAccount =>
-      'The app has no sign-in, ads or analytics. Your prayer log, tasbih counts, bookmarks, Khatmah progress and settings are stored only on this device and are deleted with the app.';
+      'The app has no sign-in or ads. Your prayer log, tasbih counts, bookmarks, Khatmah progress and settings are stored only on this device and are deleted with the app.';
+
+  @override
+  String get privacyCrashesTitle => 'Crash reports';
+
+  @override
+  String get privacyCrashes =>
+      'If the app crashes or hits an error, a report is sent to Sentry (sentry.io): the error, a stack trace, the app version and the device type. It does not include your name, location, prayer log or anything you typed.';
 
   @override
   String get privacyLocationTitle => 'Location';
