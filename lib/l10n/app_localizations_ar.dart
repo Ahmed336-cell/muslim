@@ -1904,6 +1904,12 @@ class L10nAr extends L10n {
       'اضغط على الآية لتسمعها. اضغط على رقمها لتعليمها كمحفوظة.';
 
   @override
+  String get hifzHistory => 'التحليلات السابقة';
+
+  @override
+  String get hifzHistoryEmpty => 'سمّع مقطعًا، وتُحفظ المراجعة هنا.';
+
+  @override
   String get hifzFrom => 'من';
 
   @override

@@ -7,6 +7,7 @@ import '../bloc/quran/hifz_cubit.dart';
 import '../bloc/quran/quran_prefs_cubit.dart';
 import '../bloc/quran/recitation_cubit.dart';
 import '../bloc/quran/recite_cubit.dart';
+import '../bloc/quran/recite_history_cubit.dart';
 import '../data.dart';
 import '../l10n/l10n.dart';
 import '../services/quran.dart';
@@ -20,7 +21,9 @@ import '../widgets/common.dart';
 import '../widgets/mini_player.dart';
 import '../widgets/mushaf_frame.dart';
 import '../widgets/quran_text.dart';
+import '../widgets/recite_feedback.dart';
 import '../widgets/shimmer.dart';
+import 'recite_history_screen.dart';
 
 /// Memorising: repeat an ayah range, hide the text, mark what's learnt.
 class HifzScreen extends StatelessWidget {
@@ -33,7 +36,17 @@ class HifzScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l;
     return Scaffold(
-      appBar: AppBar(title: Text(l.featHifz)),
+      appBar: AppBar(
+        title: Text(l.featHifz),
+        actions: [
+          IconButton(
+            tooltip: l.hifzHistory,
+            onPressed: () =>
+                Navigator.push(context, ReciteHistoryScreen.route()),
+            icon: const Icon(Icons.history_rounded),
+          ),
+        ],
+      ),
       bottomNavigationBar: const MiniPlayer(),
       body: ListView(
         padding: const EdgeInsets.only(top: 4, bottom: 32),
@@ -781,7 +794,7 @@ class _ReciteBar extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       builder: (sheet) =>
-          BlocProvider.value(value: hifz, child: _Feedback(result)),
+          BlocProvider.value(value: hifz, child: ReciteFeedback(result)),
     );
     if (retry == true && context.mounted) await _begin(context);
   }
@@ -831,15 +844,21 @@ class _ReciteBar extends StatelessWidget {
           ),
         ],
       ),
-      RecitePhase.checking => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      RecitePhase.checking => Column(
         children: [
-          const SizedBox.square(
-            dimension: 18,
-            child: CircularProgressIndicator(strokeWidth: 2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              const SizedBox(width: 12),
+              Flexible(child: Text(l.reciteChecking, style: Fonts.body(13.5))),
+            ],
           ),
-          const SizedBox(width: 12),
-          Flexible(child: Text(l.reciteChecking, style: Fonts.body(13.5))),
+          const SizedBox(height: 4),
+          TextButton(onPressed: cubit.cancelAnalysis, child: Text(l.cancel)),
         ],
       ),
       RecitePhase.done => _Summary(
@@ -881,7 +900,18 @@ class _ReciteBar extends StatelessWidget {
     return BlocListener<ReciteCubit, ReciteState>(
       listenWhen: (a, b) =>
           a.phase != RecitePhase.done && b.phase == RecitePhase.done,
-      listener: (context, s) => _feedback(context, s.result!),
+      listener: (context, s) {
+        final ayahs = this.ayahs;
+        if (ayahs.isNotEmpty && s.result != null) {
+          context.read<ReciteHistoryCubit>().remember(
+            surah: ayahs.first.surah,
+            from: ayahs.first.number,
+            to: ayahs.last.number,
+            result: s.result!,
+          );
+        }
+        _feedback(context, s.result!);
+      },
       child: AppCard(margin: EdgeInsets.zero, child: body),
     );
   }
@@ -934,211 +964,4 @@ class _Summary extends StatelessWidget {
       ],
     );
   }
-}
-
-/// Final feedback once the reciter finishes.
-class _Feedback extends StatelessWidget {
-  const _Feedback(this.result);
-
-  final ReciteResult result;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l;
-    final h = context.watch<HifzCubit>().state;
-    final score = result.score;
-    final (grade, color) = switch (score) {
-      >= .95 => (l.gradeExcellent, Palette.green),
-      >= .8 => (l.gradeVeryGood, Palette.green),
-      >= .6 => (l.gradeGood, _skippedColor),
-      _ => (l.gradeReview, _mistakeColor),
-    };
-    final unreached = result.count(WordMark.unreached);
-    final perfect = result.perfectAyahs;
-    final surah = h.surah;
-    final allLearnt = perfect.every((a) => h.isMemorized(surah, a));
-    final mistakes = result.mistakes;
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * .85,
-      ),
-      child: SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-          children: [
-            Text(
-              l.feedbackTitle,
-              textAlign: TextAlign.center,
-              style: Fonts.display(20),
-            ),
-            const SizedBox(height: 18),
-            Center(
-              child: SizedBox.square(
-                dimension: 110,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CircularProgressIndicator(
-                      value: score,
-                      strokeWidth: 9,
-                      color: color,
-                      backgroundColor: Palette.rule,
-                    ),
-                    Center(
-                      child: Text(
-                        '${context.n((score * 100).round())}%',
-                        style: Fonts.body(24, weight: FontWeight.w700),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              grade,
-              textAlign: TextAlign.center,
-              style: Fonts.body(16, weight: FontWeight.w600, color: color),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                _Stat(
-                  result.count(WordMark.correct),
-                  l.feedbackMatched,
-                  Palette.green,
-                ),
-                _Stat(
-                  result.count(WordMark.wrong),
-                  l.feedbackMistakes,
-                  _mistakeColor,
-                ),
-                _Stat(
-                  result.count(WordMark.missing),
-                  l.feedbackSkipped,
-                  _skippedColor,
-                ),
-              ],
-            ),
-            if (unreached > 0) ...[
-              const SizedBox(height: 12),
-              Text(
-                l.feedbackUnreached(context.n(unreached)),
-                textAlign: TextAlign.center,
-                style: Fonts.body(12.5, color: Palette.inkSoft),
-              ),
-            ],
-            if (perfect.isNotEmpty) ...[
-              const SizedBox(height: 14),
-              AppCard(
-                margin: EdgeInsets.zero,
-                padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
-                color: Palette.greenSoft,
-                child: Row(
-                  children: [
-                    Icon(Icons.verified_rounded, color: Palette.green),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        l.feedbackPerfect(context.n(perfect.length)),
-                        style: Fonts.body(13.5, weight: FontWeight.w500),
-                      ),
-                    ),
-                    if (allLearnt)
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Icon(Icons.check_rounded, color: Palette.green),
-                      )
-                    else
-                      TextButton(
-                        onPressed: () => context
-                            .read<HifzCubit>()
-                            .markMemorized(surah, perfect),
-                        child: Text(l.feedbackMarkLearnt),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-            if (mistakes.isNotEmpty) ...[
-              const SizedBox(height: 18),
-              Text(
-                l.feedbackReview,
-                style: Fonts.body(14, weight: FontWeight.w600),
-              ),
-              const SizedBox(height: 6),
-              for (final w in mistakes)
-                ListTile(
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                  leading: AyahMarker(w.ayah, size: 30),
-                  title: Text(
-                    stripTajweed(w.word),
-                    textDirection: TextDirection.rtl,
-                    style: Fonts.mushaf(
-                      22,
-                      height: 1.6,
-                      color: result.markOf(w) == WordMark.wrong
-                          ? _mistakeColor
-                          : _skippedColor,
-                    ),
-                  ),
-                  subtitle: Text(switch (result.heardAs[(w.ayah, w.index)]) {
-                    final heard? => l.feedbackHeardAs(heard),
-                    null => l.feedbackSkippedWord,
-                  }, style: Fonts.body(12.5, color: Palette.inkSoft)),
-                ),
-            ],
-            const SizedBox(height: 18),
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => Navigator.pop(context, true),
-                    icon: const Icon(Icons.mic_none_rounded),
-                    label: Text(l.retry),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: Text(l.feedbackDone),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Stat extends StatelessWidget {
-  const _Stat(this.value, this.label, this.color);
-
-  final int value;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) => Expanded(
-    child: Column(
-      children: [
-        Text(
-          context.n(value),
-          style: Fonts.body(20, weight: FontWeight.w700, color: color),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: Fonts.body(12, color: Palette.inkSoft),
-        ),
-      ],
-    ),
-  );
 }

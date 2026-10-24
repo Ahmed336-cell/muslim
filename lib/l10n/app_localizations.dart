@@ -3493,6 +3493,18 @@ abstract class L10n {
   /// **'Tap an ayah to hear it. Tap its number to mark it learnt.'**
   String get hifzPageHint;
 
+  /// No description provided for @hifzHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Past checks'**
+  String get hifzHistory;
+
+  /// No description provided for @hifzHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Recite a passage and the check is kept here.'**
+  String get hifzHistoryEmpty;
+
   /// No description provided for @hifzFrom.
   ///
   /// In en, this message translates to:

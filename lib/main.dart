@@ -40,6 +40,7 @@ import 'bloc/quran/quran_prefs_cubit.dart';
 import 'bloc/quran/recent_reciters_cubit.dart';
 import 'bloc/quran/hifz_cubit.dart';
 import 'bloc/quran/recite_cubit.dart';
+import 'bloc/quran/recite_history_cubit.dart';
 import 'bloc/quran/khatmah_cubit.dart';
 import 'bloc/quran/recent_surahs_cubit.dart';
 import 'bloc/quran/recitation_cubit.dart';
@@ -328,6 +329,7 @@ class _Blocs extends StatelessWidget {
         BlocProvider(
           create: (c) => ReciteCubit(engine: c.read<ReciteEngine>()),
         ),
+        BlocProvider(create: (_) => ReciteHistoryCubit()),
         BlocProvider(
           create: (c) => RecitationCubit(engine: c.read<AudioEngine>()),
         ),

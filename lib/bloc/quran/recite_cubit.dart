@@ -41,6 +41,9 @@ class ReciteCubit extends Cubit<ReciteState> {
   final ReciteEngine _engine;
   StreamSubscription<String>? _partials;
 
+  /// Bumped when a check is cancelled so a late transcript is ignored.
+  int _ticket = 0;
+
   Future<bool> hasModel() => _engine.hasModel();
 
   Future<bool> download() async {
@@ -85,12 +88,17 @@ class ReciteCubit extends Cubit<ReciteState> {
   }
 
   Future<void> finish(List<Ayah> ayahs) async {
+    final ticket = ++_ticket;
     emit(ReciteState(phase: RecitePhase.checking, result: state.result));
     await _partials?.cancel();
     _partials = null;
+    if (isClosed || ticket != _ticket) {
+      await _engine.cancel();
+      return;
+    }
     try {
       final heard = await _engine.finish();
-      if (isClosed) return;
+      if (isClosed || ticket != _ticket) return;
       if (heardWords(heard).isEmpty) {
         emit(const ReciteState(error: ReciteError.nothing));
         return;
@@ -102,12 +110,22 @@ class ReciteCubit extends Cubit<ReciteState> {
         ),
       );
     } catch (_) {
-      if (!isClosed) emit(const ReciteState(error: ReciteError.failed));
+      if (!isClosed && ticket == _ticket) {
+        emit(const ReciteState(error: ReciteError.failed));
+      }
     }
+  }
+
+  /// Leaves the check. A transcript that finishes later is discarded.
+  void cancelAnalysis() {
+    if (state.phase != RecitePhase.checking) return;
+    _ticket++;
+    if (!isClosed) emit(const ReciteState());
   }
 
   Future<void> clear() async {
     if (state.phase == RecitePhase.downloading) return;
+    if (state.phase == RecitePhase.checking) _ticket++;
     if (state.phase == RecitePhase.recording) {
       await _partials?.cancel();
       _partials = null;

@@ -1903,6 +1903,12 @@ class L10nEn extends L10n {
       'Tap an ayah to hear it. Tap its number to mark it learnt.';
 
   @override
+  String get hifzHistory => 'Past checks';
+
+  @override
+  String get hifzHistoryEmpty => 'Recite a passage and the check is kept here.';
+
+  @override
   String get hifzFrom => 'From';
 
   @override

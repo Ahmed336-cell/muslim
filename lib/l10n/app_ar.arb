@@ -566,6 +566,8 @@
   "kahfOpen": "افتح",
   "hifzPlayAyah": "تشغيل هذه الآية",
   "hifzPageHint": "اضغط على الآية لتسمعها. اضغط على رقمها لتعليمها كمحفوظة.",
+  "hifzHistory": "التحليلات السابقة",
+  "hifzHistoryEmpty": "سمّع مقطعًا، وتُحفظ المراجعة هنا.",
   "hifzFrom": "من",
   "hifzTo": "إلى",
   "reciteCheck": "سمّع واختبر",

@@ -1039,6 +1039,8 @@
   "kahfOpen": "Open",
   "hifzPlayAyah": "Play this ayah",
   "hifzPageHint": "Tap an ayah to hear it. Tap its number to mark it learnt.",
+  "hifzHistory": "Past checks",
+  "hifzHistoryEmpty": "Recite a passage and the check is kept here.",
   "hifzFrom": "From",
   "hifzTo": "To",
   "reciteCheck": "Recite & check",
