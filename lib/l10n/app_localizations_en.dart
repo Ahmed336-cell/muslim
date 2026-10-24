@@ -1900,7 +1900,13 @@ class L10nEn extends L10n {
 
   @override
   String get hifzPageHint =>
-      'Tap an ayah to reveal it · tap its number to play or mark it learnt';
+      'Tap an ayah to hear it. Tap its number to mark it learnt.';
+
+  @override
+  String get hifzFrom => 'From';
+
+  @override
+  String get hifzTo => 'To';
 
   @override
   String get reciteCheck => 'Recite & check';
@@ -1919,6 +1925,9 @@ class L10nEn extends L10n {
 
   @override
   String get reciteDownload => 'Download';
+
+  @override
+  String get reciteWorkDownload => 'Downloading the recitation model';
 
   @override
   String reciteDownloading(String percent) {

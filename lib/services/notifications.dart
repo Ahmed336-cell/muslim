@@ -259,6 +259,54 @@ class PrayerNotifier {
     }
   }
 
+  static const workId = 9001;
+
+  /// Ongoing notice while the recitation model downloads or a check runs.
+  /// Safe to call again as progress changes.
+  Future<void> showWork(String title, String body, {double? progress}) async {
+    try {
+      await _init();
+      final percent = progress == null
+          ? null
+          : (progress * 100).round().clamp(0, 100);
+      await _plugin.show(
+        id: workId,
+        title: title,
+        body: body,
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            'recite_work',
+            'Recitation tools',
+            channelDescription: 'Model download and recitation check',
+            icon: _icon,
+            color: _brand,
+            importance: Importance.low,
+            priority: Priority.low,
+            ongoing: true,
+            onlyAlertOnce: true,
+            showProgress: percent != null,
+            maxProgress: 100,
+            progress: percent ?? 0,
+            playSound: false,
+            enableVibration: false,
+          ),
+          iOS: const DarwinNotificationDetails(
+            presentSound: false,
+            presentBanner: false,
+            presentList: true,
+          ),
+        ),
+      );
+    } catch (_) {}
+  }
+
+  Future<void> clearWork() async {
+    try {
+      await _init();
+      await _plugin.cancel(id: workId);
+    } catch (_) {}
+  }
+
   Future<void> _cancelWhere(bool Function(int id) test) async {
     for (final p in await _plugin.pendingNotificationRequests()) {
       if (test(p.id)) await _plugin.cancel(id: p.id);

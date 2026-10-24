@@ -76,6 +76,13 @@ abstract class AudioEngine {
   Future<void> setVolume(double volume);
   Future<void> stop();
   Future<void> dispose();
+
+  /// Loops silence so a download or on-device check keeps running when the
+  /// app is backgrounded. No-op when this player is not the real one.
+  Future<void> holdInBackground(String title) async {}
+
+  /// Stops a hold started by [holdInBackground]. Leaves real playback alone.
+  Future<void> releaseBackgroundHold() async {}
 }
 
 /// Background playback with lock-screen controls via just_audio_background.
@@ -83,6 +90,8 @@ class JustAudioEngine implements AudioEngine {
   final _states = StreamController<EngineState>.broadcast();
   final _subs = <StreamSubscription<Object?>>[];
   AudioPlayer? _p;
+  var _holding = false;
+  String? _holdTitle;
 
   // Created on first use so screens that never play don't touch the
   // platform player.
@@ -131,6 +140,8 @@ class JustAudioEngine implements AudioEngine {
 
   @override
   Future<void> load(List<Track> tracks, int index, {bool live = false}) async {
+    _holding = false;
+    _holdTitle = null;
     await usePlaybackSession();
     await _player.setVolume(1);
     if (live) {
@@ -190,5 +201,37 @@ class JustAudioEngine implements AudioEngine {
     }
     await _p?.dispose();
     await _states.close();
+  }
+
+  @override
+  Future<void> holdInBackground(String title) async {
+    if (_holding && _holdTitle == title) return;
+    _holding = true;
+    _holdTitle = title;
+    try {
+      await usePlaybackSession();
+      await _player.setVolume(1);
+      await _player.setLoopMode(LoopMode.one);
+      await _player.setAudioSource(
+        AudioSource.uri(
+          Uri.parse('asset:///assets/sounds/silence.wav'),
+          tag: MediaItem(id: 'recite-work', title: title, artist: 'Sabeelak'),
+        ),
+      );
+      await _player.play();
+    } catch (_) {
+      _holding = false;
+    }
+  }
+
+  @override
+  Future<void> releaseBackgroundHold() async {
+    if (!_holding) return;
+    _holding = false;
+    _holdTitle = null;
+    try {
+      await _player.stop();
+      await _player.setLoopMode(LoopMode.off);
+    } catch (_) {}
   }
 }

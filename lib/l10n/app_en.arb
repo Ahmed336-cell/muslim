@@ -1038,7 +1038,9 @@
   "tagSunnah": "Sunnah",
   "kahfOpen": "Open",
   "hifzPlayAyah": "Play this ayah",
-  "hifzPageHint": "Tap an ayah to reveal it · tap its number to play or mark it learnt",
+  "hifzPageHint": "Tap an ayah to hear it. Tap its number to mark it learnt.",
+  "hifzFrom": "From",
+  "hifzTo": "To",
   "reciteCheck": "Recite & check",
   "reciteHint": "Recite the range from memory. It's checked on your device.",
   "reciteModelTitle": "Download the recitation model?",
@@ -1051,6 +1053,7 @@
     }
   },
   "reciteDownload": "Download",
+  "reciteWorkDownload": "Downloading the recitation model",
   "reciteDownloading": "Downloading model… {percent}",
   "@reciteDownloading": {
     "placeholders": {

@@ -39,6 +39,7 @@ import 'bloc/quran/downloads_cubit.dart';
 import 'bloc/quran/quran_prefs_cubit.dart';
 import 'bloc/quran/recent_reciters_cubit.dart';
 import 'bloc/quran/hifz_cubit.dart';
+import 'bloc/quran/recite_cubit.dart';
 import 'bloc/quran/khatmah_cubit.dart';
 import 'bloc/quran/recent_surahs_cubit.dart';
 import 'bloc/quran/recitation_cubit.dart';
@@ -82,6 +83,7 @@ import 'services/recitation.dart';
 import 'services/recite_engine.dart';
 import 'theme.dart';
 import 'widgets/home_widget_sync.dart';
+import 'widgets/recite_keep_alive.dart';
 import 'widgets/live_activity_sync.dart';
 import 'widgets/mini_player.dart';
 import 'widgets/store_gate.dart';
@@ -324,6 +326,9 @@ class _Blocs extends StatelessWidget {
         BlocProvider(create: (_) => KhatmahCubit()),
         BlocProvider(create: (_) => HifzCubit()),
         BlocProvider(
+          create: (c) => ReciteCubit(engine: c.read<ReciteEngine>()),
+        ),
+        BlocProvider(
           create: (c) => RecitationCubit(engine: c.read<AudioEngine>()),
         ),
         BlocProvider(
@@ -477,6 +482,8 @@ class _App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
       locale: Locale(lang),
+      builder: (context, child) =>
+          ReciteKeepAlive(child: child ?? const SizedBox.shrink()),
       navigatorObservers: [if (Sentry.isEnabled) SentryNavigatorObserver()],
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,21 +32,18 @@ class HifzScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l;
-    return BlocProvider(
-      create: (c) => ReciteCubit(engine: c.read<ReciteEngine>()),
-      child: Scaffold(
-        appBar: AppBar(title: Text(l.featHifz)),
-        bottomNavigationBar: const MiniPlayer(),
-        body: ListView(
-          padding: const EdgeInsets.only(top: 4, bottom: 32),
-          children: const [
-            _Setup(),
-            SizedBox(height: 16),
-            _HideBar(),
-            SizedBox(height: 8),
-            _AyahList(),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(title: Text(l.featHifz)),
+      bottomNavigationBar: const MiniPlayer(),
+      body: ListView(
+        padding: const EdgeInsets.only(top: 4, bottom: 32),
+        children: const [
+          _Setup(),
+          SizedBox(height: 16),
+          _HideBar(),
+          SizedBox(height: 8),
+          _AyahList(),
+        ],
       ),
     );
   }
@@ -115,20 +113,20 @@ class _Setup extends StatelessWidget {
             ),
             trailing: const Icon(Icons.expand_more_rounded),
           ),
-          if (surah.ayahs > 1) ...[
-            Text(
-              l.hifzRange(context.n(h.from), context.n(h.to)),
-              style: Fonts.body(14, weight: FontWeight.w500),
+          if (surah.ayahs > 1)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              onTap: () => _pickRange(context, surah.ayahs),
+              leading: Icon(
+                Icons.format_list_numbered_rounded,
+                color: Palette.green,
+              ),
+              title: Text(
+                l.hifzRange(context.n(h.from), context.n(h.to)),
+                style: Fonts.body(15, weight: FontWeight.w600),
+              ),
+              trailing: const Icon(Icons.expand_more_rounded),
             ),
-            RangeSlider(
-              values: RangeValues(h.from.toDouble(), h.to.toDouble()),
-              min: 1,
-              max: surah.ayahs.toDouble(),
-              divisions: surah.ayahs - 1,
-              labels: RangeLabels(context.n(h.from), context.n(h.to)),
-              onChanged: (v) => cubit.setRange(v.start.round(), v.end.round()),
-            ),
-          ],
           _Repeats(
             label: l.hifzAyahRepeat,
             value: h.ayahRepeat,
@@ -187,6 +185,16 @@ class _Setup extends StatelessWidget {
     if (picked != null) cubit.setSurah(picked);
   }
 
+  Future<void> _pickRange(BuildContext context, int count) async {
+    final cubit = context.read<HifzCubit>();
+    final h = cubit.state;
+    final picked = await showModalBottomSheet<(int, int)>(
+      context: context,
+      builder: (_) => _RangePicker(count: count, from: h.from, to: h.to),
+    );
+    if (picked != null) cubit.setRange(picked.$1, picked.$2);
+  }
+
   Future<void> _pickReciter(BuildContext context) async {
     final prefs = context.read<QuranPrefsCubit>();
     final picked = await showModalBottomSheet<AyahReciter>(
@@ -223,6 +231,99 @@ class _Setup extends StatelessWidget {
     if (_isHifzQueue(recitation) && recitation.playing) {
       _play(context, context.read<HifzCubit>().state);
     }
+  }
+}
+
+class _RangePicker extends StatefulWidget {
+  const _RangePicker({
+    required this.count,
+    required this.from,
+    required this.to,
+  });
+
+  final int count;
+  final int from;
+  final int to;
+
+  @override
+  State<_RangePicker> createState() => _RangePickerState();
+}
+
+class _RangePickerState extends State<_RangePicker> {
+  late var _from = widget.from;
+  late var _to = widget.to;
+  late final _fromWheel = FixedExtentScrollController(
+    initialItem: widget.from - 1,
+  );
+  late final _toWheel = FixedExtentScrollController(initialItem: widget.to - 1);
+
+  @override
+  void dispose() {
+    _fromWheel.dispose();
+    _toWheel.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l;
+    Widget wheel({
+      required String label,
+      required FixedExtentScrollController controller,
+      required ValueChanged<int> onChanged,
+    }) {
+      return Expanded(
+        child: Column(
+          children: [
+            Text(label, style: Fonts.body(13, color: Palette.inkSoft)),
+            Expanded(
+              child: CupertinoPicker(
+                scrollController: controller,
+                itemExtent: 36,
+                onSelectedItemChanged: onChanged,
+                children: [
+                  for (var i = 1; i <= widget.count; i++)
+                    Center(child: Text(context.n(i), style: Fonts.body(18))),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: SizedBox(
+        height: 280,
+        child: Column(
+          children: [
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: TextButton(
+                onPressed: () => Navigator.pop(context, (_from, _to)),
+                child: Text(l.feedbackDone),
+              ),
+            ),
+            Expanded(
+              child: Row(
+                children: [
+                  wheel(
+                    label: l.hifzFrom,
+                    controller: _fromWheel,
+                    onChanged: (i) => _from = i + 1,
+                  ),
+                  wheel(
+                    label: l.hifzTo,
+                    controller: _toWheel,
+                    onChanged: (i) => _to = i + 1,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -363,11 +464,15 @@ class _AyahListState extends State<_AyahList> {
     ]);
   }
 
-  TapGestureRecognizer _tap(int ayah) =>
+  TapGestureRecognizer _hear(int ayah) =>
       _taps[ayah] ??= TapGestureRecognizer()
-        ..onTap = () => setState(() {
-          if (!_revealed.remove(ayah)) _revealed.add(ayah);
-        });
+        ..onTap = () {
+          final h = context.read<HifzCubit>().state;
+          if (h.hide != HifzHide.none && !_revealed.contains(ayah)) {
+            setState(() => _revealed.add(ayah));
+          }
+          _play(context, h, only: ayah);
+        };
 
   @override
   void dispose() {
@@ -406,12 +511,13 @@ class _AyahListState extends State<_AyahList> {
               WordMark.unreached || null when marks.live => covered,
               final mark => _markStyle(mark),
             },
+            recognizer: _hear(a.number),
           )
       else if (shownWords == words.length)
         ...ayahSpans(
           a.text,
           mushaf,
-          recognizer: _tap(a.number),
+          recognizer: _hear(a.number),
           background: background,
         )
       else ...[
@@ -419,12 +525,12 @@ class _AyahListState extends State<_AyahList> {
           TextSpan(
             text: '${words.take(shownWords).join(' ')} ',
             style: TextStyle(backgroundColor: background),
-            recognizer: _tap(a.number),
+            recognizer: _hear(a.number),
           ),
         TextSpan(
           text: words.skip(shownWords).join(' '),
           style: covered,
-          recognizer: _tap(a.number),
+          recognizer: _hear(a.number),
         ),
       ],
       const TextSpan(text: '\u00A0'),

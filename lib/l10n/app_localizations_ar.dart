@@ -1901,7 +1901,13 @@ class L10nAr extends L10n {
 
   @override
   String get hifzPageHint =>
-      'اضغط على الآية لإظهارها · واضغط على رقمها للتشغيل أو التعليم كمحفوظة';
+      'اضغط على الآية لتسمعها. اضغط على رقمها لتعليمها كمحفوظة.';
+
+  @override
+  String get hifzFrom => 'من';
+
+  @override
+  String get hifzTo => 'إلى';
 
   @override
   String get reciteCheck => 'سمّع واختبر';
@@ -1919,6 +1925,9 @@ class L10nAr extends L10n {
 
   @override
   String get reciteDownload => 'تنزيل';
+
+  @override
+  String get reciteWorkDownload => 'جارٍ تنزيل نموذج الترتيل';
 
   @override
   String reciteDownloading(String percent) {

@@ -76,6 +76,12 @@ class FakeEngine implements AudioEngine {
 
   @override
   Future<void> dispose() => _states.close();
+
+  @override
+  Future<void> holdInBackground(String title) async {}
+
+  @override
+  Future<void> releaseBackgroundHold() async {}
 }
 
 class FakeStore implements AudioStore {

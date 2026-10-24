@@ -3490,8 +3490,20 @@ abstract class L10n {
   /// No description provided for @hifzPageHint.
   ///
   /// In en, this message translates to:
-  /// **'Tap an ayah to reveal it · tap its number to play or mark it learnt'**
+  /// **'Tap an ayah to hear it. Tap its number to mark it learnt.'**
   String get hifzPageHint;
+
+  /// No description provided for @hifzFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get hifzFrom;
+
+  /// No description provided for @hifzTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get hifzTo;
 
   /// No description provided for @reciteCheck.
   ///
@@ -3522,6 +3534,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Download'**
   String get reciteDownload;
+
+  /// No description provided for @reciteWorkDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading the recitation model'**
+  String get reciteWorkDownload;
 
   /// No description provided for @reciteDownloading.
   ///
