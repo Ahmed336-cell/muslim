@@ -53,6 +53,22 @@ class QuranText {
     return QuranSearch(total, matches);
   }
 
+  /// The ayah a spoken transcript is reading, or null when the words are
+  /// too short or fit more than one place equally.
+  Future<Ayah?> locate(String transcript) async =>
+      (await locateSpan(transcript))?.start;
+
+  /// Where [transcript] sits. [VerseSpan.end] is a later ayah when the
+  /// clip crosses a verse boundary. A phrase that occurs in several
+  /// places (the basmalah, the refrain of ar-Rahman) stays null.
+  Future<VerseSpan?> locateSpan(String transcript) async {
+    final edition = await _edition(Mushaf.plain);
+    final stream = edition.stream ??= _WordStream.of(edition);
+    final hit = stream.align(_spokenWords(transcript));
+    if (hit == null) return null;
+    return VerseSpan(edition._ayah(hit.$1), edition._ayah(hit.$2));
+  }
+
   Future<_Edition> _edition(Mushaf mushaf) async {
     final ready = _ready[mushaf];
     if (ready != null) return ready;
@@ -112,6 +128,112 @@ String foldArabic(String s) => s
     .replaceAll(_diacritics, '')
     .replaceAllMapped(RegExp('[أإآٱىئةؤ]'), (m) => _folds[m[0]]!);
 
+final _nonArabic = RegExp(r'[^\u0621-\u064A\s]');
+
+const _bismillahWords = ['بسم', 'الله', 'الرحمن', 'الرحيم'];
+
+/// Start and end ayah of one recited passage. They are the same ayah when
+/// the clip stays inside a single verse.
+class VerseSpan {
+  const VerseSpan(this.start, this.end);
+
+  final Ayah start;
+  final Ayah end;
+}
+
+List<String> _tokens(String text) {
+  final spoken = foldArabic(text)
+      .replaceAll(_nonArabic, ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim();
+  return [
+    for (final w in spoken.split(' '))
+      if (w.length >= 2) w,
+  ];
+}
+
+List<String> _spokenWords(String transcript) {
+  final words = _tokens(transcript);
+  if (words.length >= 7 &&
+      words[0] == _bismillahWords[0] &&
+      words[1] == _bismillahWords[1] &&
+      words[2] == _bismillahWords[2] &&
+      words[3] == _bismillahWords[3]) {
+    return words.sublist(4);
+  }
+  return words;
+}
+
+class _WordStream {
+  _WordStream(this.words, this.ayahOf, this._grams);
+
+  final List<String> words;
+  final List<int> ayahOf;
+  final Map<int, Map<String, List<int>>> _grams;
+
+  static _WordStream of(_Edition edition) {
+    final words = <String>[];
+    final ayahOf = <int>[];
+    for (var i = 0; i < edition.texts.length; i++) {
+      for (final word in _tokens(edition._ayah(i).text)) {
+        words.add(word);
+        ayahOf.add(i);
+      }
+    }
+    final grams = <int, Map<String, List<int>>>{};
+    for (final n in const [3, 4, 5]) {
+      final table = <String, List<int>>{};
+      for (var i = 0; i + n <= words.length; i++) {
+        final key = words.sublist(i, i + n).join(' ');
+        (table[key] ??= []).add(i);
+      }
+      grams[n] = table;
+    }
+    return _WordStream(words, ayahOf, grams);
+  }
+
+  /// Ayah indexes `(start, end)` into the edition, or null on a tie.
+  (int, int)? align(List<String> query) {
+    if (query.length < 3) return null;
+    final width = query.length >= 8 ? 5 : query.length >= 5 ? 4 : 3;
+    final votes = <int, int>{};
+    var grams = 0;
+    for (var q = 0; q + width <= query.length; q++) {
+      final hits = _grams[width]![query.sublist(q, q + width).join(' ')];
+      if (hits == null) continue;
+      grams++;
+      for (final pos in hits) {
+        votes[pos - q] = (votes[pos - q] ?? 0) + 1;
+      }
+    }
+    if (grams == 0 || votes.isEmpty) return null;
+    final possible = query.length - width + 1;
+    var start = 0;
+    var best = 0;
+    var second = 0;
+    votes.forEach((at, score) {
+      if (score > best) {
+        second = best;
+        best = score;
+        start = at;
+      } else if (score == best) {
+        second = score;
+      } else if (score > second) {
+        second = score;
+      }
+    });
+    if (best < 1 || best == second) return null;
+    // A clean clip matches most grams. One exact stretch in a misheard
+    // transcript stays under 0.34, but still counts when it leads by 2x.
+    final margin = best >= 3 && best >= second * 2;
+    if (best / possible < 0.34 && !margin) return null;
+    if (start < 0 || start >= words.length) return null;
+    final end = start + query.length - 1;
+    final last = end < words.length ? end : words.length - 1;
+    return (ayahOf[start], ayahOf[last]);
+  }
+}
+
 class _Meta {
   _Meta(Map json)
     : page = List<int>.from(json['page'] as List),
@@ -159,6 +281,9 @@ class _Edition {
 
   /// [texts] folded by [foldArabic], built on the first search.
   List<String>? folded;
+
+  /// Word stream for [QuranText.locateSpan], built on the first locate.
+  _WordStream? stream;
 
   MushafPage page(int number) => _pages[number] ??= MushafPage(
     number: number,

@@ -46,3 +46,10 @@ app.*.map.json
 
 # Local secrets
 env.json
+
+# Reciter-id build cache and the 25MB speaker model
+tools/reciter_id/.venv/
+tools/reciter_id/.uv/
+tools/reciter_id/.cache/
+tools/reciter_id/models/
+tools/reciter_id/cache/

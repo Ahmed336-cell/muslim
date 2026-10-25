@@ -1,0 +1,5 @@
+# Small files. Hugging Face upload does not need Git LFS for these.
+catalog.json linguist-language=JSON
+embeddings.bin binary
+embeddings.safetensors binary
+*.safetensors binary

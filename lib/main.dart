@@ -82,6 +82,7 @@ import 'services/quran.dart';
 import 'services/quran_text.dart';
 import 'services/recitation.dart';
 import 'services/recite_engine.dart';
+import 'services/reciter_id.dart';
 import 'theme.dart';
 import 'widgets/home_widget_sync.dart';
 import 'widgets/recite_keep_alive.dart';
@@ -179,6 +180,7 @@ class MuslimApp extends StatelessWidget {
     this.hisn,
     this.homeWidgets,
     this.reciteEngine,
+    this.reciterId,
     this.apiKey,
   });
 
@@ -194,6 +196,7 @@ class MuslimApp extends StatelessWidget {
   final HisnRepository? hisn;
   final HomeWidgets? homeWidgets;
   final ReciteEngine? reciteEngine;
+  final ReciterId? reciterId;
   final String? apiKey;
 
   @override
@@ -228,6 +231,7 @@ class MuslimApp extends StatelessWidget {
         RepositoryProvider(create: (_) => hisn ?? HisnRepository()),
         RepositoryProvider(create: (_) => HadithRepository()),
         RepositoryProvider(create: (_) => reciteEngine ?? ReciteEngine()),
+        RepositoryProvider(create: (_) => reciterId ?? ReciterId()),
         RepositoryProvider<AudioEngine>(
           create: (_) => audio ?? JustAudioEngine(),
         ),

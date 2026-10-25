@@ -13,6 +13,7 @@ class Track {
     required this.surah,
     this.ayah,
     this.art,
+    this.start,
   });
 
   final String id;
@@ -20,6 +21,9 @@ class Track {
   final String title;
   final String artist;
   final int surah;
+
+  /// Where playback of this file begins. Used to open a full surah at an ayah.
+  final Duration? start;
 
   /// Bundled photo of the reciter, if there is one.
   final String? art;
@@ -124,10 +128,15 @@ class JustAudioEngine implements AudioEngine {
     return p;
   }
 
-  static AudioSource _source(Track t) => AudioSource.uri(
-    t.uri,
-    tag: MediaItem(id: t.id, title: t.title, artist: t.artist),
-  );
+  static AudioSource _source(Track t) {
+    final tag = MediaItem(id: t.id, title: t.title, artist: t.artist);
+    final file = AudioSource.uri(t.uri);
+    final start = t.start;
+    if (start == null || start <= Duration.zero) {
+      return AudioSource.uri(t.uri, tag: tag);
+    }
+    return ClippingAudioSource(child: file, start: start, tag: tag);
+  }
 
   @override
   Stream<EngineState> get states => _states.stream;

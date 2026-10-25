@@ -183,6 +183,41 @@ class RecitersApi {
       throw const ApiException(ApiException.badResponse);
     }
   }
+
+  /// Where [ayah] begins in this recording's surah file, from mp3quran.
+  /// Null when that recording has no timing.
+  Future<Duration?> ayahOffset(int recordingId, int surah, int ayah) async {
+    final http.Response res;
+    try {
+      res = await _client
+          .get(
+            Uri.https('www.mp3quran.net', '/api/v3/ayat_timing', {
+              'surah': '$surah',
+              'read': '$recordingId',
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+    } catch (_) {
+      return null;
+    }
+    if (res.statusCode != 200) return null;
+    try {
+      return ayahOffsetFromJson(jsonDecode(utf8.decode(res.bodyBytes)), ayah);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+/// [start_time] for [ayah] in an `ayat_timing` payload, in milliseconds.
+Duration? ayahOffsetFromJson(Object? json, int ayah) {
+  if (json is! List) return null;
+  for (final row in json) {
+    if (row is! Map || row['ayah'] != ayah) continue;
+    final ms = row['start_time'];
+    if (ms is num && ms >= 0) return Duration(milliseconds: ms.round());
+  }
+  return null;
 }
 
 /// Surah files saved for offline listening; replaced by a fake in tests.

@@ -91,4 +91,16 @@ void main() {
     expect((await text.search('ا')).total, 0);
     expect((await text.search('zzzz')).total, 0);
   });
+
+  test('locate picks ayat al-kursi from a spoken phrase', () async {
+    final ayah = await text.locate(
+      'الله لا اله الا هو الحي القيوم، لا تاخذه سنه ولا نوم.',
+    );
+    expect(ayah?.surah, 2);
+    expect(ayah?.number, 255);
+  });
+
+  test('locate ignores a fragment that is too short', () async {
+    expect(await text.locate('الله'), isNull);
+  });
 }

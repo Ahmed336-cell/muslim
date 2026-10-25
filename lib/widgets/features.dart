@@ -20,6 +20,7 @@ import '../screens/kids_screen.dart';
 import '../screens/lesson_screen.dart';
 import '../screens/names_screen.dart';
 import '../screens/qada_screen.dart';
+import '../screens/identify_reciter_screen.dart';
 import '../screens/quran_screen.dart';
 import '../screens/radio_screen.dart';
 import '../screens/ramadan_screen.dart';
@@ -45,6 +46,7 @@ enum Feature {
   prayer(Icons.schedule_rounded),
   tracker(Icons.insights_rounded),
   quran(Icons.menu_book_rounded, artAsset: 'assets/features/quran_rehal.png'),
+  identify(Icons.graphic_eq_rounded),
   khatmah(Icons.flag_rounded),
   hifz(Icons.psychology_rounded),
   tajweed(Icons.record_voice_over_rounded),
@@ -89,6 +91,7 @@ enum Feature {
   String title(L10n l) => switch (this) {
     prayer => l.featPrayer,
     quran => l.featQuran,
+    identify => l.featIdentify,
     reciters => l.featReciters,
     tawashih => l.featTawashih,
     radio => l.featRadio,
@@ -122,6 +125,7 @@ enum Feature {
   String subtitle(L10n l) => switch (this) {
     prayer => l.featPrayerSub,
     quran => l.featQuranSub,
+    identify => l.featIdentifySub,
     reciters => l.featRecitersSub,
     tawashih => l.featTawashihSub,
     radio => l.featRadioSub,
@@ -179,6 +183,8 @@ enum Feature {
         route = TravelScreen.route();
       case quran:
         route = QuranScreen.route();
+      case identify:
+        route = IdentifyReciterScreen.route();
       case reciters:
         route = RecitersScreen.route();
       case tawashih:
@@ -241,8 +247,10 @@ List<Feature> visibleFeatures(BuildContext context) {
   return [
     if (ramadan) Feature.ramadan,
     if (friday) Feature.friday,
+    Feature.identify,
     for (final f in Feature.values)
-      if (f != Feature.ramadan &&
+      if (f != Feature.identify &&
+          f != Feature.ramadan &&
           f != Feature.friday &&
           f != Feature.books &&
           (qiblaEnabled || f != Feature.qibla))

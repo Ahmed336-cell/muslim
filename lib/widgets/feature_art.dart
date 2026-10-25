@@ -94,6 +94,8 @@ class _GlyphPainter extends CustomPainter {
         _brain(canvas, c, s);
       case Feature.khatmah:
         _flag(canvas, c, s);
+      case Feature.identify:
+        _wave(canvas, c, s);
       case Feature.qada:
         _repeat(canvas, c, s);
     }
@@ -543,6 +545,19 @@ class _GlyphPainter extends CustomPainter {
       ..lineTo(c.dx - s * .14, c.dy)
       ..close();
     canvas.drawPath(flag, Paint()..color = const Color(0xFFB0812F));
+  }
+
+  void _wave(Canvas canvas, Offset c, double s) {
+    final paint = Paint()
+      ..color = const Color(0xFF1E7A46)
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = s * .08;
+    const heights = [.35, .55, .8, .6, .4];
+    for (var i = 0; i < heights.length; i++) {
+      final x = c.dx + (i - 2) * s * .16;
+      final h = s * heights[i] * .55;
+      canvas.drawLine(Offset(x, c.dy + h), Offset(x, c.dy - h), paint);
+    }
   }
 
   void _repeat(Canvas canvas, Offset c, double s) {

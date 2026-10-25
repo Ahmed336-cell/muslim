@@ -373,6 +373,18 @@ abstract class L10n {
   /// **'Mushaf & tafsir'**
   String get featQuranSub;
 
+  /// No description provided for @featIdentify.
+  ///
+  /// In en, this message translates to:
+  /// **'Identify'**
+  String get featIdentify;
+
+  /// No description provided for @featIdentifySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Reciter, surah and ayah'**
+  String get featIdentifySub;
+
   /// No description provided for @featQibla.
   ///
   /// In en, this message translates to:
@@ -1836,6 +1848,107 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Search reciters'**
   String get recitersSearch;
+
+  /// No description provided for @identifyReciter.
+  ///
+  /// In en, this message translates to:
+  /// **'Identify reciter'**
+  String get identifyReciter;
+
+  /// No description provided for @identifyListen.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen'**
+  String get identifyListen;
+
+  /// No description provided for @identifyListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get identifyListening;
+
+  /// No description provided for @identifyHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the phone near the recitation for about half a minute'**
+  String get identifyHold;
+
+  /// No description provided for @identifyTap.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to listen'**
+  String get identifyTap;
+
+  /// No description provided for @identifyMatching.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding the ayah…'**
+  String get identifyMatching;
+
+  /// No description provided for @identifyOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this ayah'**
+  String get identifyOpen;
+
+  /// No description provided for @identifyOpenReciter.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this reciter'**
+  String get identifyOpenReciter;
+
+  /// No description provided for @identifyPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'{surah}, ayah {ayah}'**
+  String identifyPlace(String surah, String ayah);
+
+  /// No description provided for @identifySpan.
+  ///
+  /// In en, this message translates to:
+  /// **'{surah}, ayah {from}–{to}'**
+  String identifySpan(Object from, Object surah, Object to);
+
+  /// No description provided for @identifyCrossing.
+  ///
+  /// In en, this message translates to:
+  /// **'{fromSurah} {fromAyah} – {toSurah} {toAyah}'**
+  String identifyCrossing(
+    Object fromAyah,
+    Object fromSurah,
+    Object toAyah,
+    Object toSurah,
+  );
+
+  /// No description provided for @identifyDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading the voice model…'**
+  String get identifyDownloading;
+
+  /// No description provided for @identifyUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'No confident match'**
+  String get identifyUnknown;
+
+  /// No description provided for @identifyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Reciter voices are not ready yet.'**
+  String get identifyEmpty;
+
+  /// No description provided for @identifyNeedMic.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access is needed.'**
+  String get identifyNeedMic;
+
+  /// No description provided for @identifyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not identify this recitation.'**
+  String get identifyFailed;
 
   /// No description provided for @surahCount.
   ///

@@ -159,6 +159,12 @@ class L10nEn extends L10n {
   String get featQuranSub => 'Mushaf & tafsir';
 
   @override
+  String get featIdentify => 'Identify';
+
+  @override
+  String get featIdentifySub => 'Reciter, surah and ayah';
+
+  @override
   String get featQibla => 'Qibla';
 
   @override
@@ -963,6 +969,66 @@ class L10nEn extends L10n {
 
   @override
   String get recitersSearch => 'Search reciters';
+
+  @override
+  String get identifyReciter => 'Identify reciter';
+
+  @override
+  String get identifyListen => 'Listen';
+
+  @override
+  String get identifyListening => 'Listening...';
+
+  @override
+  String get identifyHold =>
+      'Keep the phone near the recitation for about half a minute';
+
+  @override
+  String get identifyTap => 'Tap to listen';
+
+  @override
+  String get identifyMatching => 'Finding the ayah…';
+
+  @override
+  String get identifyOpen => 'Open this ayah';
+
+  @override
+  String get identifyOpenReciter => 'Open this reciter';
+
+  @override
+  String identifyPlace(String surah, String ayah) {
+    return '$surah, ayah $ayah';
+  }
+
+  @override
+  String identifySpan(Object from, Object surah, Object to) {
+    return '$surah, ayah $from–$to';
+  }
+
+  @override
+  String identifyCrossing(
+    Object fromAyah,
+    Object fromSurah,
+    Object toAyah,
+    Object toSurah,
+  ) {
+    return '$fromSurah $fromAyah – $toSurah $toAyah';
+  }
+
+  @override
+  String get identifyDownloading => 'Downloading the voice model…';
+
+  @override
+  String get identifyUnknown => 'No confident match';
+
+  @override
+  String get identifyEmpty => 'Reciter voices are not ready yet.';
+
+  @override
+  String get identifyNeedMic => 'Microphone access is needed.';
+
+  @override
+  String get identifyFailed => 'Could not identify this recitation.';
 
   @override
   String surahCount(String n) {

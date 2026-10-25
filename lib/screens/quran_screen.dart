@@ -16,6 +16,7 @@ import '../widgets/shimmer.dart';
 import '../widgets/star_pattern.dart';
 import 'khatmah_screen.dart';
 import 'mushaf_screen.dart';
+import 'identify_reciter_screen.dart';
 import 'reciters_screen.dart';
 
 String _westernDigits(String s) => s.replaceAllMapped(
@@ -90,6 +91,13 @@ class _QuranScreenState extends State<QuranScreen> {
       appBar: AppBar(
         title: Text(l.quranTitle),
         actions: [
+          IconButton(
+            tooltip: l.identifyReciter,
+            icon: const Icon(Icons.graphic_eq_rounded),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(IdentifyReciterScreen.route()),
+          ),
           IconButton(
             tooltip: l.featReciters,
             icon: const Icon(Icons.headphones_rounded),

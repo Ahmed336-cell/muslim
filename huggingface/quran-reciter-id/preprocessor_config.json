@@ -1,0 +1,23 @@
+{
+  "feature_extractor_type": "ReciterWaveform",
+  "sampling_rate": 16000,
+  "num_channels": 1,
+  "encoding": "pcm_s16le",
+  "min_seconds": 20,
+  "listen_seconds": 30,
+  "window_seconds": 20,
+  "hop_seconds": 10,
+  "rejects_seconds_at_or_below": 15,
+  "enrollment": {
+    "clips_per_recording": 12,
+    "surahs_per_recording": 6,
+    "windows_per_surah": 2,
+    "clip_start_seconds": [8, 30],
+    "clip_seconds": 20,
+    "min_seconds": 8,
+    "preferred_surahs": [67, 78, 36, 55, 18, 19],
+    "recordings_with_12_clips": 269,
+    "mean_clips": 11.68,
+    "pooling": "mean of per-clip L2-normalized embeddings, then L2-normalize"
+  }
+}

@@ -234,17 +234,24 @@ class RecitationCubit extends Cubit<RecitationState> {
     int surah,
     String language, {
     Map<int, Uri> local = const {},
+    int? ayah,
+    Duration? startAt,
   }) async {
     _reciter = null;
+    final clip = startAt != null && startAt > Duration.zero ? startAt : null;
     final tracks = [
       for (final s in recording.surahs)
         Track(
           id: '${recording.id}:$s',
           uri: local[s] ?? recording.surahUrl(s),
-          title: surahTitle(s, language),
+          title: ayah != null && s == surah
+              ? '${surahTitle(s, language)} · '
+                    '${language == 'ar' ? arabicDigits('$ayah') : '$ayah'}'
+              : surahTitle(s, language),
           artist: reciter.name,
           surah: s,
           art: reciterPhoto(reciter.id),
+          start: s == surah ? clip : null,
         ),
     ];
     final index = recording.surahs.indexOf(surah);

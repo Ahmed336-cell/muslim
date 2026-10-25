@@ -158,6 +158,12 @@ class L10nAr extends L10n {
   String get featQuranSub => 'المصحف والتفسير';
 
   @override
+  String get featIdentify => 'تعرّف';
+
+  @override
+  String get featIdentifySub => 'القارئ والسورة والآية';
+
+  @override
   String get featQibla => 'القبلة';
 
   @override
@@ -973,6 +979,65 @@ class L10nAr extends L10n {
 
   @override
   String get recitersSearch => 'ابحث عن قارئ';
+
+  @override
+  String get identifyReciter => 'تعرّف على القارئ';
+
+  @override
+  String get identifyListen => 'استمع';
+
+  @override
+  String get identifyListening => 'جاري الاستماع...';
+
+  @override
+  String get identifyHold => 'قرّب الهاتف من التلاوة لنحو نصف دقيقة';
+
+  @override
+  String get identifyTap => 'اضغط للاستماع';
+
+  @override
+  String get identifyMatching => 'جاري تحديد الآية…';
+
+  @override
+  String get identifyOpen => 'افتح الآية';
+
+  @override
+  String get identifyOpenReciter => 'افتح القارئ';
+
+  @override
+  String identifyPlace(String surah, String ayah) {
+    return 'سورة $surah، الآية $ayah';
+  }
+
+  @override
+  String identifySpan(Object from, Object surah, Object to) {
+    return 'سورة $surah، الآيات $from–$to';
+  }
+
+  @override
+  String identifyCrossing(
+    Object fromAyah,
+    Object fromSurah,
+    Object toAyah,
+    Object toSurah,
+  ) {
+    return '$fromSurah $fromAyah – $toSurah $toAyah';
+  }
+
+  @override
+  String get identifyDownloading => 'جاري تنزيل نموذج الصوت…';
+
+  @override
+  String get identifyUnknown => 'لم يتم التعرف على القارئ';
+
+  @override
+  String get identifyEmpty => 'بصمات القراء غير جاهزة بعد.';
+
+  @override
+  String get identifyNeedMic => 'يلزم السماح باستخدام الميكروفون.';
+
+  @override
+  String get identifyFailed => 'تعذر التعرف على هذه التلاوة.';
 
   @override
   String surahCount(String n) {

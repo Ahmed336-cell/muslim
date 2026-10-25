@@ -9,6 +9,7 @@ import '../bloc/quran/recitation_cubit.dart';
 import '../data.dart';
 import '../l10n/l10n.dart';
 import '../services/recitation.dart';
+import 'identify_reciter_screen.dart';
 import '../services/reciter_photos.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
@@ -81,6 +82,15 @@ class _RecitersScreenState extends State<RecitersScreen> {
                     style: Fonts.display(24, color: Listen.text),
                   ),
             actions: [
+              Builder(
+                builder: (context) => IconButton(
+                  tooltip: l.identifyReciter,
+                  icon: const Icon(Icons.graphic_eq_rounded),
+                  onPressed: () => Navigator.of(
+                    context,
+                  ).push(IdentifyReciterScreen.route()),
+                ),
+              ),
               IconButton(
                 tooltip: l.searchTip,
                 icon: Icon(

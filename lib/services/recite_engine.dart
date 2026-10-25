@@ -114,6 +114,30 @@ class ReciteEngine {
     _session = null;
   }
 
+  /// Transcript of a 16 kHz mono PCM clip already on hand.
+  Future<String> transcribePcm(Uint8List pcm) async {
+    if (pcm.length < 16000 || !await hasModel()) return '';
+    try {
+      final wav = File(await _path('identify.wav'));
+      await wav.writeAsBytes([..._wavHeader(pcm.length), ...pcm], flush: true);
+      final response = await const Whisper(model: WhisperModel.base).transcribe(
+        transcribeRequest: TranscribeRequest(
+          audio: wav.path,
+          language: 'ar',
+          isNoTimestamps: true,
+          noContext: true,
+          maxContext: 0,
+          suppressNonSpeechTokens: true,
+          keepModelLoaded: true,
+        ),
+        modelPath: await _modelPath,
+      );
+      return response.text.trim();
+    } catch (_) {
+      return '';
+    }
+  }
+
   /// Stops listening and returns the transcript. The whole recording is
   /// transcribed again in one pass, which is more accurate than the live
   /// text.

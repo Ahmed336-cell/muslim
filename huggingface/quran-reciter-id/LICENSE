@@ -1,0 +1,39 @@
+Quran Reciter Voiceprint License
+Version 1.0, 25 October 2026
+
+This license covers the voiceprint gallery in this repository
+(catalog.json, embeddings.safetensors, embeddings.bin) and the
+identification code shipped next to it (reciter_identifier.py,
+handler.py). It does not cover the TitaNet encoder. That file is
+not in this repository. Its weights stay under the NVIDIA NeMo
+license (CC-BY-4.0) and the sherpa-onnx ONNX package that
+redistributes them.
+
+You may use, copy, and share this gallery and this code for
+closed-set identification of the enrolled Quran reciters, including
+inside an application, if you do all of the following:
+
+1. Give credit. Name this gallery, and name NVIDIA TitaNet-Small
+   as the encoder. A link to the Hugging Face model page is enough.
+2. Keep this license with every copy of the gallery.
+3. Do not sell the gallery on its own. Using it inside a free or
+   paid Quran application is allowed. Selling the vectors, or a
+   model that is only these vectors, is not.
+4. Do not use the gallery, the scores, or the encoder to clone,
+   imitate, or impersonate a reciter, and do not present a
+   synthetic voice as one of these reciters.
+5. Do not use it to identify private people, or any speaker who is
+   not one of the enrolled public recitations.
+6. State clearly when a clip is below the published threshold and
+   is therefore unknown. Do not force a name onto a weak score.
+
+The numbers were computed from short clips of recordings indexed by
+the mp3quran.net API. This repository does not contain that audio.
+Rights in the recordings stay with their reciters and publishers.
+If you rebuild the gallery, follow the source site's terms and
+keep the same enrollment rules, or the vectors will not match this
+release.
+
+THE GALLERY AND THE CODE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND. IDENTIFICATION CAN BE WRONG. A SCORE IS NOT PROOF OF WHO
+IS SPEAKING.
