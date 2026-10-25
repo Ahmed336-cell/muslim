@@ -385,8 +385,38 @@ class _FeatureGlyph extends StatelessWidget {
             Positioned(
               top: -8,
               child: _NewBadge(label: context.l.badgeNew),
+            )
+          else if (feature == Feature.identify)
+            Positioned(
+              top: -8,
+              child: _BetaBadge(label: context.l.identifyBeta),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _BetaBadge extends StatelessWidget {
+  const _BetaBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFB45309),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: Fonts.body(
+          9.5,
+          color: Colors.white,
+          weight: FontWeight.w700,
+        ),
       ),
     );
   }

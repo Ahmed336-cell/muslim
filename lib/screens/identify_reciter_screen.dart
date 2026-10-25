@@ -1,8 +1,7 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
 import '../bloc/quran/quran_prefs_cubit.dart';
 import '../bloc/quran/recent_reciters_cubit.dart';
@@ -41,7 +40,6 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
   ReciterMatch? _match;
   Ayah? _ayah;
   VerseSpan? _span;
-  var _started = false;
 
   @override
   void initState() {
@@ -50,9 +48,6 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && !_started) _listen();
-    });
   }
 
   @override
@@ -70,7 +65,6 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
 
   Future<void> _listen() async {
     if (_phase == _Phase.listening || _phase == _Phase.downloading) return;
-    _started = true;
     final l = context.l;
     final recite = context.read<ReciteEngine>();
     final quran = context.read<QuranText>();
@@ -284,6 +278,14 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
           child: Column(
             children: [
               const Spacer(),
+              _BetaMark(label: l.identifyBeta),
+              const SizedBox(height: 8),
+              Text(
+                l.identifyInaccurate,
+                textAlign: TextAlign.center,
+                style: Fonts.body(13, color: soft),
+              ),
+              const SizedBox(height: 18),
               _ListenOrb(
                 pulse: _pulse,
                 active: listening,
@@ -331,6 +333,27 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
   }
 }
 
+class _BetaMark extends StatelessWidget {
+  const _BetaMark({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFB45309),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: Fonts.body(12, color: Colors.white, weight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
 class _ListenOrb extends StatelessWidget {
   const _ListenOrb({
     required this.pulse,
@@ -349,106 +372,77 @@ class _ListenOrb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Palette.dark;
+    final disc = dark ? const Color(0xFF121816) : Palette.card;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: SizedBox(
-      width: 268,
-      height: 268,
-      child: AnimatedBuilder(
-        animation: pulse,
-        builder: (context, _) {
-          final grow = active ? 6 * pulse.value : 0.0;
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 268 + grow,
-                height: 268 + grow,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: dark
-                      ? const Color(0xFF161616)
-                      : const Color(0xFFE6E8E3),
+        width: 280,
+        height: 280,
+        child: AnimatedBuilder(
+          animation: pulse,
+          builder: (context, _) {
+            final breathe = active ? 10 * pulse.value : 0.0;
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 248 + breathe,
+                  height: 248 + breathe,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: green.withValues(alpha: active ? .28 : .12),
+                      width: active ? 14 : 8,
+                    ),
+                  ),
                 ),
-              ),
-              Container(
-                width: 214,
-                height: 214,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: dark
-                      ? const Color(0xFF0E0E0E)
-                      : const Color(0xFFF7F7F4),
+                Container(
+                  width: 196,
+                  height: 196,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: disc,
+                    border: Border.all(color: green, width: 2.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: green.withValues(alpha: active ? .22 : .08),
+                        blurRadius: active ? 28 : 14,
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  padding: const EdgeInsets.all(22),
+                  child: ColorFiltered(
+                    colorFilter: const ColorFilter.mode(green, BlendMode.srcIn),
+                    child: Lottie.asset(
+                      'assets/features/Music.json',
+                      animate: active,
+                      repeat: true,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
-              ),
-              Material(
-                color: green,
-                shape: const CircleBorder(),
-                clipBehavior: Clip.antiAlias,
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  child: SizedBox(
-                    width: 156,
-                    height: 156,
-                    child: CustomPaint(
-                      painter: _WavePainter(
-                        t: active ? pulse.value : .35,
+                if (progress != null)
+                  IgnorePointer(
+                    child: SizedBox(
+                      width: 214,
+                      height: 214,
+                      child: CircularProgressIndicator(
+                        value: progress == 0 ? null : progress,
+                        strokeWidth: 3,
+                        color: green,
+                        backgroundColor: Colors.transparent,
                       ),
                     ),
                   ),
-                ),
-              ),
-              if (progress != null)
-                IgnorePointer(
-                  child: SizedBox(
-                    width: 188,
-                    height: 188,
-                    child: CircularProgressIndicator(
-                      value: progress == 0 ? null : progress,
-                      strokeWidth: 3,
-                      color: green,
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
-}
-
-class _WavePainter extends CustomPainter {
-  _WavePainter({required this.t});
-
-  final double t;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 7;
-    final mid = size.center(Offset.zero);
-    const base = [18.0, 28.0, 40.0, 30.0, 20.0];
-    for (var i = 0; i < base.length; i++) {
-      final wave = .55 + .45 * math.sin((t * math.pi) + i * .7);
-      final h = base[i] * (.7 + .5 * wave);
-      final x = mid.dx + (i - 2) * 16;
-      final lean = (i - 2) * .18;
-      canvas.save();
-      canvas.translate(x, mid.dy);
-      canvas.rotate(lean);
-      canvas.drawLine(Offset(0, h / 2), Offset(0, -h / 2), paint);
-      canvas.restore();
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _WavePainter oldDelegate) => oldDelegate.t != t;
 }
 
 class _Dots extends StatelessWidget {

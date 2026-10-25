@@ -1031,6 +1031,12 @@ class L10nEn extends L10n {
   String get identifyFailed => 'Could not identify this recitation.';
 
   @override
+  String get identifyBeta => 'Beta';
+
+  @override
+  String get identifyInaccurate => 'May not be accurate';
+
+  @override
   String surahCount(String n) {
     return '$n surahs';
   }

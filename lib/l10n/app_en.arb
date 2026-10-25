@@ -536,6 +536,8 @@
   "identifyEmpty": "Reciter voices are not ready yet.",
   "identifyNeedMic": "Microphone access is needed.",
   "identifyFailed": "Could not identify this recitation.",
+  "identifyBeta": "Beta",
+  "identifyInaccurate": "May not be accurate",
   "surahCount": "{n} surahs",
   "listenFromHere": "Listen from here",
   "listenPage": "Listen to this page",

@@ -1040,6 +1040,12 @@ class L10nAr extends L10n {
   String get identifyFailed => 'تعذر التعرف على هذه التلاوة.';
 
   @override
+  String get identifyBeta => 'تجريبي';
+
+  @override
+  String get identifyInaccurate => 'قد لا تكون النتيجة دقيقة';
+
+  @override
   String surahCount(String n) {
     return '$n سورة';
   }

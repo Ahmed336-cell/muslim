@@ -36,21 +36,18 @@ class ReciterId {
   static const catalogAsset = 'assets/reciter_id/catalog.json';
   static const embeddingsAsset = 'assets/reciter_id/embeddings.bin';
 
-  /// Cosine on TitaNet. On a 289-voice catalogue, a surah that was not used
-  /// for enrollment matched the right reciter at 0.73 or above. The two
-  /// misses topped out at 0.65, so those stay "unknown".
+  /// Kept for the gallery config. A cosine under this still names the
+  /// nearest recording. Silence and a clip under [minListen] name nobody.
   static const threshold = 0.70;
 
-  /// Sixteen seconds. Long enough to name a voice and place an ayah.
-  /// A shorter take still scores when the simulator mic delivers less.
-  static const listenFor = Duration(seconds: 16);
+  /// 30 seconds is the length the voice windows are built for.
+  static const listenFor = Duration(seconds: 30);
+
+  /// Under this the call names nobody. 15 seconds or less is refused.
   static const minListen = Duration(seconds: 20);
+  static const rejectAtOrBelow = Duration(seconds: 15);
   static const window = Duration(seconds: 20);
   static const hop = Duration(seconds: 10);
-
-  /// When two or more windows exist, at least this fraction must name the
-  /// same reciter as the pooled vector.
-  static const minAgreement = 0.5;
 
   final http.Client _client;
   final _recorder = AudioRecorder();
@@ -228,7 +225,8 @@ class ReciterId {
     );
   }
 
-  /// [pcm16] is little-endian mono 16 kHz. Empty under 3 seconds.
+  /// [pcm16] is little-endian mono 16 kHz. Empty under [minListen].
+  /// The named reciter is the first candidate, including under [threshold].
   Future<({List<ReciterMatch> matches, double agreement})> identifyPcm16(
     Uint8List pcm16,
   ) async {
@@ -239,7 +237,7 @@ class ReciterId {
       return (matches: const <ReciterMatch>[], agreement: 0.0);
     }
     final samples = _pcm16ToFloat(pcm16);
-    final windows = _windows(samples);
+    final windows = audioWindows(samples);
     if (windows.isEmpty) return (matches: const <ReciterMatch>[], agreement: 0.0);
     final extractor = await _openExtractor();
     final vectors = <Float32List>[];
@@ -271,28 +269,6 @@ class ReciterId {
     return (matches: matches, agreement: agreement);
   }
 
-  /// 20-second slices when the take is long enough. A clip of at least
-  /// 3 seconds is still scored whole, so a simulator mic is not dropped.
-  static List<Float32List> _windows(Float32List samples) {
-    const rate = 16000;
-    if (samples.length < rate * 3) return const [];
-    final win = rate * window.inSeconds;
-    if (samples.length < rate * minListen.inSeconds) return [samples];
-    final hopN = rate * hop.inSeconds;
-    if (samples.length <= win) return [samples];
-    final chunks = <Float32List>[];
-    var start = 0;
-    while (start < samples.length) {
-      final end = start + win < samples.length ? start + win : samples.length;
-      if (end - start > rate * 15) {
-        chunks.add(Float32List.sublistView(samples, start, end));
-      }
-      if (start + win >= samples.length) break;
-      start += hopN;
-    }
-    return chunks;
-  }
-
   static Float32List _pool(List<Float32List> vectors) {
     final dim = vectors.first.length;
     final mean = Float64List(dim);
@@ -321,6 +297,31 @@ class ReciterId {
   }
 
   bool get catalogReady => _voices != null && _voices!.isNotEmpty;
+
+  /// 20-second slices, hop 10. Empty when the clip is under 20 seconds.
+  /// A window of 15 seconds or less is dropped. 30 seconds makes two windows.
+  static List<Float32List> audioWindows(
+    Float32List samples, {
+    int sampleRate = 16000,
+  }) {
+    if (sampleRate < 1) return const [];
+    if (samples.length < sampleRate * minListen.inSeconds) return const [];
+    final win = sampleRate * window.inSeconds;
+    final floor = sampleRate * rejectAtOrBelow.inSeconds;
+    if (samples.length <= win) return [samples];
+    final hopN = sampleRate * hop.inSeconds;
+    final chunks = <Float32List>[];
+    var start = 0;
+    while (start < samples.length) {
+      final end = start + win < samples.length ? start + win : samples.length;
+      if (end - start > floor) {
+        chunks.add(Float32List.sublistView(samples, start, end));
+      }
+      if (start + win >= samples.length) break;
+      start += hopN;
+    }
+    return chunks;
+  }
 
   static Float32List _pcm16ToFloat(Uint8List bytes) {
     final view = ByteData.sublistView(bytes);

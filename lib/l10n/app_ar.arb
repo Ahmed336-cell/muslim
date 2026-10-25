@@ -314,6 +314,8 @@
   "identifyEmpty": "بصمات القراء غير جاهزة بعد.",
   "identifyNeedMic": "يلزم السماح باستخدام الميكروفون.",
   "identifyFailed": "تعذر التعرف على هذه التلاوة.",
+  "identifyBeta": "تجريبي",
+  "identifyInaccurate": "قد لا تكون النتيجة دقيقة",
   "surahCount": "{n} سورة",
   "listenFromHere": "استمع من هنا",
   "listenPage": "استمع إلى هذه الصفحة",

@@ -69,6 +69,18 @@ void main() {
     expect(warsh.ayahReciter, isNull);
   });
 
+  test('30s clip is two windows, under 20s is none', () {
+    expect(ReciterId.audioWindows(Float32List(15 * 16000)), isEmpty);
+    expect(ReciterId.audioWindows(Float32List(20 * 16000)), hasLength(1));
+    final half = ReciterId.audioWindows(Float32List(25 * 16000));
+    expect(half, hasLength(1));
+    expect(half.first.length, 20 * 16000);
+    final windows = ReciterId.audioWindows(Float32List(30 * 16000));
+    expect(windows, hasLength(2));
+    expect(windows.first.length, 20 * 16000);
+    expect(windows.last.length, 20 * 16000);
+  });
+
   test('wav pcm comes back as 16 kHz mono', () {
     final data = Uint8List(4);
     final samples = ByteData.sublistView(data);

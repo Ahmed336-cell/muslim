@@ -1950,6 +1950,18 @@ abstract class L10n {
   /// **'Could not identify this recitation.'**
   String get identifyFailed;
 
+  /// No description provided for @identifyBeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Beta'**
+  String get identifyBeta;
+
+  /// No description provided for @identifyInaccurate.
+  ///
+  /// In en, this message translates to:
+  /// **'May not be accurate'**
+  String get identifyInaccurate;
+
   /// No description provided for @surahCount.
   ///
   /// In en, this message translates to:
