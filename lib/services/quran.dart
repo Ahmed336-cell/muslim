@@ -6,7 +6,11 @@ import 'package:http/http.dart' as http;
 import 'islamic_api.dart' show ApiException;
 import 'quran_text.dart';
 
+/// Page look: paper, ink, and ornaments. Separate from the script [Mushaf].
+enum MushafStyle { classic, madinah, night, sepia, ottoman, emerald, royal, rose, ink }
+
 /// Script the mushaf is printed in. Texts come from api.alquran.cloud.
+
 enum Mushaf {
   uthmani('quran-uthmani', 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ'),
   tajweed(

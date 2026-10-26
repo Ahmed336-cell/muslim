@@ -29,8 +29,10 @@ import 'recite_history_screen.dart';
 class HifzScreen extends StatelessWidget {
   const HifzScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const HifzScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'hifz'),
+    builder: (_) => const HifzScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -503,11 +505,12 @@ class _AyahListState extends State<_AyahList> {
     bool memorized,
     double fs,
     _Marks? marks,
+    MushafColors colors,
   ) {
     final background = current ? _recitingColor : null;
     final covered = TextStyle(
       color: Colors.transparent,
-      backgroundColor: MushafColors.band,
+      backgroundColor: colors.band,
     );
     final words = stripTajweed(a.text).split(' ');
     final shownWords = switch (hide) {
@@ -522,7 +525,7 @@ class _AyahListState extends State<_AyahList> {
             text: i < words.length - 1 ? '$w ' : w,
             style: switch (marks.marks[(a.number, i)]) {
               WordMark.unreached || null when marks.live => covered,
-              final mark => _markStyle(mark),
+              final mark => _markStyle(mark, colors.green),
             },
             recognizer: _hear(a.number),
           )
@@ -555,7 +558,8 @@ class _AyahListState extends State<_AyahList> {
             child: AyahMarker(
               a.number,
               size: fs * 1.25,
-              color: memorized ? MushafColors.green : Palette.brass,
+              color: memorized ? colors.green : colors.brass,
+              numberColor: colors.ink,
             ),
           ),
         ),
@@ -564,8 +568,8 @@ class _AyahListState extends State<_AyahList> {
     ];
   }
 
-  static TextStyle? _markStyle(WordMark? mark) => switch (mark) {
-    WordMark.correct => TextStyle(color: MushafColors.green),
+  static TextStyle? _markStyle(WordMark? mark, Color correct) => switch (mark) {
+    WordMark.correct => TextStyle(color: correct),
     WordMark.wrong => TextStyle(
       color: _mistakeColor,
       backgroundColor: _mistakeColor.withValues(alpha: .14),
@@ -658,6 +662,7 @@ class _AyahListState extends State<_AyahList> {
     return FutureBuilder<List<Ayah>>(
       future: _ayahs,
       builder: (context, snap) {
+        final colors = MushafColors.watch(context);
         final ayahs = snap.data;
         if (ayahs == null) return const ListSkeleton(rows: 4);
         final opening = ayahs.first;
@@ -685,7 +690,7 @@ class _AyahListState extends State<_AyahList> {
                         textAlign: TextAlign.center,
                         textDirection: TextDirection.rtl,
                         textScaler: TextScaler.noScaling,
-                        style: Fonts.mushaf(fs),
+                        style: Fonts.mushaf(fs, color: colors.ink),
                       ),
                     // Semantics can't follow tap spans being added or removed
                     // in place, so a new span layout gets a new paragraph.
@@ -709,13 +714,14 @@ class _AyahListState extends State<_AyahList> {
                               h.isMemorized(a.surah, a.number),
                               fs,
                               marks,
+                              colors,
                             ),
                         ],
                       ),
                       textAlign: TextAlign.justify,
                       textDirection: TextDirection.rtl,
                       textScaler: TextScaler.noScaling,
-                      style: Fonts.mushaf(fs),
+                      style: Fonts.mushaf(fs, color: colors.ink),
                     ),
                   ],
                 ),

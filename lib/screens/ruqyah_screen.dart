@@ -27,8 +27,10 @@ extension on RuqyahSource {
 class RuqyahScreen extends StatefulWidget {
   const RuqyahScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const RuqyahScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'ruqyah'),
+    builder: (_) => const RuqyahScreen(),
+  );
 
   @override
   State<RuqyahScreen> createState() => _RuqyahScreenState();

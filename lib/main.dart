@@ -66,6 +66,7 @@ import 'screens/prayer_screen.dart';
 import 'screens/qibla_screen.dart';
 import 'screens/sadaqah_screen.dart';
 import 'screens/sleep_screen.dart';
+import 'services/analytics.dart';
 import 'services/ambient.dart';
 import 'services/clock.dart';
 import 'services/hadith.dart';
@@ -84,7 +85,9 @@ import 'services/recitation.dart';
 import 'services/recite_engine.dart';
 import 'services/reciter_id.dart';
 import 'theme.dart';
+import 'widgets/features.dart';
 import 'widgets/home_widget_sync.dart';
+import 'widgets/location_prompt.dart';
 import 'widgets/recite_keep_alive.dart';
 import 'widgets/live_activity_sync.dart';
 import 'widgets/mini_player.dart';
@@ -94,7 +97,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final env = await _loadEnv();
   if (env.sentryDsn.isEmpty) {
-    await _start(env.apiKey);
+    await _start(env);
     return;
   }
   await SentryFlutter.init((options) {
@@ -102,10 +105,10 @@ Future<void> main() async {
     options.environment = kReleaseMode ? 'production' : 'development';
     options.sendDefaultPii = false;
     options.tracesSampleRate = 0;
-  }, appRunner: () => _start(env.apiKey));
+  }, appRunner: () => _start(env));
 }
 
-Future<void> _start(String apiKey) async {
+Future<void> _start(_Env env) async {
   if (Sentry.isEnabled) Bloc.observer = _SentryBlocObserver();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   HydratedBloc.storage = await HydratedStorage.build(
@@ -127,23 +130,31 @@ Future<void> _start(String apiKey) async {
     // Playback still works in the foreground.
   }
   await usePlaybackSession();
-  runApp(MuslimApp(apiKey: apiKey));
+  await Analytics.init(env.mixpanelToken);
+  runApp(MuslimApp(apiKey: env.apiKey));
 }
 
 class _Env {
-  const _Env({required this.apiKey, required this.sentryDsn});
+  const _Env({
+    required this.apiKey,
+    required this.sentryDsn,
+    required this.mixpanelToken,
+  });
 
   final String apiKey;
   final String sentryDsn;
+  final String mixpanelToken;
 }
 
 /// `--dart-define` wins; otherwise the bundled assets/env/env.json.
 Future<_Env> _loadEnv() async {
   const definedKey = String.fromEnvironment('ISLAMIC_API_KEY');
   const definedDsn = String.fromEnvironment('SENTRY_DSN');
+  const definedMixpanel = String.fromEnvironment('MIXPANEL_TOKEN');
   var apiKey = definedKey;
   var sentryDsn = definedDsn;
-  if (apiKey.isEmpty || sentryDsn.isEmpty) {
+  var mixpanelToken = definedMixpanel;
+  if (apiKey.isEmpty || sentryDsn.isEmpty || mixpanelToken.isEmpty) {
     try {
       final json = jsonDecode(
         await rootBundle.loadString('assets/env/env.json'),
@@ -153,9 +164,16 @@ Future<_Env> _loadEnv() async {
         apiKey = map['ISLAMIC_API_KEY'] as String? ?? '';
       }
       if (sentryDsn.isEmpty) sentryDsn = map['SENTRY_DSN'] as String? ?? '';
+      if (mixpanelToken.isEmpty) {
+        mixpanelToken = map['MIXPANEL_TOKEN'] as String? ?? '';
+      }
     } catch (_) {}
   }
-  return _Env(apiKey: apiKey, sentryDsn: sentryDsn);
+  return _Env(
+    apiKey: apiKey,
+    sentryDsn: sentryDsn,
+    mixpanelToken: mixpanelToken,
+  );
 }
 
 class _SentryBlocObserver extends BlocObserver {
@@ -490,7 +508,10 @@ class _App extends StatelessWidget {
       locale: Locale(lang),
       builder: (context, child) =>
           ReciteKeepAlive(child: child ?? const SizedBox.shrink()),
-      navigatorObservers: [if (Sentry.isEnabled) SentryNavigatorObserver()],
+      navigatorObservers: [
+        FeatureRoutes(),
+        if (Sentry.isEnabled) SentryNavigatorObserver(),
+      ],
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         L10n.delegate,
@@ -503,7 +524,9 @@ class _App extends StatelessWidget {
             ? const ReviewPrompt(
                 child: _NotificationTaps(
                   child: HomeWidgetSync(
-                    child: LiveActivitySync(child: Shell()),
+                    child: LiveActivitySync(
+                      child: LocationPrompt(child: Shell()),
+                    ),
                   ),
                 ),
               )

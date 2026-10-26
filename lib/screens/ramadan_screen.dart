@@ -51,8 +51,10 @@ HijriDate hijriToday(BuildContext context, PrayerDay? day, DateTime now) {
 class RamadanScreen extends StatelessWidget {
   const RamadanScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const RamadanScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'ramadan'),
+    builder: (_) => const RamadanScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

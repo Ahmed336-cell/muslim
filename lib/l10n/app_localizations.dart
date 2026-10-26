@@ -1303,6 +1303,66 @@ abstract class L10n {
   /// **'Plain letters, easy to scan'**
   String get mushafPlainSub;
 
+  /// No description provided for @mushafStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Page style'**
+  String get mushafStyle;
+
+  /// No description provided for @styleClassic.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic'**
+  String get styleClassic;
+
+  /// No description provided for @styleMadinah.
+  ///
+  /// In en, this message translates to:
+  /// **'Madinah'**
+  String get styleMadinah;
+
+  /// No description provided for @styleNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get styleNight;
+
+  /// No description provided for @styleSepia.
+  ///
+  /// In en, this message translates to:
+  /// **'Sepia'**
+  String get styleSepia;
+
+  /// No description provided for @styleOttoman.
+  ///
+  /// In en, this message translates to:
+  /// **'Ottoman'**
+  String get styleOttoman;
+
+  /// No description provided for @styleEmerald.
+  ///
+  /// In en, this message translates to:
+  /// **'Emerald'**
+  String get styleEmerald;
+
+  /// No description provided for @styleRoyal.
+  ///
+  /// In en, this message translates to:
+  /// **'Royal'**
+  String get styleRoyal;
+
+  /// No description provided for @styleRose.
+  ///
+  /// In en, this message translates to:
+  /// **'Rose'**
+  String get styleRose;
+
+  /// No description provided for @styleInk.
+  ///
+  /// In en, this message translates to:
+  /// **'Ink'**
+  String get styleInk;
+
   /// No description provided for @textSize.
   ///
   /// In en, this message translates to:
@@ -2466,6 +2526,18 @@ abstract class L10n {
   /// **'Add or subtract minutes to match your local mosque.'**
   String get adjustTimesSub;
 
+  /// No description provided for @tuneHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get tuneHour;
+
+  /// No description provided for @tuneMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get tuneMinute;
+
   /// No description provided for @adjustNone.
   ///
   /// In en, this message translates to:
@@ -2555,6 +2627,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'If the app crashes or hits an error, a report is sent to Sentry (sentry.io): the error, a stack trace, the app version and the device type. It does not include your name, location, prayer log or anything you typed.'**
   String get privacyCrashes;
+
+  /// No description provided for @privacyUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage'**
+  String get privacyUsageTitle;
+
+  /// No description provided for @privacyUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'The app records which feature you open, plus app sessions, with Mixpanel (mixpanel.com). The event includes the feature name, app version, language and whether the build is a release. It does not include your name, location, prayer log or anything you typed. Mixpanel knows you by a random id stored on this device.'**
+  String get privacyUsage;
 
   /// No description provided for @privacyLocationTitle.
   ///
@@ -4924,6 +5008,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Live recitation from Cairo'**
   String get featRadioSub;
+
+  /// No description provided for @featTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Tafsir'**
+  String get featTafsir;
+
+  /// No description provided for @featTafsirSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Al-Tabari, read aloud'**
+  String get featTafsirSub;
 
   /// No description provided for @radioLive.
   ///

@@ -34,8 +34,10 @@ extension on SadaqahKind {
 class SadaqahScreen extends StatelessWidget {
   const SadaqahScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const SadaqahScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'sadaqah'),
+    builder: (_) => const SadaqahScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

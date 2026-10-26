@@ -8,6 +8,7 @@ import '../../l10n/l10n.dart' show arabicDigits;
 import '../../services/player.dart';
 import '../../services/quran_radio.dart';
 import '../../services/recitation.dart';
+import '../../services/tafsir.dart';
 import '../../services/reciter_photos.dart';
 
 enum RecitationKind {
@@ -22,6 +23,9 @@ enum RecitationKind {
 
   /// Live إذاعة القرآن الكريم stream.
   radio,
+
+  /// Spoken tafsir, one passage per track.
+  tafsir,
 }
 
 final class RecitationState extends Equatable {
@@ -302,6 +306,39 @@ class RecitationCubit extends Cubit<RecitationState> {
         buffering: true,
         playing: true,
         recording: recording,
+        sleepAt: state.sleepAt,
+        sleepAfterSurah: state.sleepAfterSurah,
+      ),
+    );
+    await _load(queue, start);
+  }
+
+  /// Queues spoken tafsir passages, starting at [index].
+  Future<void> playTafsir({
+    required String book,
+    required List<TafsirTrack> tracks,
+    required int index,
+  }) async {
+    _reciter = null;
+    if (tracks.isEmpty) return;
+    final queue = [
+      for (final track in tracks)
+        Track(
+          id: 'tafsir:${track.id}',
+          uri: track.url,
+          title: track.name,
+          artist: book,
+          surah: track.surah,
+        ),
+    ];
+    final start = index.clamp(0, queue.length - 1);
+    emit(
+      RecitationState(
+        kind: RecitationKind.tafsir,
+        tracks: queue,
+        index: start,
+        buffering: true,
+        playing: true,
         sleepAt: state.sleepAt,
         sleepAfterSurah: state.sleepAfterSurah,
       ),

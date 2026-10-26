@@ -23,6 +23,7 @@ import '../screens/qada_screen.dart';
 import '../screens/identify_reciter_screen.dart';
 import '../screens/quran_screen.dart';
 import '../screens/radio_screen.dart';
+import '../screens/tafsir_screen.dart';
 import '../screens/ramadan_screen.dart';
 import '../screens/reciters_screen.dart';
 import '../screens/ruqyah_screen.dart';
@@ -37,6 +38,7 @@ import '../services/lessons.dart';
 import '../services/tajweed_lessons.dart';
 import '../services/prayer_calc.dart';
 import '../bloc/feature_news_cubit.dart';
+import '../services/analytics.dart';
 import '../theme.dart';
 import 'azkar_card.dart';
 import 'common.dart';
@@ -53,6 +55,7 @@ enum Feature {
   reciters(Icons.headphones_rounded),
   tawashih(Icons.music_note_rounded, highlight: 'tawashih-2026-10'),
   radio(Icons.radio_rounded, highlight: 'radio-2026-10'),
+  tafsir(Icons.menu_book_rounded, highlight: 'tafsir-2026-10'),
   qibla(Icons.explore_rounded),
   travel(Icons.flight_takeoff_rounded),
   tasbih(Icons.blur_circular_rounded),
@@ -65,10 +68,7 @@ enum Feature {
   learn(Icons.school_rounded),
   hajj(Icons.landscape_rounded),
   kids(Icons.child_care_rounded),
-  names(
-    Icons.auto_awesome_rounded,
-    artAsset: 'assets/features/asma_allah.jpg',
-  ),
+  names(Icons.auto_awesome_rounded, artAsset: 'assets/features/asma_allah.jpg'),
   zakat(Icons.savings_rounded),
   sadaqah(Icons.favorite_rounded),
   ruqyah(Icons.shield_moon_rounded),
@@ -95,6 +95,7 @@ enum Feature {
     reciters => l.featReciters,
     tawashih => l.featTawashih,
     radio => l.featRadio,
+    tafsir => l.featTafsir,
     qibla => l.featQibla,
     travel => l.featTravel,
     tasbih => l.featTasbih,
@@ -129,6 +130,7 @@ enum Feature {
     reciters => l.featRecitersSub,
     tawashih => l.featTawashihSub,
     radio => l.featRadioSub,
+    tafsir => l.featTafsirSub,
     qibla => l.featQiblaSub,
     travel => l.featTravelSub,
     tasbih => l.featTasbihSub,
@@ -191,6 +193,8 @@ enum Feature {
         route = TawashihScreen.route();
       case radio:
         route = RadioScreen.route();
+      case tafsir:
+        route = TafsirScreen.route();
       case duas:
         route = DuasScreen.route();
       case kids:
@@ -199,12 +203,12 @@ enum Feature {
         route = LessonsScreen.route(l.featLearn, const [
           wuduLesson,
           salahLesson,
-        ]);
+        ], name: name);
       case hajj:
         route = LessonsScreen.route(l.featHajj, const [
           umrahLesson,
           hajjLesson,
-        ]);
+        ], name: name);
       case names:
         route = NamesScreen.route();
       case zakat:
@@ -222,7 +226,7 @@ enum Feature {
       case hifz:
         route = HifzScreen.route();
       case tajweed:
-        route = LessonsScreen.route(l.featTajweed, tajweedLessons);
+        route = LessonsScreen.route(l.featTajweed, tajweedLessons, name: name);
       case calendar:
         route = CalendarScreen.route();
       case tracker:
@@ -233,6 +237,25 @@ enum Feature {
         route = FridayScreen.route();
     }
     if (route != null) Navigator.push(context, route);
+  }
+}
+
+/// Route name that counts as opening a [Feature], or null.
+String? featureFromRoute(String? name) {
+  if (name == null || name.isEmpty) return null;
+  final feature = name.startsWith('azkar:') ? 'azkar' : name;
+  for (final f in Feature.values) {
+    if (f.name == feature) return feature;
+  }
+  return null;
+}
+
+/// Sends a Feature Opened event when a named feature route is pushed.
+class FeatureRoutes extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    final feature = featureFromRoute(route.settings.name);
+    if (feature != null) Analytics.feature(feature);
   }
 }
 
@@ -382,10 +405,7 @@ class _FeatureGlyph extends StatelessWidget {
             child: FeatureArt(feature: feature, size: size),
           ),
           if (showNew)
-            Positioned(
-              top: -8,
-              child: _NewBadge(label: context.l.badgeNew),
-            )
+            Positioned(top: -8, child: _NewBadge(label: context.l.badgeNew))
           else if (feature == Feature.identify)
             Positioned(
               top: -8,
@@ -412,11 +432,7 @@ class _BetaBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: Fonts.body(
-          9.5,
-          color: Colors.white,
-          weight: FontWeight.w700,
-        ),
+        style: Fonts.body(9.5, color: Colors.white, weight: FontWeight.w700),
       ),
     );
   }
@@ -444,11 +460,7 @@ class _NewBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: Fonts.body(
-          9.5,
-          color: Colors.white,
-          weight: FontWeight.w700,
-        ),
+        style: Fonts.body(9.5, color: Colors.white, weight: FontWeight.w700),
       ),
     );
   }

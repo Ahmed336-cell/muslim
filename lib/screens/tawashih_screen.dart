@@ -34,18 +34,21 @@ ThemeData _darkTheme(BuildContext context) => Theme.of(context).copyWith(
   iconTheme: IconThemeData(color: Listen.text),
 );
 
-void _openMunshid(BuildContext context, TawashihMunshid m) => Navigator.of(
-  context,
-).push(
-  MaterialPageRoute<void>(builder: (_) => TawashihMunshidScreen(munshid: m)),
-);
+void _openMunshid(BuildContext context, TawashihMunshid m) =>
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => TawashihMunshidScreen(munshid: m),
+      ),
+    );
 
 /// Tawashih home — same layout and behaviour as [RecitersScreen].
 class TawashihScreen extends StatefulWidget {
   const TawashihScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const TawashihScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'tawashih'),
+    builder: (_) => const TawashihScreen(),
+  );
 
   @override
   State<TawashihScreen> createState() => _TawashihScreenState();
@@ -153,12 +156,8 @@ class _Home extends StatelessWidget {
               crossAxisSpacing: 4,
             ),
             itemCount: munshids.length,
-            itemBuilder: (context, i) => _Card(
-              munshid: munshids[i],
-              size: 96,
-              circle: true,
-              lang: lang,
-            ),
+            itemBuilder: (context, i) =>
+                _Card(munshid: munshids[i], size: 96, circle: true, lang: lang),
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 16)),
@@ -583,7 +582,8 @@ class _TrackRow extends StatelessWidget {
       download = IconButton(
         tooltip: l.removeDownload,
         icon: Icon(Icons.download_done_rounded, color: Listen.accent),
-        onPressed: () => context.read<DownloadsCubit>().delete(recording, index),
+        onPressed: () =>
+            context.read<DownloadsCubit>().delete(recording, index),
       );
     } else {
       download = IconButton(

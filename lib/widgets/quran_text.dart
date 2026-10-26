@@ -55,11 +55,18 @@ List<InlineSpan> ayahSpans(
 
 /// End-of-ayah rosette with the ayah number.
 class AyahMarker extends StatelessWidget {
-  const AyahMarker(this.number, {super.key, required this.size, this.color});
+  const AyahMarker(
+    this.number, {
+    super.key,
+    required this.size,
+    this.color,
+    this.numberColor,
+  });
 
   final int number;
   final double size;
   final Color? color;
+  final Color? numberColor;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +82,7 @@ class AyahMarker extends StatelessWidget {
             textScaler: TextScaler.noScaling,
             style: Fonts.arabic(
               size * (number > 99 ? .3 : .38),
-              color: Palette.ink,
+              color: numberColor ?? Palette.ink,
             ).copyWith(height: 1),
           ),
         ],

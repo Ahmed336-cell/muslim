@@ -13,8 +13,10 @@ import 'dua_screen.dart';
 class DuasScreen extends StatefulWidget {
   const DuasScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const DuasScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'duas'),
+    builder: (_) => const DuasScreen(),
+  );
 
   @override
   State<DuasScreen> createState() => _DuasScreenState();

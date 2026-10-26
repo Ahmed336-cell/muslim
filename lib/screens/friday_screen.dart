@@ -18,8 +18,10 @@ const _salawat = 'اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى 
 class FridayScreen extends StatelessWidget {
   const FridayScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const FridayScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'friday'),
+    builder: (_) => const FridayScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

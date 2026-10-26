@@ -14,8 +14,10 @@ import '../widgets/dhikr_card.dart';
 class HisnScreen extends StatefulWidget {
   const HisnScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const HisnScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'hisn'),
+    builder: (_) => const HisnScreen(),
+  );
 
   @override
   State<HisnScreen> createState() => _HisnScreenState();

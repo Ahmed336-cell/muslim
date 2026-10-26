@@ -172,6 +172,7 @@ class ShareCardImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = MushafColors.watch(context);
     return MediaQuery.withNoTextScaling(
       child: MushafFrame(
         child: Padding(
@@ -185,7 +186,7 @@ class ShareCardImage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: Fonts.body(
                   12.5,
-                  color: MushafColors.green,
+                  color: colors.green,
                   weight: FontWeight.w600,
                 ),
               ),
@@ -195,7 +196,7 @@ class ShareCardImage extends StatelessWidget {
                   arabic,
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.rtl,
-                  style: Fonts.arabic(28, color: Palette.ink).copyWith(
+                  style: Fonts.arabic(28, color: colors.ink).copyWith(
                     height: 1.7,
                   ),
                 ),
@@ -204,7 +205,7 @@ class ShareCardImage extends StatelessWidget {
                 Text(
                   s,
                   textAlign: TextAlign.center,
-                  style: Fonts.display(18, color: Palette.green),
+                  style: Fonts.display(18, color: colors.green),
                 ),
               ],
               if (meaning case final m? when m.isNotEmpty) ...[
@@ -212,7 +213,7 @@ class ShareCardImage extends StatelessWidget {
                 Text(
                   m,
                   textAlign: TextAlign.center,
-                  style: Fonts.quote(15.5, color: Palette.ink),
+                  style: Fonts.quote(15.5, color: colors.ink),
                 ),
               ],
               if (description case final d? when d.isNotEmpty) ...[
@@ -220,7 +221,7 @@ class ShareCardImage extends StatelessWidget {
                 Text(
                   d,
                   textAlign: TextAlign.center,
-                  style: Fonts.body(14, color: Palette.ink).copyWith(
+                  style: Fonts.body(14, color: colors.ink).copyWith(
                     height: 1.55,
                   ),
                 ),
@@ -230,14 +231,14 @@ class ShareCardImage extends StatelessWidget {
                 Text(
                   c,
                   textAlign: TextAlign.center,
-                  style: Fonts.body(12.5, color: MushafColors.green),
+                  style: Fonts.body(12.5, color: colors.green),
                 ),
               ],
               const SizedBox(height: 2),
               Text(
                 footer,
                 textAlign: TextAlign.center,
-                style: Fonts.body(11, color: Palette.inkSoft),
+                style: Fonts.body(11, color: colors.ink.withValues(alpha: .62)),
               ),
             ],
           ),

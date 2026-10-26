@@ -667,6 +667,36 @@ class L10nAr extends L10n {
   String get mushafPlainSub => 'حروف مجردة لتسهيل البحث';
 
   @override
+  String get mushafStyle => 'شكل الصفحة';
+
+  @override
+  String get styleClassic => 'كلاسيكي';
+
+  @override
+  String get styleMadinah => 'المدينة';
+
+  @override
+  String get styleNight => 'ليلي';
+
+  @override
+  String get styleSepia => 'بني';
+
+  @override
+  String get styleOttoman => 'عثماني';
+
+  @override
+  String get styleEmerald => 'زمردي';
+
+  @override
+  String get styleRoyal => 'كحلي';
+
+  @override
+  String get styleRose => 'وردي';
+
+  @override
+  String get styleInk => 'حبر';
+
+  @override
   String get textSize => 'حجم الخط';
 
   @override
@@ -1316,6 +1346,12 @@ class L10nAr extends L10n {
   String get adjustTimesSub => 'أضف أو أنقص دقائق لتوافق مسجدك.';
 
   @override
+  String get tuneHour => 'ساعات';
+
+  @override
+  String get tuneMinute => 'دقائق';
+
+  @override
   String get adjustNone => 'بدون تعديل';
 
   @override
@@ -1363,6 +1399,13 @@ class L10nAr extends L10n {
   @override
   String get privacyCrashes =>
       'إذا توقف التطبيق أو حدث خطأ، يُرسل تقرير إلى Sentry‏ (sentry.io): نص الخطأ، وتتبع المكدس، وإصدار التطبيق، ونوع الجهاز. لا يتضمن اسمك ولا موقعك ولا سجل صلواتك ولا ما تكتبه.';
+
+  @override
+  String get privacyUsageTitle => 'الاستخدام';
+
+  @override
+  String get privacyUsage =>
+      'يسجّل التطبيق الميزة التي تفتحها، مع جلسات الاستخدام، عبر Mixpanel‏ (mixpanel.com). يتضمن الحدث اسم الميزة وإصدار التطبيق واللغة ونوع النسخة. لا يتضمن اسمك ولا موقعك ولا سجل صلواتك ولا ما تكتبه. يعرفك Mixpanel برقم عشوائي محفوظ على هذا الجهاز.';
 
   @override
   String get privacyLocationTitle => 'الموقع';
@@ -2729,6 +2772,12 @@ class L10nAr extends L10n {
 
   @override
   String get featRadioSub => 'بث مباشر من القاهرة';
+
+  @override
+  String get featTafsir => 'تفسير';
+
+  @override
+  String get featTafsirSub => 'الخلاصة من تفسير الطبري';
 
   @override
   String get radioLive => 'مباشر';

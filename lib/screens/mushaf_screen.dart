@@ -158,6 +158,8 @@ class _ReaderState extends State<_Reader> {
     final recitation = context.watch<RecitationCubit>().state;
     final recitingHere =
         recitation.kind == RecitationKind.ayahs && recitation.playing;
+    final colors = MushafColors.watch(context);
+    final lightPage = colors.page.computeLuminance() > .4;
 
     return MultiBlocListener(
       listeners: [
@@ -183,10 +185,11 @@ class _ReaderState extends State<_Reader> {
         ),
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: Palette.dark
-            ? SystemUiOverlayStyle.light
-            : SystemUiOverlayStyle.dark,
+        value: lightPage
+            ? SystemUiOverlayStyle.dark
+            : SystemUiOverlayStyle.light,
         child: Scaffold(
+          backgroundColor: colors.page,
           bottomNavigationBar: const MiniPlayer(canOpenReader: false),
           body: Stack(
             children: [
@@ -232,54 +235,63 @@ class _ReaderState extends State<_Reader> {
                     opacity: _chrome ? 1 : 0,
                     duration: const Duration(milliseconds: 180),
                     child: Material(
-                      color: Palette.paper,
+                      color: colors.page,
                       elevation: 2,
-                      shadowColor: Palette.ink.withValues(alpha: .2),
+                      shadowColor: colors.ink.withValues(alpha: .2),
                       child: SafeArea(
                         bottom: false,
-                        child: SizedBox(
-                          height: 56,
-                          child: Row(
-                            children: [
-                              const BackButton(),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      context.surahName(surah),
-                                      style: Fonts.display(19),
-                                    ),
-                                    Text(
-                                      l.pageN(context.n(_page)),
-                                      style: Fonts.body(
-                                        12,
-                                        color: Palette.inkSoft,
+                        child: IconTheme(
+                          data: IconThemeData(color: colors.ink),
+                          child: SizedBox(
+                            height: 56,
+                            child: Row(
+                              children: [
+                                const BackButton(),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        context.surahName(surah),
+                                        style: Fonts.display(
+                                          19,
+                                          color: colors.ink,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      Text(
+                                        l.pageN(context.n(_page)),
+                                        style: Fonts.body(
+                                          12,
+                                          color: colors.ink.withValues(
+                                            alpha: .62,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              IconButton(
-                                tooltip: recitingHere
-                                    ? l.pauseTip
-                                    : l.listenPage,
-                                icon: Icon(
-                                  recitingHere
-                                      ? Icons.pause_circle_outline_rounded
-                                      : Icons.headphones_rounded,
+                                IconButton(
+                                  tooltip: recitingHere
+                                      ? l.pauseTip
+                                      : l.listenPage,
+                                  icon: Icon(
+                                    recitingHere
+                                        ? Icons.pause_circle_outline_rounded
+                                        : Icons.headphones_rounded,
+                                  ),
+                                  onPressed: () => recitingHere
+                                      ? context.read<RecitationCubit>().pause()
+                                      : _listen(pageStarts[_page - 1]),
                                 ),
-                                onPressed: () => recitingHere
-                                    ? context.read<RecitationCubit>().pause()
-                                    : _listen(pageStarts[_page - 1]),
-                              ),
-                              IconButton(
-                                tooltip: l.readingSettings,
-                                icon: const Icon(Icons.tune_rounded),
-                                onPressed: () => showReadingSettings(context),
-                              ),
-                            ],
+                                IconButton(
+                                  tooltip: l.readingSettings,
+                                  icon: const Icon(Icons.tune_rounded),
+                                  onPressed: () => showReadingSettings(context),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -322,6 +334,7 @@ class _PageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = MushafColors.watch(context);
     final load = context.select((MushafCubit c) => c.state.pages[number]);
     final page = load?.page;
     if (page == null) {
@@ -350,6 +363,8 @@ class _PageBody extends StatelessWidget {
       blocks.last.add(a);
     }
 
+    final header = Fonts.arabic(14, color: colors.green).copyWith(height: 1.5);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 2, 8, 6),
       child: Column(
@@ -360,12 +375,9 @@ class _PageBody extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
                 children: [
-                  Text(juz, style: _headerStyle),
+                  Text(juz, style: header),
                   const Spacer(),
-                  Text(
-                    'سورة ${surahs[first.surah - 1].arabic}',
-                    style: _headerStyle,
-                  ),
+                  Text('سورة ${surahs[first.surah - 1].arabic}', style: header),
                 ],
               ),
             ),
@@ -382,6 +394,7 @@ class _PageBody extends StatelessWidget {
                     maxFont,
                     c.maxWidth,
                     c.maxHeight,
+                    colors,
                   );
                   return SingleChildScrollView(
                     physics: fit.overflows
@@ -394,7 +407,13 @@ class _PageBody extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           for (final block in blocks)
-                            ..._block(block, page.mushaf, fit, bookmark),
+                            ..._block(
+                              block,
+                              page.mushaf,
+                              fit,
+                              bookmark,
+                              colors,
+                            ),
                         ],
                       ),
                     ),
@@ -410,18 +429,12 @@ class _PageBody extends StatelessWidget {
     );
   }
 
-  static const _recitingColor = Color(0x33B0812F);
-
-  static final _headerStyle = Fonts.arabic(
-    14,
-    color: MushafColors.green,
-  ).copyWith(height: 1.5);
-
   List<Widget> _block(
     List<Ayah> block,
     Mushaf mushaf,
     _Fit fit,
     QuranBookmark? bookmark,
+    MushafColors colors,
   ) {
     final fs = fit.fontSize;
     final opening = block.first;
@@ -440,14 +453,14 @@ class _PageBody extends StatelessWidget {
           textAlign: TextAlign.center,
           textDirection: TextDirection.rtl,
           textScaler: TextScaler.noScaling,
-          style: Fonts.mushaf(fs, height: fit.lineHeight),
+          style: Fonts.mushaf(fs, height: fit.lineHeight, color: colors.ink),
         ),
       Text.rich(
-        TextSpan(children: _spans(block, mushaf, fs, bookmark)),
+        TextSpan(children: _spans(block, mushaf, fs, bookmark, colors)),
         textAlign: TextAlign.justify,
         textDirection: TextDirection.rtl,
         textScaler: TextScaler.noScaling,
-        style: Fonts.mushaf(fs, height: fit.lineHeight),
+        style: Fonts.mushaf(fs, height: fit.lineHeight, color: colors.ink),
       ),
     ];
   }
@@ -457,6 +470,7 @@ class _PageBody extends StatelessWidget {
     Mushaf mushaf,
     double fs,
     QuranBookmark? bookmark,
+    MushafColors colors,
   ) => [
     for (final a in block) ...[
       ...ayahSpans(
@@ -464,16 +478,16 @@ class _PageBody extends StatelessWidget {
         mushaf,
         recognizer: onTap?.call((a.surah, a.number)),
         background: (a.surah, a.number) == selected
-            ? Palette.greenSoft
+            ? colors.highlight
             : (a.surah, a.number) == reciting
-            ? _recitingColor
+            ? colors.brass.withValues(alpha: .22)
             : null,
       ),
       const TextSpan(text: '\u00A0'),
       if (a.sajda)
         TextSpan(
           text: '۩\u00A0',
-          style: TextStyle(color: Palette.clay),
+          style: TextStyle(color: colors.mark),
         ),
       WidgetSpan(
         alignment: PlaceholderAlignment.middle,
@@ -484,8 +498,9 @@ class _PageBody extends StatelessWidget {
               a.number,
               size: fs * 1.25,
               color: bookmark?.surah == a.surah && bookmark?.ayah == a.number
-                  ? Palette.clay
-                  : Palette.brass,
+                  ? colors.mark
+                  : colors.brass,
+              numberColor: colors.ink,
             ),
           ),
         ),
@@ -502,6 +517,7 @@ class _PageBody extends StatelessWidget {
     double maxFont,
     double width,
     double height,
+    MushafColors colors,
   ) {
     if (_fits.length > 40) _fits.clear();
     return _fits[(page.number, page.mushaf, maxFont, width, height)] ??= () {
@@ -540,7 +556,7 @@ class _PageBody extends StatelessWidget {
             );
           }
           total += paragraph(
-            _spans(block, page.mushaf, fs, null),
+            _spans(block, page.mushaf, fs, null, colors),
             block.length,
           );
         }
@@ -616,6 +632,63 @@ class ReadingSettingsPanel extends StatelessWidget {
               onTap: () => prefs.setMushaf(m),
             ),
           ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Caption(l.mushafStyle),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 84,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: MushafStyle.values.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 10),
+            itemBuilder: (context, i) {
+              final style = MushafStyle.values[i];
+              final swatch = MushafColors.forStyle(style);
+              final on = style == p.style;
+              return GestureDetector(
+                onTap: () => prefs.setStyle(style),
+                child: SizedBox(
+                  width: 68,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: swatch.page,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: on ? Palette.green : swatch.green,
+                            width: on ? 2.2 : 1,
+                          ),
+                        ),
+                        child: Text(
+                          'ب',
+                          style: Fonts.mushaf(22, color: swatch.ink),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        context.mushafStyleName(style),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Fonts.body(
+                          11,
+                          color: on ? Palette.green : Palette.inkSoft,
+                          weight: on ? FontWeight.w600 : FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
         if (p.mushaf == Mushaf.tajweed) ...[
           const SizedBox(height: 4),
           Padding(
@@ -656,17 +729,34 @@ class ReadingSettingsPanel extends StatelessWidget {
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: TextButton.icon(
-            onPressed: () =>
-                prefs.setFontSize(QuranPrefs.comfortFontSize),
+            onPressed: () => prefs.setFontSize(QuranPrefs.comfortFontSize),
             icon: const Icon(Icons.chrome_reader_mode_outlined, size: 18),
             label: Text(l.comfortReading),
           ),
         ),
-        Text(
-          'ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ',
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.rtl,
-          style: Fonts.mushaf(p.fontSize),
+        Builder(
+          builder: (context) {
+            final swatch = MushafColors.forStyle(p.style);
+            return DecoratedBox(
+              decoration: BoxDecoration(
+                color: swatch.page,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: swatch.green.withValues(alpha: .45)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 12,
+                ),
+                child: Text(
+                  'ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ',
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.rtl,
+                  style: Fonts.mushaf(p.fontSize, color: swatch.ink),
+                ),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 18),
         Padding(

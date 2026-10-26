@@ -231,6 +231,21 @@ void main() {
       expect(denied.state.error, isNull);
     });
 
+    test('a fresh grant is flagged so the tune sheet can open', () async {
+      final settings = SettingsCubit();
+      final cubit = LocationCubit(
+        service: _FakeLocation(
+          () async => (21.42, 39.83),
+          status: LocationAccess.denied,
+        ),
+        settings: settings,
+      );
+      await cubit.locate();
+      expect(cubit.state.grantedNow, isTrue);
+      cubit.acknowledgeGrant();
+      expect(cubit.state.grantedNow, isFalse);
+    });
+
     test('refreshes on launch only when reading by location', () async {
       var calls = 0;
       final settings = SettingsCubit();
@@ -239,18 +254,24 @@ void main() {
         return (30.0, 31.0);
       });
       LocationCubit(service: service, settings: settings).refresh();
+      await Future<void>.delayed(Duration.zero);
       expect(calls, 0);
       settings.setLocation(30, 31);
       LocationCubit(service: service, settings: settings).refresh();
+      await Future<void>.delayed(Duration.zero);
       expect(calls, 1);
     });
   });
 }
 
 class _FakeLocation extends LocationService {
-  _FakeLocation(this._current);
+  _FakeLocation(this._current, {this.status = LocationAccess.unknown});
 
   final Future<(double, double)> Function() _current;
+  final LocationAccess status;
+
+  @override
+  Future<LocationAccess> access() async => status;
 
   @override
   Future<(double, double)> current() => _current();

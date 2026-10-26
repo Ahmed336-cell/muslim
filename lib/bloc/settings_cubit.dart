@@ -31,6 +31,7 @@ final class Settings extends Equatable {
   final int? methodId;
 
   /// Minutes added to Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha.
+  /// Up to twelve hours either way.
   final List<int> offsets;
 
   /// Days added to the Hijri date (-2…2).
@@ -136,7 +137,7 @@ class SettingsCubit extends HydratedCubit<Settings> {
     state.copyWith(
       offsets: [
         for (final (i, m) in state.offsets.indexed)
-          i == prayer ? minutes.clamp(-30, 30) : m,
+          i == prayer ? minutes.clamp(-12 * 60, 12 * 60) : m,
       ],
     ),
   );

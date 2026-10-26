@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/quran/recitation_cubit.dart';
 import '../data.dart';
 import '../l10n/l10n.dart';
+import '../services/quran.dart';
+import '../services/quran_text.dart';
+import '../services/recitation.dart';
 import '../theme.dart';
 import '../widgets/ambient_mixer.dart';
 import '../widgets/gramophone_disc.dart';
@@ -57,9 +61,14 @@ class NowPlayingScreen extends StatelessWidget {
     final (light, _) = coverColors(track.artist);
     final ayah = s.ayah;
     final tawashih = s.kind == RecitationKind.tawashih;
+    final tafsir = s.kind == RecitationKind.tafsir;
     final radio = s.kind == RecitationKind.radio;
     final Surah? surah =
-        tawashih || radio || track.surah < 1 || track.surah > surahs.length
+        tawashih ||
+            tafsir ||
+            radio ||
+            track.surah < 1 ||
+            track.surah > surahs.length
         ? null
         : surahs[track.surah - 1];
 
@@ -109,6 +118,8 @@ class NowPlayingScreen extends StatelessWidget {
                                     ? l.fromMushaf
                                     : radio
                                     ? l.radioLive
+                                    : tafsir
+                                    ? l.featTafsir
                                     : tawashih
                                     ? l.featTawashih
                                     : track.artist,
@@ -147,7 +158,7 @@ class NowPlayingScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 18),
                     Center(
-                      child: tawashih || radio
+                      child: tawashih || tafsir || radio
                           ? GramophoneDisc(
                               name: track.artist,
                               spinning: s.playing,
@@ -173,6 +184,19 @@ class NowPlayingScreen extends StatelessWidget {
                               ),
                             ),
                     ),
+                    if (surah != null)
+                      AyahBar(
+                        cubit: cubit,
+                        surah: surah.number,
+                        ayah: ayah?.$2,
+                        recording: ayah == null ? s.recording : null,
+                        clip: track.start ?? Duration.zero,
+                        canOpenReader: canOpenReader,
+                      ),
+                    if (surah != null && !radio) ...[
+                      const SizedBox(height: 20),
+                      _SeekBar(cubit: cubit, gold: true),
+                    ],
                     const SizedBox(height: 28),
                     Row(
                       children: [
@@ -228,7 +252,7 @@ class NowPlayingScreen extends StatelessWidget {
                           ),
                         ),
                       )
-                    else
+                    else if (surah == null)
                       _SeekBar(cubit: cubit),
                     if (s.error)
                       Padding(
@@ -266,10 +290,8 @@ class _Controls extends StatelessWidget {
     final rtl = context.isAr;
     // Keep slots fixed, then swap skip buttons for Arabic so "next" sits
     // on the leading side and the arrows point with the reading direction.
-    Widget mirror(IconData icon) => Transform.flip(
-      flipX: rtl,
-      child: Icon(icon),
-    );
+    Widget mirror(IconData icon) =>
+        Transform.flip(flipX: rtl, child: Icon(icon));
     if (s.kind == RecitationKind.radio) {
       return Center(
         child: SizedBox.square(
@@ -369,9 +391,10 @@ class _Controls extends StatelessWidget {
 }
 
 class _SeekBar extends StatefulWidget {
-  const _SeekBar({required this.cubit});
+  const _SeekBar({required this.cubit, this.gold = false});
 
   final RecitationCubit cubit;
+  final bool gold;
 
   @override
   State<_SeekBar> createState() => _SeekBarState();
@@ -392,22 +415,26 @@ class _SeekBarState extends State<_SeekBar> {
           final p =
               _dragging ??
               (pos.data?.inMilliseconds.toDouble() ?? 0).clamp(0.0, max);
+          final gold = widget.gold;
+          final at = Duration(milliseconds: p.round());
+          final left = t - at;
+          final active = gold ? _gold : Listen.text;
           return Column(
             children: [
               SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  trackHeight: 3.5,
+                  trackHeight: gold ? 3 : 3.5,
                   overlayShape: SliderComponentShape.noOverlay,
-                  thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 6.5,
+                  thumbShape: RoundSliderThumbShape(
+                    enabledThumbRadius: gold ? 0 : 6.5,
                   ),
                 ),
                 child: Slider(
                   value: p,
                   max: max,
-                  activeColor: Listen.text,
-                  inactiveColor: Listen.textFaint,
-                  thumbColor: Listen.text,
+                  activeColor: active,
+                  inactiveColor: gold ? _track : Listen.textFaint,
+                  thumbColor: active,
                   onChanged: t == Duration.zero
                       ? null
                       : (v) => setState(() => _dragging = v),
@@ -424,13 +451,17 @@ class _SeekBarState extends State<_SeekBar> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      formatDuration(Duration(milliseconds: p.round())),
+                      gold ? context.n(_clock(at)) : formatDuration(at),
                       style: Fonts.body(12, color: Listen.textSoft),
                     ),
                     Text(
                       t == Duration.zero
-                          ? '--:--'
-                          : '-${formatDuration(t - Duration(milliseconds: p.round()))}',
+                          ? (gold ? context.n('--:--') : '--:--')
+                          : gold
+                          ? context.n(
+                              '-${_clock(left.isNegative ? Duration.zero : left)}',
+                            )
+                          : '-${formatDuration(left.isNegative ? Duration.zero : left)}',
                       style: Fonts.body(12, color: Listen.textSoft),
                     ),
                   ],
@@ -441,5 +472,229 @@ class _SeekBarState extends State<_SeekBar> {
         },
       ),
     );
+  }
+}
+
+const _gold = Color(0xFFC9A45C);
+const _track = Color(0xFF3A3A3A);
+
+/// The stamps sit a little after the voice. Step the verse forward so the
+/// words on screen meet the words being recited.
+const _lead = Duration(milliseconds: 700);
+
+String _clock(Duration d) {
+  final h = d.inHours;
+  final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+  final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+  return h > 0 ? '$h:$m:$s' : '$m:$s';
+}
+
+/// The ayah being recited. Shown on the mini player and under the artwork.
+class AyahBar extends StatefulWidget {
+  const AyahBar({
+    super.key,
+    required this.cubit,
+    required this.surah,
+    required this.ayah,
+    required this.recording,
+    required this.clip,
+    required this.canOpenReader,
+    this.top = 16,
+  });
+
+  final RecitationCubit cubit;
+  final int surah;
+  final int? ayah;
+  final int? recording;
+
+  /// File offset when playback of this surah starts mid-file.
+  final Duration clip;
+  final bool canOpenReader;
+  final double top;
+
+  @override
+  State<AyahBar> createState() => _AyahBarState();
+}
+
+class _AyahBarState extends State<AyahBar> {
+  Ayah? _verse;
+  final _verses = <int, Ayah>{};
+  List<({int ayah, Duration start, Duration end})> _timings = const [];
+  StreamSubscription<Duration>? _pos;
+  StreamSubscription<Duration?>? _dur;
+  Duration _audio = Duration.zero;
+  Duration _playhead = Duration.zero;
+  int? _shown;
+  int? _pending;
+  var _gen = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_gen == 0) _start();
+  }
+
+  @override
+  void didUpdateWidget(covariant AyahBar old) {
+    super.didUpdateWidget(old);
+    if (old.surah != widget.surah ||
+        old.ayah != widget.ayah ||
+        old.recording != widget.recording ||
+        old.clip != widget.clip) {
+      _start();
+    }
+  }
+
+  @override
+  void dispose() {
+    _gen++;
+    _pos?.cancel();
+    _dur?.cancel();
+    super.dispose();
+  }
+
+  void _start() {
+    final gen = ++_gen;
+    _pos?.cancel();
+    _dur?.cancel();
+    _pos = null;
+    _dur = null;
+    _timings = const [];
+    _verses.clear();
+    _pending = null;
+    _shown = widget.ayah;
+    _loadFixed(gen);
+    final id = widget.recording;
+    if (widget.ayah != null || id == null) return;
+    final api = _maybe<RecitersApi>(context);
+    if (api == null) return;
+    _follow(api, id, gen);
+  }
+
+  Future<void> _loadFixed(int gen) async {
+    final n = widget.ayah;
+    final text = _maybe<QuranText>(context);
+    if (n == null || text == null) return;
+    try {
+      final verse = await text.ayah(widget.surah, n, Mushaf.uthmani);
+      if (!mounted || gen != _gen) return;
+      setState(() => _verse = verse);
+    } catch (_) {}
+  }
+
+  Future<void> _follow(RecitersApi api, int recording, int gen) async {
+    final text = _maybe<QuranText>(context);
+    final timings = await api.ayahTimings(recording, widget.surah);
+    if (!mounted || gen != _gen) return;
+    _timings = timings;
+    _dur = widget.cubit.duration.listen((d) {
+      _audio = d ?? Duration.zero;
+      _onPosition(_playhead);
+    });
+    _pos = widget.cubit.position.listen(_onPosition);
+    if (text == null) return;
+    final count = surahs[widget.surah - 1].ayahs;
+    for (var n = 1; n <= count; n++) {
+      if (!mounted || gen != _gen) return;
+      final Ayah verse;
+      try {
+        verse = await text.ayah(widget.surah, n, Mushaf.uthmani);
+      } catch (_) {
+        return;
+      }
+      _verses[n] = verse;
+      if (n == _pending && n != _shown) _show(verse);
+    }
+  }
+
+  void _onPosition(Duration position) {
+    _playhead = position;
+    final timings = _timings;
+    if (timings.isEmpty || !mounted) return;
+    var at = position + widget.clip;
+    if (widget.clip == Duration.zero) {
+      at = timingAt(at, _audio, timings.last.end);
+    }
+    at += _lead;
+    int? n;
+    for (final t in timings) {
+      if (t.start <= at) {
+        n = t.ayah;
+      } else {
+        break;
+      }
+    }
+    if (n == null || n == _shown) return;
+    final verse = _verses[n];
+    if (verse == null) {
+      _pending = n;
+      return;
+    }
+    _show(verse);
+  }
+
+  void _show(Ayah verse) {
+    _pending = null;
+    _shown = verse.number;
+    setState(() => _verse = verse);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final verse = _verse;
+    final surah = surahs[widget.surah - 1];
+    final shown =
+        verse?.text ?? (context.isAr ? 'سورة ${surah.arabic}' : surah.name);
+    final open = widget.canOpenReader && verse != null
+        ? () {
+            final nav = Navigator.of(context);
+            nav.pop();
+            nav.push(
+              MushafScreen.route(
+                verse.surah,
+                ayah: verse.number,
+                highlight: true,
+              ),
+            );
+          }
+        : null;
+    final frame = DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _gold.withValues(alpha: .9)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        child: Text(
+          shown,
+          textAlign: TextAlign.center,
+          textDirection: verse == null ? null : TextDirection.rtl,
+          style: verse == null
+              ? Fonts.body(15, color: Listen.text, weight: FontWeight.w600)
+              : Fonts.mushaf(20, color: Listen.text, height: 1.75),
+        ),
+      ),
+    );
+    return Padding(
+      padding: EdgeInsets.only(top: widget.top),
+      child: open == null
+          ? frame
+          : Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: open,
+                borderRadius: BorderRadius.circular(22),
+                child: frame,
+              ),
+            ),
+    );
+  }
+}
+
+T? _maybe<T>(BuildContext context) {
+  try {
+    return context.read<T>();
+  } catch (_) {
+    return null;
   }
 }

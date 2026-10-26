@@ -20,8 +20,10 @@ const _sun = Color(0xFFE0A030);
 class KidsScreen extends StatelessWidget {
   const KidsScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const KidsScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'kids'),
+    builder: (_) => const KidsScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

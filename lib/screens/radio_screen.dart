@@ -17,8 +17,10 @@ import '../widgets/mini_player.dart';
 class RadioScreen extends StatelessWidget {
   const RadioScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const RadioScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'radio'),
+    builder: (_) => const RadioScreen(),
+  );
 
   Future<void> _toggle(BuildContext context) async {
     final l = context.l;
@@ -38,8 +40,7 @@ class RadioScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l;
     final s = context.watch<RecitationCubit>().state;
-    final on =
-        s.kind == RecitationKind.radio && s.current?.id == quranRadioId;
+    final on = s.kind == RecitationKind.radio && s.current?.id == quranRadioId;
     final playing = on && s.playing;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -58,11 +59,7 @@ class RadioScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                GramophoneDisc(
-                  name: l.featRadio,
-                  spinning: playing,
-                  size: 220,
-                ),
+                GramophoneDisc(name: l.featRadio, spinning: playing, size: 220),
                 const SizedBox(height: 28),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -70,9 +67,7 @@ class RadioScreen extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: playing
-                        ? const Color(0xFFC62828)
-                        : Listen.surfaceHi,
+                    color: playing ? const Color(0xFFC62828) : Listen.surfaceHi,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

@@ -21,8 +21,10 @@ import 'reciters_screen.dart';
 class IdentifyReciterScreen extends StatefulWidget {
   const IdentifyReciterScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const IdentifyReciterScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'identify'),
+    builder: (_) => const IdentifyReciterScreen(),
+  );
 
   @override
   State<IdentifyReciterScreen> createState() => _IdentifyReciterScreenState();
@@ -120,7 +122,9 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
       }
       setState(() => _phase = _Phase.matching);
       final transcript = await recite.transcribePcm(capture.pcm);
-      final span = transcript.isEmpty ? null : await quran.locateSpan(transcript);
+      final span = transcript.isEmpty
+          ? null
+          : await quran.locateSpan(transcript);
       if (!mounted) return;
       final top = capture.matches.first;
       setState(() {
@@ -245,7 +249,8 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
     final ink = dark ? const Color(0xFFF4F4F4) : const Color(0xFF1A1A1A);
     final soft = dark ? const Color(0xFF9A9A9A) : const Color(0xFF8E8E8E);
     final listening = _phase == _Phase.listening;
-    final busy = _phase == _Phase.downloading ||
+    final busy =
+        _phase == _Phase.downloading ||
         _phase == _Phase.listening ||
         _phase == _Phase.matching;
     final title = switch (_phase) {

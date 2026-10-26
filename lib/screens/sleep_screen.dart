@@ -65,8 +65,10 @@ final List<_Bedtime> _bedtime = [
 class SleepScreen extends StatelessWidget {
   const SleepScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const SleepScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'sleep'),
+    builder: (_) => const SleepScreen(),
+  );
 
   Future<void> _play(BuildContext context, _Bedtime b) async {
     final cubit = context.read<RecitationCubit>();

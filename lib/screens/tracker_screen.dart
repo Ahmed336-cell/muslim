@@ -12,8 +12,10 @@ import '../widgets/common.dart';
 class TrackerScreen extends StatelessWidget {
   const TrackerScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const TrackerScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'tracker'),
+    builder: (_) => const TrackerScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

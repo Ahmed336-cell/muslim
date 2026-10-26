@@ -17,8 +17,10 @@ String _money(double v) =>
 class QadaScreen extends StatelessWidget {
   const QadaScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const QadaScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'qada'),
+    builder: (_) => const QadaScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

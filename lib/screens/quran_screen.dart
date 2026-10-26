@@ -38,8 +38,10 @@ final _arabic = RegExp('[\u0621-\u064A]');
 class QuranScreen extends StatefulWidget {
   const QuranScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const QuranScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'quran'),
+    builder: (_) => const QuranScreen(),
+  );
 
   @override
   State<QuranScreen> createState() => _QuranScreenState();
@@ -94,9 +96,8 @@ class _QuranScreenState extends State<QuranScreen> {
           IconButton(
             tooltip: l.identifyReciter,
             icon: const Icon(Icons.graphic_eq_rounded),
-            onPressed: () => Navigator.of(
-              context,
-            ).push(IdentifyReciterScreen.route()),
+            onPressed: () =>
+                Navigator.of(context).push(IdentifyReciterScreen.route()),
           ),
           IconButton(
             tooltip: l.featReciters,
@@ -357,10 +358,7 @@ class _LastRead extends StatelessWidget {
                   ),
                 ),
                 if (!context.isAr)
-                  Text(
-                    surah.arabic,
-                    style: Fonts.arabic(26, color: _brass),
-                  ),
+                  Text(surah.arabic, style: Fonts.arabic(26, color: _brass)),
               ],
             ),
           ),

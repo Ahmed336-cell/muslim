@@ -167,15 +167,21 @@ void main() {
       expect(c.state.tafsirFor('en'), TafsirSource.qurtubi);
     });
 
-    test('persists mushaf, tafsir and a clamped font size', () {
+    test('persists mushaf, style, tafsir and a clamped font size', () {
       QuranPrefsCubit()
         ..setMushaf(Mushaf.tajweed)
+        ..setStyle(MushafStyle.emerald)
         ..setTafsir(TafsirSource.jalalayn)
         ..setFontSize(99);
       final restored = QuranPrefsCubit().state;
       expect(restored.mushaf, Mushaf.tajweed);
+      expect(restored.style, MushafStyle.emerald);
       expect(restored.tafsir, TafsirSource.jalalayn);
       expect(restored.fontSize, QuranPrefs.maxFontSize);
+      expect(
+        QuranPrefsCubit().fromJson({'mushaf': 'uthmani'})?.style,
+        MushafStyle.classic,
+      );
     });
   });
 

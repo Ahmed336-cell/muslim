@@ -15,8 +15,10 @@ import 'mushaf_screen.dart';
 class KhatmahScreen extends StatelessWidget {
   const KhatmahScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const KhatmahScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'khatmah'),
+    builder: (_) => const KhatmahScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

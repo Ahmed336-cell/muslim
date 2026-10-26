@@ -20,8 +20,10 @@ const _currencies = [
 class ZakatScreen extends StatelessWidget {
   const ZakatScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const ZakatScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'zakat'),
+    builder: (_) => const ZakatScreen(),
+  );
 
   Future<void> _pickCurrency(BuildContext context, String current) async {
     final picked = await showModalBottomSheet<String>(

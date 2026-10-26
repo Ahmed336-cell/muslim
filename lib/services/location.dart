@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:geolocator/geolocator.dart';
 
+enum LocationAccess { granted, denied, blocked, disabled, unknown }
+
 class LocationException implements Exception {
   const LocationException(this.code);
 
@@ -21,6 +23,25 @@ class LocationException implements Exception {
 /// Device position; overridden in tests.
 class LocationService {
   const LocationService();
+
+  /// Current permission, without prompting. [unknown] when the plugin
+  /// cannot answer (tests, or a platform without location).
+  Future<LocationAccess> access() async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        return LocationAccess.disabled;
+      }
+      return switch (await Geolocator.checkPermission()) {
+        LocationPermission.deniedForever => LocationAccess.blocked,
+        LocationPermission.denied ||
+        LocationPermission.unableToDetermine => LocationAccess.denied,
+        LocationPermission.whileInUse || LocationPermission.always =>
+          LocationAccess.granted,
+      };
+    } catch (_) {
+      return LocationAccess.unknown;
+    }
+  }
 
   /// Asks for permission when needed. Throws [LocationException].
   Future<(double lat, double lon)> current() async {
@@ -76,4 +97,6 @@ class LocationService {
   }
 
   Future<void> openSettings() => Geolocator.openAppSettings();
+
+  Future<void> openLocationSettings() => Geolocator.openLocationSettings();
 }

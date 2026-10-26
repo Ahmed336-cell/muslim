@@ -7,6 +7,7 @@ import '../../services/recitation.dart';
 final class QuranPrefs extends Equatable {
   const QuranPrefs({
     this.mushaf = Mushaf.uthmani,
+    this.style = MushafStyle.classic,
     this.tafsir,
     this.fontSize = defaultFontSize,
     this.reciter = AyahReciter.alafasy,
@@ -18,6 +19,9 @@ final class QuranPrefs extends Equatable {
   static const maxFontSize = 56.0;
 
   final Mushaf mushaf;
+
+  /// Paper and ornament palette. Classic follows the app light/dark theme.
+  final MushafStyle style;
 
   /// Null until the user picks one; then [tafsirFor] stops following the
   /// app language.
@@ -32,24 +36,28 @@ final class QuranPrefs extends Equatable {
 
   QuranPrefs _copy({
     Mushaf? mushaf,
+    MushafStyle? style,
     TafsirSource? tafsir,
     double? fontSize,
     AyahReciter? reciter,
   }) => QuranPrefs(
     mushaf: mushaf ?? this.mushaf,
+    style: style ?? this.style,
     tafsir: tafsir ?? this.tafsir,
     fontSize: fontSize ?? this.fontSize,
     reciter: reciter ?? this.reciter,
   );
 
   @override
-  List<Object?> get props => [mushaf, tafsir, fontSize, reciter];
+  List<Object?> get props => [mushaf, style, tafsir, fontSize, reciter];
 }
 
 class QuranPrefsCubit extends HydratedCubit<QuranPrefs> {
   QuranPrefsCubit() : super(const QuranPrefs());
 
   void setMushaf(Mushaf mushaf) => emit(state._copy(mushaf: mushaf));
+
+  void setStyle(MushafStyle style) => emit(state._copy(style: style));
 
   void setTafsir(TafsirSource tafsir) => emit(state._copy(tafsir: tafsir));
 
@@ -64,6 +72,7 @@ class QuranPrefsCubit extends HydratedCubit<QuranPrefs> {
   @override
   QuranPrefs? fromJson(Map<String, dynamic> json) => QuranPrefs(
     mushaf: Mushaf.values.asNameMap()[json['mushaf']] ?? Mushaf.uthmani,
+    style: MushafStyle.values.asNameMap()[json['style']] ?? MushafStyle.classic,
     tafsir: TafsirSource.values.asNameMap()[json['tafsir']],
     fontSize:
         (json['fontSize'] as num?)?.toDouble() ?? QuranPrefs.defaultFontSize,
@@ -73,6 +82,7 @@ class QuranPrefsCubit extends HydratedCubit<QuranPrefs> {
   @override
   Map<String, dynamic> toJson(QuranPrefs state) => {
     'mushaf': state.mushaf.name,
+    'style': state.style.name,
     'tafsir': state.tafsir?.name,
     'fontSize': state.fontSize,
     'reciter': state.reciter.id,

@@ -69,6 +69,18 @@ extension L10nX on BuildContext {
     Mushaf.plain => l.mushafPlain,
   };
 
+  String mushafStyleName(MushafStyle s) => switch (s) {
+    MushafStyle.classic => l.styleClassic,
+    MushafStyle.madinah => l.styleMadinah,
+    MushafStyle.night => l.styleNight,
+    MushafStyle.sepia => l.styleSepia,
+    MushafStyle.ottoman => l.styleOttoman,
+    MushafStyle.emerald => l.styleEmerald,
+    MushafStyle.royal => l.styleRoyal,
+    MushafStyle.rose => l.styleRose,
+    MushafStyle.ink => l.styleInk,
+  };
+
   String mushafDetail(Mushaf m) => switch (m) {
     Mushaf.uthmani => l.mushafUthmaniSub,
     Mushaf.tajweed => l.mushafTajweedSub,

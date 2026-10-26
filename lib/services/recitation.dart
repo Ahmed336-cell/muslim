@@ -26,6 +26,13 @@ enum AyahReciter {
     'Al-Husary (Mujawwad)',
     118,
   ),
+  minshawi(
+    'ar.minshawi',
+    128,
+    'محمد صديق المنشاوي',
+    'Muhammad Siddiq Al-Minshawi',
+    112,
+  ),
   abdulBasit('ar.abdulsamad', 64, 'عبد الباسط عبد الصمد', 'Abdul Basit', 51),
   sudais('ar.abdurrahmaansudais', 192, 'عبد الرحمن السديس', 'As-Sudais', 54),
   shuraym('ar.saoodshuraym', 64, 'سعود الشريم', 'Saud Ash-Shuraym', 31),
@@ -207,6 +214,33 @@ class RecitersApi {
       return null;
     }
   }
+
+  /// Every ayah start in this recording's surah file. Empty when the
+  /// recording has no timing.
+  Future<List<({int ayah, Duration start, Duration end})>> ayahTimings(
+    int recordingId,
+    int surah,
+  ) async {
+    final http.Response res;
+    try {
+      res = await _client
+          .get(
+            Uri.https('www.mp3quran.net', '/api/v3/ayat_timing', {
+              'surah': '$surah',
+              'read': '$recordingId',
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+    } catch (_) {
+      return const [];
+    }
+    if (res.statusCode != 200) return const [];
+    try {
+      return ayahTimingsFromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+    } catch (_) {
+      return const [];
+    }
+  }
 }
 
 /// [start_time] for [ayah] in an `ayat_timing` payload, in milliseconds.
@@ -218,6 +252,52 @@ Duration? ayahOffsetFromJson(Object? json, int ayah) {
     if (ms is num && ms >= 0) return Duration(milliseconds: ms.round());
   }
   return null;
+}
+
+/// Ayah start and end times from an `ayat_timing` payload, earliest first.
+/// Ayah 0 is the opening basmala and is left out.
+List<({int ayah, Duration start, Duration end})> ayahTimingsFromJson(
+  Object? json,
+) {
+  if (json is! List) return const [];
+  final out = <({int ayah, Duration start, Duration end})>[];
+  for (final row in json) {
+    if (row is! Map) continue;
+    final ayah = row['ayah'];
+    final ms = row['start_time'];
+    final endMs = row['end_time'];
+    final n = ayah is int
+        ? ayah
+        : ayah is num
+        ? ayah.round()
+        : null;
+    if (n == null || n < 1 || ms is! num || ms < 0) continue;
+    final start = Duration(milliseconds: ms.round());
+    final end = endMs is num ? Duration(milliseconds: endMs.round()) : start;
+    out.add((ayah: n, start: start, end: end));
+  }
+  out.sort((a, b) => a.start.compareTo(b.start));
+  return out;
+}
+
+/// Where [position] sits on the timing map.
+///
+/// A file that is shorter than the stamps runs ahead of them. Stretch the
+/// playhead onto the stamp timeline so the verse changes with the voice.
+Duration timingAt(Duration position, Duration audio, Duration timingEnd) {
+  // Only when the file is shorter than the stamps. A longer file is left
+  // on the playhead clock.
+  if (audio < const Duration(seconds: 1) ||
+      timingEnd < const Duration(seconds: 1) ||
+      audio >= timingEnd) {
+    return position;
+  }
+  return Duration(
+    microseconds:
+        position.inMicroseconds *
+        timingEnd.inMicroseconds ~/
+        audio.inMicroseconds,
+  );
 }
 
 /// Surah files saved for offline listening; replaced by a fake in tests.

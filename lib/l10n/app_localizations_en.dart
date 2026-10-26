@@ -663,6 +663,36 @@ class L10nEn extends L10n {
   String get mushafPlainSub => 'Plain letters, easy to scan';
 
   @override
+  String get mushafStyle => 'Page style';
+
+  @override
+  String get styleClassic => 'Classic';
+
+  @override
+  String get styleMadinah => 'Madinah';
+
+  @override
+  String get styleNight => 'Night';
+
+  @override
+  String get styleSepia => 'Sepia';
+
+  @override
+  String get styleOttoman => 'Ottoman';
+
+  @override
+  String get styleEmerald => 'Emerald';
+
+  @override
+  String get styleRoyal => 'Royal';
+
+  @override
+  String get styleRose => 'Rose';
+
+  @override
+  String get styleInk => 'Ink';
+
+  @override
   String get textSize => 'Text size';
 
   @override
@@ -1311,6 +1341,12 @@ class L10nEn extends L10n {
       'Add or subtract minutes to match your local mosque.';
 
   @override
+  String get tuneHour => 'Hours';
+
+  @override
+  String get tuneMinute => 'Minutes';
+
+  @override
   String get adjustNone => 'No adjustments';
 
   @override
@@ -1358,6 +1394,13 @@ class L10nEn extends L10n {
   @override
   String get privacyCrashes =>
       'If the app crashes or hits an error, a report is sent to Sentry (sentry.io): the error, a stack trace, the app version and the device type. It does not include your name, location, prayer log or anything you typed.';
+
+  @override
+  String get privacyUsageTitle => 'Usage';
+
+  @override
+  String get privacyUsage =>
+      'The app records which feature you open, plus app sessions, with Mixpanel (mixpanel.com). The event includes the feature name, app version, language and whether the build is a release. It does not include your name, location, prayer log or anything you typed. Mixpanel knows you by a random id stored on this device.';
 
   @override
   String get privacyLocationTitle => 'Location';
@@ -2744,6 +2787,12 @@ class L10nEn extends L10n {
 
   @override
   String get featRadioSub => 'Live recitation from Cairo';
+
+  @override
+  String get featTafsir => 'Tafsir';
+
+  @override
+  String get featTafsirSub => 'Al-Tabari, read aloud';
 
   @override
   String get radioLive => 'Live';

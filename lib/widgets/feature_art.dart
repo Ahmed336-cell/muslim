@@ -62,6 +62,8 @@ class _GlyphPainter extends CustomPainter {
         _headphones(canvas, c, s, music: feature == Feature.tawashih);
       case Feature.radio:
         _radio(canvas, c, s);
+      case Feature.tafsir:
+        _book(canvas, c, s, open: true);
       case Feature.hadith:
       case Feature.books:
       case Feature.duas:

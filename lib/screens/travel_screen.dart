@@ -23,8 +23,10 @@ const _rakahs = {
 class TravelScreen extends StatelessWidget {
   const TravelScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const TravelScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'travel'),
+    builder: (_) => const TravelScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

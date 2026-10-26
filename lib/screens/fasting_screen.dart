@@ -10,8 +10,10 @@ import '../widgets/fasting_section.dart';
 class FastingScreen extends StatelessWidget {
   const FastingScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const FastingScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'fasting'),
+    builder: (_) => const FastingScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {

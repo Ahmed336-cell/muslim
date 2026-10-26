@@ -16,8 +16,10 @@ import '../widgets/shimmer.dart';
 class HadithScreen extends StatefulWidget {
   const HadithScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const HadithScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'hadith'),
+    builder: (_) => const HadithScreen(),
+  );
 
   @override
   State<HadithScreen> createState() => _HadithScreenState();

@@ -14,10 +14,14 @@ class LessonsScreen extends StatelessWidget {
   final String title;
   final List<Lesson> lessons;
 
-  static Route<void> route(String title, List<Lesson> lessons) =>
-      MaterialPageRoute(
-        builder: (_) => LessonsScreen(title: title, lessons: lessons),
-      );
+  static Route<void> route(
+    String title,
+    List<Lesson> lessons, {
+    String? name,
+  }) => MaterialPageRoute(
+    settings: RouteSettings(name: name),
+    builder: (_) => LessonsScreen(title: title, lessons: lessons),
+  );
 
   @override
   Widget build(BuildContext context) => Scaffold(

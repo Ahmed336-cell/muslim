@@ -14,8 +14,10 @@ import '../widgets/star_pattern.dart';
 class NamesScreen extends StatelessWidget {
   const NamesScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const NamesScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'names'),
+    builder: (_) => const NamesScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -245,8 +247,7 @@ class _NameSheet extends StatelessWidget {
                       subtitle: ar ? null : name.transliteration,
                       meaning: name.translation,
                       description: name.meaning.isEmpty ? null : name.meaning,
-                      citation:
-                          '${context.n(name.number)} / ${context.n(99)}',
+                      citation: '${context.n(name.number)} / ${context.n(99)}',
                       allowHideMeaning: name.translation.isNotEmpty,
                     ),
                     icon: const Icon(Icons.ios_share_rounded),

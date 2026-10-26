@@ -51,8 +51,10 @@ String hijriMonthName(BuildContext context, int month) =>
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const CalendarScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'calendar'),
+    builder: (_) => const CalendarScreen(),
+  );
 
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();

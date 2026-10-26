@@ -44,8 +44,10 @@ void _openReciter(BuildContext context, Reciter r) => Navigator.of(
 class RecitersScreen extends StatefulWidget {
   const RecitersScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const RecitersScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'reciters'),
+    builder: (_) => const RecitersScreen(),
+  );
 
   @override
   State<RecitersScreen> createState() => _RecitersScreenState();
@@ -86,9 +88,8 @@ class _RecitersScreenState extends State<RecitersScreen> {
                 builder: (context) => IconButton(
                   tooltip: l.identifyReciter,
                   icon: const Icon(Icons.graphic_eq_rounded),
-                  onPressed: () => Navigator.of(
-                    context,
-                  ).push(IdentifyReciterScreen.route()),
+                  onPressed: () =>
+                      Navigator.of(context).push(IdentifyReciterScreen.route()),
                 ),
               ),
               IconButton(

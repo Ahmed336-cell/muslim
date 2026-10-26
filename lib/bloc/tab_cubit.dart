@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../services/analytics.dart';
+
 /// Qibla tab in the bottom bar and the Explore grid.
 const qiblaEnabled = true;
 
@@ -22,6 +24,18 @@ class TabCubit extends Cubit<AppTab> {
   TabCubit([super.initial = AppTab.home]);
 
   void select(AppTab tab) {
-    if (AppTab.visible.contains(tab)) emit(tab);
+    if (!AppTab.visible.contains(tab)) return;
+    final changed = tab != state;
+    emit(tab);
+    if (!changed) return;
+    switch (tab) {
+      case AppTab.prayer:
+      case AppTab.qibla:
+      case AppTab.tasbih:
+        Analytics.feature(tab.name);
+      case AppTab.home:
+      case AppTab.more:
+        break;
+    }
   }
 }

@@ -10,8 +10,10 @@ import 'book_reader_screen.dart';
 class BooksScreen extends StatelessWidget {
   const BooksScreen({super.key});
 
-  static Route<void> route() =>
-      MaterialPageRoute(builder: (_) => const BooksScreen());
+  static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: 'books'),
+    builder: (_) => const BooksScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +41,9 @@ class BooksScreen extends StatelessWidget {
                     for (final (i, book) in booksIn(cat).indexed) ...[
                       if (i > 0) const RowDivider(indent: 72),
                       ListTile(
-                        onTap: () => Navigator.of(context).push(
-                          BookReaderScreen.route(book),
-                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(BookReaderScreen.route(book)),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 4,

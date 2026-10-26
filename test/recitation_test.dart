@@ -62,6 +62,10 @@ void main() {
         'https://cdn.islamic.network/quran/audio/128/ar.alafasy/262.mp3',
       );
       expect(
+        AyahReciter.minshawi.ayahUrl(1, 1).toString(),
+        'https://cdn.islamic.network/quran/audio/128/ar.minshawi/1.mp3',
+      );
+      expect(
         _recording.surahUrl(2).toString(),
         'https://server.test/r5/002.mp3',
       );
@@ -96,6 +100,38 @@ void main() {
       expect(rec.surahs, [1, 114]);
       expect(rec.server, 'https://server.test/r1/');
       expect(list.last.recordings.single.surahs, [1, 2, 3]);
+    });
+
+    test('ayah timings keep the start of each verse', () {
+      expect(
+        ayahTimingsFromJson([
+          {'ayah': 2, 'start_time': 12000, 'end_time': 18000},
+          {'ayah': 1, 'start_time': 0, 'end_time': 12000},
+          {'ayah': 0, 'start_time': 0, 'end_time': 1000},
+          {'ayah': 'nope'},
+        ]),
+        [
+          (
+            ayah: 1,
+            start: Duration.zero,
+            end: const Duration(milliseconds: 12000),
+          ),
+          (
+            ayah: 2,
+            start: const Duration(milliseconds: 12000),
+            end: const Duration(milliseconds: 18000),
+          ),
+        ],
+      );
+      // A shorter file runs ahead of the stamps.
+      expect(
+        timingAt(
+          const Duration(seconds: 5),
+          const Duration(seconds: 10),
+          const Duration(seconds: 12),
+        ),
+        const Duration(seconds: 6),
+      );
     });
 
     test('network failures become ApiException', () async {
@@ -222,21 +258,24 @@ void main() {
       expect(c.state.current!.artist, 'Test Reciter');
     });
 
-    test('quran radio plays the Cairo stream and a second call resumes', () async {
-      final engine = FakeEngine();
-      final c = RecitationCubit(engine: engine);
-      await c.playRadio(title: 'إذاعة القرآن الكريم', artist: 'القاهرة');
-      await _settle();
-      expect(c.state.kind, RecitationKind.radio);
-      expect(c.state.current!.uri.toString(), quranRadioStream);
-      expect(c.state.playing, isTrue);
+    test(
+      'quran radio plays the Cairo stream and a second call resumes',
+      () async {
+        final engine = FakeEngine();
+        final c = RecitationCubit(engine: engine);
+        await c.playRadio(title: 'إذاعة القرآن الكريم', artist: 'القاهرة');
+        await _settle();
+        expect(c.state.kind, RecitationKind.radio);
+        expect(c.state.current!.uri.toString(), quranRadioStream);
+        expect(c.state.playing, isTrue);
 
-      await c.pause();
-      await c.playRadio(title: 'إذاعة القرآن الكريم', artist: 'القاهرة');
-      await _settle();
-      expect(engine.loads, 1);
-      expect(c.state.playing, isTrue);
-    });
+        await c.pause();
+        await c.playRadio(title: 'إذاعة القرآن الكريم', artist: 'القاهرة');
+        await _settle();
+        expect(engine.loads, 1);
+        expect(c.state.playing, isTrue);
+      },
+    );
   });
 
   group('DownloadsCubit', () {
@@ -379,9 +418,14 @@ void main() {
       await tester.tap(find.byType(MiniPlayer));
       await tester.pumpAndSettle();
       expect(find.byType(NowPlayingScreen), findsOneWidget);
-      await tester.ensureVisible(find.text('Rain'));
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Rain'));
+      await tester.scrollUntilVisible(
+        find.text('Rain'),
+        400,
+        scrollable: find.descendant(
+          of: find.byType(NowPlayingScreen),
+          matching: find.byType(Scrollable),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Rain'));
       await tester.pump();

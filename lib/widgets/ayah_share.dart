@@ -167,6 +167,7 @@ class AyahImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = MushafColors.watch(context);
     final s = surahs[surah - 1];
     return MediaQuery.withNoTextScaling(
       child: MushafFrame(
@@ -185,13 +186,18 @@ class AyahImage extends StatelessWidget {
                     const TextSpan(text: '\u00A0'),
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
-                      child: AyahMarker(ayah, size: 30),
+                      child: AyahMarker(
+                        ayah,
+                        size: 30,
+                        color: colors.brass,
+                        numberColor: colors.ink,
+                      ),
                     ),
                   ],
                 ),
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.rtl,
-                style: Fonts.mushaf(25, color: Palette.ink),
+                style: Fonts.mushaf(25, color: colors.ink),
               ),
               if (meaning case final m? when m.isNotEmpty) ...[
                 const SizedBox(height: 12),
@@ -199,7 +205,7 @@ class AyahImage extends StatelessWidget {
                   m,
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.ltr,
-                  style: Fonts.quote(15.5, color: Palette.ink),
+                  style: Fonts.quote(15.5, color: colors.ink),
                 ),
               ],
               const SizedBox(height: 14),
@@ -208,13 +214,13 @@ class AyahImage extends StatelessWidget {
                     ? '${s.arabic} · ${arabicDigits('$ayah')}'
                     : '${s.name} $surah:$ayah',
                 textAlign: TextAlign.center,
-                style: Fonts.body(12.5, color: MushafColors.green),
+                style: Fonts.body(12.5, color: colors.green),
               ),
               const SizedBox(height: 2),
               Text(
                 footer,
                 textAlign: TextAlign.center,
-                style: Fonts.body(11, color: Palette.inkSoft),
+                style: Fonts.body(11, color: colors.ink.withValues(alpha: .62)),
               ),
             ],
           ),
