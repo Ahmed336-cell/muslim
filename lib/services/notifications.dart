@@ -307,6 +307,36 @@ class PrayerNotifier {
     } catch (_) {}
   }
 
+  static const identifyReadyId = 9002;
+
+  /// One-shot notice when background identify finishes.
+  Future<void> showIdentifyReady({
+    required String title,
+    required String body,
+  }) async {
+    try {
+      await _init();
+      await _plugin.show(
+        id: identifyReadyId,
+        title: title,
+        body: body,
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'identify_ready',
+            'Identify reciter',
+            channelDescription: 'When a background identify finishes',
+            icon: _icon,
+            color: _brand,
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(presentSound: true),
+        ),
+        payload: 'identify',
+      );
+    } catch (_) {}
+  }
+
   Future<void> _cancelWhere(bool Function(int id) test) async {
     for (final p in await _plugin.pendingNotificationRequests()) {
       if (test(p.id)) await _plugin.cancel(id: p.id);

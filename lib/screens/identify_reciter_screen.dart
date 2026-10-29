@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -104,6 +106,8 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
         _phase = _Phase.listening;
         _progress = 0;
       });
+      // Park Whisper while the mic is open — cold load is the long wait.
+      unawaited(recite.warmModel());
       final capture = await _id.listen(
         onProgress: (p) {
           if (mounted) setState(() => _progress = p);
@@ -121,15 +125,18 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
         return;
       }
       setState(() => _phase = _Phase.matching);
-      final transcript = await recite.transcribePcm(capture.pcm);
+      final transcript = await recite.transcribePcm(
+        capture.pcm,
+        // 10 s is enough words for locate; longer clips drag on Android.
+        maxSeconds: 10,
+      );
       final span = transcript.isEmpty
           ? null
           : await quran.locateSpan(transcript);
       if (!mounted) return;
-      final top = capture.matches.first;
       setState(() {
         _phase = _Phase.result;
-        _match = top;
+        _match = capture.matches.first;
         _span = span;
         _ayah = span?.start;
         _message = null;
@@ -263,6 +270,7 @@ class _IdentifyReciterScreenState extends State<IdentifyReciterScreen>
     final span = _span;
     final subtitle = switch (_phase) {
       _Phase.listening => l.identifyHold,
+      _Phase.matching => l.identifyHold,
       _Phase.result when span != null => _place(context, span),
       _Phase.result when _match != null => _match!.voice.recordingName,
       _ when _message != null => _message!,

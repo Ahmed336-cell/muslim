@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -27,6 +29,8 @@ class ReciteEngine {
   late final _recorder = AudioRecorder();
   String? _dir;
   bool _loaded = false;
+  bool _warmed = false;
+  Future<void>? _warming;
   WhisperLiveSession? _session;
   StreamSubscription<Uint8List>? _mic;
   final _pcm = BytesBuilder(copy: false);
@@ -43,6 +47,7 @@ class ReciteEngine {
   /// Throws on network failure or a corrupt download.
   Future<void> downloadModel({void Function(double)? onProgress}) async {
     final target = await _modelPath;
+    if (await File(target).exists()) return;
     final part = File('$target.part');
     final response = await _client.send(http.Request('GET', modelUrl));
     if (response.statusCode != 200) {
@@ -114,28 +119,81 @@ class ReciteEngine {
     _session = null;
   }
 
+  /// Load Whisper into RAM during mic capture so ayah detect skips the
+  /// multi-second cold start that makes Android feel stuck.
+  Future<void> warmModel() {
+    if (_warmed) return Future.value();
+    return _warming ??= _warm();
+  }
+
+  Future<void> _warm() async {
+    try {
+      if (!await hasModel()) return;
+      // 0.25 s of silence — enough to park the model, tiny to decode.
+      final silence = Uint8List(16000 * 2 ~/ 4);
+      final wav = File(await _path('warm.wav'));
+      await _writeWav(wav, silence);
+      await _transcribeFile(wav.path, timeout: const Duration(seconds: 60));
+      _warmed = true;
+    } catch (error, stack) {
+      debugPrint('whisper warm: $error\n$stack');
+    } finally {
+      _warming = null;
+    }
+  }
+
   /// Transcript of a 16 kHz mono PCM clip already on hand.
-  Future<String> transcribePcm(Uint8List pcm) async {
+  ///
+  /// [maxSeconds] keeps only the start of the clip so ayah locate stays
+  /// quick on phones. [timeout] stops a hang (common on Android when RAM
+  /// is tight after the speaker model).
+  Future<String> transcribePcm(
+    Uint8List pcm, {
+    int? maxSeconds,
+    Duration timeout = const Duration(seconds: 45),
+  }) async {
     if (pcm.length < 16000 || !await hasModel()) return '';
+    await warmModel();
+    final clip = maxSeconds == null
+        ? pcm
+        : Uint8List.sublistView(
+            pcm,
+            0,
+            math.min(pcm.length, 16000 * 2 * maxSeconds),
+          );
+    if (clip.length < 16000) return '';
     try {
       final wav = File(await _path('identify.wav'));
-      await wav.writeAsBytes([..._wavHeader(pcm.length), ...pcm], flush: true);
-      final response = await const Whisper(model: WhisperModel.base).transcribe(
-        transcribeRequest: TranscribeRequest(
-          audio: wav.path,
-          language: 'ar',
-          isNoTimestamps: true,
-          noContext: true,
-          maxContext: 0,
-          suppressNonSpeechTokens: true,
-          keepModelLoaded: true,
-        ),
-        modelPath: await _modelPath,
-      );
-      return response.text.trim();
-    } catch (_) {
+      await _writeWav(wav, clip);
+      return (await _transcribeFile(wav.path, timeout: timeout)).trim();
+    } catch (error, stack) {
+      debugPrint('whisper pcm: $error\n$stack');
       return '';
     }
+  }
+
+  Future<String> _transcribeFile(
+    String audioPath, {
+    required Duration timeout,
+  }) async {
+    _loaded = true;
+    final response = await const Whisper(model: WhisperModel.base)
+        .transcribe(
+          transcribeRequest: TranscribeRequest(
+            audio: audioPath,
+            language: 'ar',
+            threads: _threads,
+            isNoTimestamps: true,
+            noContext: true,
+            maxContext: 0,
+            suppressNonSpeechTokens: true,
+            keepModelLoaded: true,
+          ),
+          modelPath: await _modelPath,
+        )
+        .timeout(timeout);
+    _warmed = true;
+    return response.text;
   }
 
   /// Stops listening and returns the transcript. The whole recording is
@@ -149,26 +207,39 @@ class ReciteEngine {
     if (pcm.isEmpty) return live;
     try {
       final wav = File(await _path('recitation.wav'));
-      await wav.writeAsBytes([..._wavHeader(pcm.length), ...pcm], flush: true);
-      final response = await const Whisper(model: WhisperModel.base).transcribe(
-        transcribeRequest: TranscribeRequest(
-          audio: wav.path,
-          language: 'ar',
-          isNoTimestamps: true,
-          noContext: true,
-          maxContext: 0,
-          suppressNonSpeechTokens: true,
-          keepModelLoaded: true,
-        ),
-        modelPath: await _modelPath,
+      await _writeWav(wav, pcm);
+      final text = await _transcribeFile(
+        wav.path,
+        timeout: const Duration(seconds: 90),
       );
-      return response.text.trim().isEmpty ? live : response.text;
-    } catch (_) {
+      return text.trim().isEmpty ? live : text;
+    } catch (error, stack) {
+      debugPrint('whisper finish: $error\n$stack');
       return live;
     }
   }
 
-  static List<int> _wavHeader(int dataBytes) {
+  /// Android phones thrash with the package default of 6 whisper threads.
+  static int get _threads {
+    final n = Platform.numberOfProcessors;
+    if (Platform.isAndroid) return math.max(1, math.min(n, 2));
+    return math.max(1, math.min(n, 4));
+  }
+
+  /// Write header + PCM without spreading the clip into a Dart list
+  /// (a 30s capture is ~1 MB of ints and can stall low-RAM Androids).
+  static Future<void> _writeWav(File wav, Uint8List pcm) async {
+    final sink = wav.openWrite();
+    try {
+      sink
+        ..add(_wavHeader(pcm.length))
+        ..add(pcm);
+    } finally {
+      await sink.close();
+    }
+  }
+
+  static Uint8List _wavHeader(int dataBytes) {
     const rate = 16000, channels = 1, bits = 16;
     final h = ByteData(44);
     void ascii(int at, String s) {
@@ -195,8 +266,9 @@ class ReciteEngine {
 
   /// Frees the model kept in memory between attempts.
   Future<void> release() async {
-    if (!_loaded) return;
+    if (!_loaded && !_warmed) return;
     _loaded = false;
+    _warmed = false;
     await const Whisper(model: WhisperModel.base).releaseModel();
   }
 }

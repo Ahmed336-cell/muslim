@@ -8,8 +8,8 @@ import 'package:path_provider/path_provider.dart';
 import '../data.dart';
 import 'islamic_api.dart' show ApiException;
 
-/// Verse-by-verse recitations on cdn.islamic.network (alquran.cloud audio
-/// editions); bitrates differ per reciter.
+/// Verse-by-verse recitations. The first set is on cdn.islamic.network.
+/// [folder] voices are everyayah.com, one file per ayah, no page cap.
 enum AyahReciter {
   alafasy('ar.alafasy', 128, 'مشاري العفاسي', 'Mishary Alafasy', 123),
   husary(
@@ -26,6 +26,14 @@ enum AyahReciter {
     'Al-Husary (Mujawwad)',
     118,
   ),
+  husaryMuallim(
+    'ea.husarymuallim',
+    128,
+    'الحصري (معلم)',
+    'Al-Husary (Muallim)',
+    118,
+    'Husary_Muallim_128kbps',
+  ),
   minshawi(
     'ar.minshawi',
     128,
@@ -33,7 +41,23 @@ enum AyahReciter {
     'Muhammad Siddiq Al-Minshawi',
     112,
   ),
+  minshawiMujawwad(
+    'ea.minshawimujawwad',
+    192,
+    'المنشاوي (مجوّد)',
+    'Al-Minshawi (Mujawwad)',
+    112,
+    'Minshawy_Mujawwad_192kbps',
+  ),
   abdulBasit('ar.abdulsamad', 64, 'عبد الباسط عبد الصمد', 'Abdul Basit', 51),
+  abdulBasitMujawwad(
+    'ea.abdulbasitmujawwad',
+    128,
+    'عبد الباسط (مجوّد)',
+    'Abdul Basit (Mujawwad)',
+    51,
+    'Abdul_Basit_Mujawwad_128kbps',
+  ),
   sudais('ar.abdurrahmaansudais', 192, 'عبد الرحمن السديس', 'As-Sudais', 54),
   shuraym('ar.saoodshuraym', 64, 'سعود الشريم', 'Saud Ash-Shuraym', 31),
   muaiqly('ar.mahermuaiqly', 128, 'ماهر المعيقلي', 'Maher Al-Muaiqly', 102),
@@ -43,30 +67,205 @@ enum AyahReciter {
   hudhaify('ar.hudhaify', 128, 'علي الحذيفي', 'Ali Al-Hudhaify', 74),
   ayyoub('ar.muhammadayyoub', 128, 'محمد أيوب', 'Muhammad Ayyub', 109),
   jibreel('ar.muhammadjibreel', 128, 'محمد جبريل', 'Muhammad Jibreel', 111),
-  rifai('ar.hanirifai', 192, 'هاني الرفاعي', 'Hani Ar-Rifai', 89);
+  rifai('ar.hanirifai', 192, 'هاني الرفاعي', 'Hani Ar-Rifai', 89),
+  dossari(
+    'ea.dossari',
+    128,
+    'ياسر الدوسري',
+    'Yasser Al-Dosari',
+    92,
+    'Yasser_Ad-Dussary_128kbps',
+  ),
+  ghamdi(
+    'ea.ghamdi',
+    40,
+    'سعد الغامدي',
+    'Saad Al-Ghamdi',
+    30,
+    'Ghamadi_40kbps',
+  ),
+  budair(
+    'ea.budair',
+    128,
+    'صلاح البدير',
+    'Salah Al-Budair',
+    43,
+    'Salah_Al_Budair_128kbps',
+  ),
+  qasim(
+    'ea.qasim',
+    192,
+    'محسن القاسم',
+    'Muhsin Al-Qasim',
+    67,
+    'Muhsin_Al_Qasim_192kbps',
+  ),
+  juhani(
+    'ea.juhani',
+    128,
+    'عبد الله الجهني',
+    'Abdullah Al-Juhani',
+    62,
+    'Abdullaah_3awwaad_Al-Juhaynee_128kbps',
+  ),
+  qahtani(
+    'ea.qahtani',
+    192,
+    'خالد القحطاني',
+    'Khalid Al-Qahtani',
+    21,
+    'Khaalid_Abdullaah_al-Qahtaanee_192kbps',
+  ),
+  qatami(
+    'ea.qatami',
+    128,
+    'ناصر القطامي',
+    'Nasser Al-Qatami',
+    86,
+    'Nasser_Alqatami_128kbps',
+  ),
+  bukhatir(
+    'ea.bukhatir',
+    128,
+    'صلاح بو خاطر',
+    'Salah Bukhatir',
+    46,
+    'Salaah_AbdulRahman_Bukhatir_128kbps',
+  ),
+  suwaid(
+    'ea.suwaid',
+    64,
+    'أيمن سويد',
+    'Ayman Suwaid',
+    21203,
+    'Ayman_Sowaid_64kbps',
+  ),
+  akhdar(
+    'ea.akhdar',
+    32,
+    'إبراهيم الأخضر',
+    'Ibrahim Al-Akhdar',
+    1,
+    'Ibrahim_Akhdar_32kbps',
+  ),
+  tablawi(
+    'ea.tablawi',
+    128,
+    'محمد الطبلاوي',
+    'Muhammad Al-Tablawi',
+    106,
+    'Mohammad_al_Tablaway_128kbps',
+  ),
+  mustafaIsmail(
+    'ea.mustafaismail',
+    48,
+    'مصطفى إسماعيل',
+    'Mustafa Ismail',
+    125,
+    'Mustafa_Ismail_48kbps',
+  ),
+  albanna(
+    'ea.albanna',
+    32,
+    'محمود علي البنا',
+    'Mahmoud Ali Al-Banna',
+    121,
+    'mahmoud_ali_al_banna_32kbps',
+  ),
+  tunaiji(
+    'ea.tunaiji',
+    64,
+    'خليفة الطنيجي',
+    'Khalifa Al-Tunaiji',
+    24,
+    'khalefa_al_tunaiji_64kbps',
+  ),
+  suwaisi(
+    'ea.suwaisi',
+    128,
+    'علي حجاج السويسي',
+    'Ali Hajjaj Al-Suwaisi',
+    77,
+    'Ali_Hajjaj_AlSuesy_128kbps',
+  ),
+  yassin(
+    'ea.yassin',
+    128,
+    'سهل ياسين',
+    'Sahl Yassin',
+    32,
+    'Sahl_Yassin_128kbps',
+  ),
+  jaber('ea.jaber', 64, 'علي جابر', 'Ali Jaber', 76, 'Ali_Jaber_64kbps'),
+  abbad('ea.abbad', 64, 'فارس عباد', 'Fares Abbad', 81, 'Fares_Abbad_64kbps'),
+  matrood(
+    'ea.matrood',
+    128,
+    'عبد الله المطرود',
+    'Abdullah Al-Matrood',
+    59,
+    'Abdullah_Matroud_128kbps',
+  ),
+  abdulKareem(
+    'ea.abdulkareem',
+    128,
+    'محمد عبدالكريم',
+    'Muhammad Abdul Kareem',
+    115,
+    'Muhammad_AbdulKareem_128kbps',
+  ),
+  alili('ea.alili', 128, 'عزيز عليلي', 'Aziz Alili', null, 'aziz_alili_128kbps'),
+  neana(
+    'ea.neana',
+    128,
+    'أحمد نعينع',
+    'Ahmed Neana',
+    null,
+    'Ahmed_Neana_128kbps',
+  ),
+  parhizgar(
+    'ea.parhizgar',
+    48,
+    'شهريار پرهیزگار',
+    'Shahriar Parhizgar',
+    null,
+    'Parhizgar_48kbps',
+  );
 
   const AyahReciter(
     this.id,
     this.bitrate,
     this.arabic,
     this.english,
-    this.mp3quranId,
-  );
+    this.mp3quranId, [
+    this.folder,
+  ]);
 
   final String id;
   final int bitrate;
   final String arabic;
   final String english;
 
-  /// The same reciter in the mp3quran catalogue.
-  final int mp3quranId;
+  /// The same reciter in the mp3quran catalogue, when one exists.
+  final int? mp3quranId;
+
+  /// everyayah.com folder. Null means [id] is an islamic.network edition.
+  final String? folder;
 
   String label(String language) => language == 'ar' ? arabic : english;
 
-  Uri ayahUrl(int surah, int ayah) => Uri.https(
-    'cdn.islamic.network',
-    '/quran/audio/$bitrate/$id/${globalAyah(surah, ayah)}.mp3',
-  );
+  Uri ayahUrl(int surah, int ayah) {
+    final folder = this.folder;
+    if (folder != null) {
+      final file =
+          '${surah.toString().padLeft(3, '0')}${ayah.toString().padLeft(3, '0')}.mp3';
+      return Uri.https('everyayah.com', '/data/$folder/$file');
+    }
+    return Uri.https(
+      'cdn.islamic.network',
+      '/quran/audio/$bitrate/$id/${globalAyah(surah, ayah)}.mp3',
+    );
+  }
 
   static AyahReciter byId(String? id) =>
       values.firstWhere((r) => r.id == id, orElse: () => alafasy);

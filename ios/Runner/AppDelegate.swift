@@ -2,6 +2,7 @@ import ActivityKit
 import CoreLocation
 import CoreMotion
 import Flutter
+import flutter_foreground_task
 import UIKit
 
 @main
@@ -17,6 +18,9 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    SwiftFlutterForegroundTaskPlugin.setPluginRegistrantCallback { registry in
+      GeneratedPluginRegistrant.register(with: registry)
+    }
     if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "LiveActivity") {
       let channel = FlutterMethodChannel(
         name: "muslim/live_activity", binaryMessenger: registrar.messenger())

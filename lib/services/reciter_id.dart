@@ -40,8 +40,10 @@ class ReciterId {
   /// nearest recording. Silence and a clip under [minListen] name nobody.
   static const threshold = 0.70;
 
-  /// 30 seconds is the length the voice windows are built for.
+  /// Default capture length. Android uses [listenForAndroid] — one
+  /// 20 s window is enough and saves ten seconds of waiting.
   static const listenFor = Duration(seconds: 30);
+  static const listenForAndroid = Duration(seconds: 20);
 
   /// Under this the call names nobody. 15 seconds or less is refused.
   static const minListen = Duration(seconds: 20);
@@ -159,10 +161,12 @@ class ReciterId {
     _cancelled = true;
   }
 
-  /// Records [listenFor] from the microphone. Null when permission is
-  /// denied or [stop] was called.
+  /// Records from the microphone. Null when permission is denied or
+  /// [stop] was called. Length is [listenFor], or [listenForAndroid]
+  /// on Android unless [duration] is set.
   Future<ListenCapture?> listen({
     void Function(double progress)? onProgress,
+    Duration? duration,
   }) async {
     _cancelled = false;
     if (!await _recorder.hasPermission()) {
@@ -178,6 +182,8 @@ class ReciterId {
     if (voices == null || embeddings == null || voices.isEmpty) {
       return ListenCapture(matches: [], pcm: ListenCapture._emptyPcm);
     }
+    final listenDuration =
+        duration ?? (Platform.isAndroid ? listenForAndroid : listenFor);
     final chunks = <Uint8List>[];
     StreamSubscription<Uint8List>? sub;
     try {
@@ -195,10 +201,11 @@ class ReciterId {
         },
       );
       final started = DateTime.now();
-      while (!_cancelled && DateTime.now().difference(started) < listenFor) {
+      while (!_cancelled &&
+          DateTime.now().difference(started) < listenDuration) {
         onProgress?.call(
           (DateTime.now().difference(started).inMilliseconds /
-                  listenFor.inMilliseconds)
+                  listenDuration.inMilliseconds)
               .clamp(0.0, 1.0)
               .toDouble(),
         );
@@ -218,11 +225,20 @@ class ReciterId {
     }
     final pcm = bytes.takeBytes();
     final found = await identifyPcm16(pcm);
+    // Drop the speaker model before Whisper loads; both at once OOMs many
+    // Android phones and leaves "Finding the ayah…" spinning forever.
+    releaseExtractor();
     return ListenCapture(
       matches: found.matches,
       pcm: pcm,
       agreement: found.agreement,
     );
+  }
+
+  /// Frees the speaker-embedding model kept after [identifyPcm16].
+  void releaseExtractor() {
+    _extractor?.free();
+    _extractor = null;
   }
 
   /// [pcm16] is little-endian mono 16 kHz. Empty under [minListen].
@@ -238,7 +254,8 @@ class ReciterId {
     }
     final samples = _pcm16ToFloat(pcm16);
     final windows = audioWindows(samples);
-    if (windows.isEmpty) return (matches: const <ReciterMatch>[], agreement: 0.0);
+    if (windows.isEmpty)
+      return (matches: const <ReciterMatch>[], agreement: 0.0);
     final extractor = await _openExtractor();
     final vectors = <Float32List>[];
     for (final chunk in windows) {
@@ -334,8 +351,7 @@ class ReciterId {
   }
 
   void dispose() {
-    _extractor?.free();
-    _extractor = null;
+    releaseExtractor();
     _recorder.dispose();
   }
 }

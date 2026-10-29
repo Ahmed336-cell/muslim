@@ -66,6 +66,10 @@ void main() {
         'https://cdn.islamic.network/quran/audio/128/ar.minshawi/1.mp3',
       );
       expect(
+        AyahReciter.dossari.ayahUrl(2, 255).toString(),
+        'https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/002255.mp3',
+      );
+      expect(
         _recording.surahUrl(2).toString(),
         'https://server.test/r5/002.mp3',
       );
