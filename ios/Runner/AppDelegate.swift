@@ -16,28 +16,36 @@ import UIKit
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
-    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+  /// Plugins and the app channels. Used by the explicit engine in SceneDelegate,
+  /// and by the storyboard engine if one is still created.
+  static func register(engine: FlutterEngine) {
+    GeneratedPluginRegistrant.register(with: engine)
     SwiftFlutterForegroundTaskPlugin.setPluginRegistrantCallback { registry in
       GeneratedPluginRegistrant.register(with: registry)
     }
-    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "LiveActivity") {
-      let channel = FlutterMethodChannel(
-        name: "muslim/live_activity", binaryMessenger: registrar.messenger())
-      channel.setMethodCallHandler(LiveActivityChannel.handle)
+    if let registrar = engine.registrar(forPlugin: "LiveActivity") {
+      FlutterMethodChannel(name: "muslim/live_activity", binaryMessenger: registrar.messenger())
+        .setMethodCallHandler(LiveActivityChannel.handle)
     }
-    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "Links") {
+    if let registrar = engine.registrar(forPlugin: "Links") {
       FlutterMethodChannel(name: "muslim/links", binaryMessenger: registrar.messenger())
         .setMethodCallHandler(LinksChannel.handle)
     }
-    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "Heading") {
+    if let registrar = engine.registrar(forPlugin: "Heading") {
       FlutterEventChannel(name: "sabeelak/heading", binaryMessenger: registrar.messenger())
         .setStreamHandler(HeadingStream.shared)
-      FlutterEventChannel(
-        name: "sabeelak/camera_heading", binaryMessenger: registrar.messenger()
-      )
-      .setStreamHandler(CameraHeadingStream())
+      FlutterEventChannel(name: "sabeelak/camera_heading", binaryMessenger: registrar.messenger())
+        .setStreamHandler(CameraHeadingStream())
     }
+  }
+
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    let engine = engineBridge.pluginRegistry as? FlutterEngine
+    if let engine {
+      Self.register(engine: engine)
+      return
+    }
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
   }
 }
 
