@@ -17,9 +17,9 @@
 
 <section>
 <h1>Sabeelak — Privacy Policy</h1>
-<small>Last updated: 13 October 2026</small>
+<small>Last updated: 30 October 2026</small>
 
-<p>Sabeelak ("the app") is built so that your worship stays private. The app has <strong>no sign-in, no ads and no analytics</strong>, and we do not run any server that stores your data.</p>
+<p>Sabeelak ("the app") is built so that your worship stays private. The app has <strong>no sign-in and no ads</strong>, and we do not run any server that stores your prayer log or recordings.</p>
 
 <h2>Data stored on your device</h2>
 <p>Your prayer log, adhkar and tasbih counts, bookmarks, khatmah and hifz progress, sadaqah and qada entries, and settings are saved only on your device. They are deleted when you uninstall the app.</p>
@@ -28,10 +28,23 @@
 <p>If you choose "my location", your position is used on the device to calculate prayer times and the qibla. To fetch fasting times it is rounded to about 100 m and sent to islamicapi.com. It is not stored by us. You can choose a city instead and never share your location.</p>
 
 <h2>Microphone</h2>
-<p>The hifz recitation check records your voice and analyses it entirely on the device. Audio is never uploaded or saved.</p>
+<p>The microphone is used only when you ask for it: to check a hifz recitation, or to name the reciter and the ayah you are hearing. The recording is analysed on the device. It is not uploaded and it is not kept after the check finishes.</p>
+<p>On Android, while that listening is in progress, the app runs a microphone foreground service and shows a notification, so the recording is not cut off if you leave the app. The service stops when the result is ready or you cancel. It does not start on its own and it does not keep the microphone open afterwards.</p>
+
+<h2>Camera</h2>
+<p>The camera is used only for the augmented-reality qibla view, so you can see the direction over your surroundings. The picture stays on the screen. It is not saved and it is not uploaded.</p>
+
+<h2>Playback</h2>
+<p>While a recitation is playing, Android may show a media notification so the audio can continue if you leave the app, and so you can pause it from the lock screen. That playback is downloaded Quran audio, not your microphone.</p>
 
 <h2>Online content</h2>
-<p>Recitations, tafsir, translations, duas and other content are downloaded from these services: api.alquran.cloud, api.quran.com, cdn.islamic.network, mp3quran.net, hisnmuslim.com, islamicapi.com, cdn.aladhan.com, islamcan.com and huggingface.co. Like any website, they can see your IP address when a file is downloaded. Downloads are cached on the device.</p>
+<p>Recitations, tafsir, translations, duas and other content are downloaded from these services: api.alquran.cloud, api.quran.com, cdn.islamic.network, everyayah.com, mp3quran.net, hisnmuslim.com, islamicapi.com, cdn.aladhan.com, islamcan.com and huggingface.co. Like any website, they can see your IP address when a file is downloaded. Downloads are cached on the device.</p>
+
+<h2>Crash reports</h2>
+<p>If the app crashes or hits an error, a report is sent to Sentry (sentry.io): the error, a stack trace, the app version and the device type. It does not include your name, location, prayer log, microphone audio or anything you typed.</p>
+
+<h2>Usage</h2>
+<p>The app records which feature you open, plus app sessions, with Mixpanel (mixpanel.com). The event includes the feature name, app version, language and whether the build is a release. It does not include your name, location, prayer log, microphone audio or anything you typed. Mixpanel knows you by a random id stored on this device.</p>
 
 <h2>Notifications and widgets</h2>
 <p>Reminders are scheduled locally on your device. Home-screen widgets read data the app saved on the device; nothing is sent anywhere.</p>
@@ -50,9 +63,9 @@
 
 <section dir="rtl" lang="ar">
 <h1>سبيلك — سياسة الخصوصية</h1>
-<small>آخر تحديث: ١٣ أكتوبر ٢٠٢٦</small>
+<small>آخر تحديث: ٣٠ أكتوبر ٢٠٢٦</small>
 
-<p>صُمّم تطبيق «سبيلك» لتبقى عبادتك خاصة بك. لا يوجد في التطبيق <strong>تسجيل دخول ولا إعلانات ولا تحليلات</strong>، ولا نملك أي خادم يخزّن بياناتك.</p>
+<p>صُمّم تطبيق «سبيلك» لتبقى عبادتك خاصة بك. لا يوجد في التطبيق <strong>تسجيل دخول ولا إعلانات</strong>، ولا نملك أي خادم يخزّن سجلّ صلواتك أو تسجيلاتك.</p>
 
 <h2>البيانات المحفوظة على جهازك</h2>
 <p>سجلّ صلواتك، وأعداد الأذكار والتسبيح، والعلامات، وتقدّم الختمة والحفظ، وسجلّ الصدقات والقضاء، والإعدادات — كلها تُحفظ على جهازك فقط، وتُحذف عند حذف التطبيق.</p>
@@ -61,10 +74,23 @@
 <p>إذا اخترت «موقعي»، يُستخدم موقعك على الجهاز لحساب مواقيت الصلاة واتجاه القبلة. ولجلب مواقيت الصيام يُقرَّب إلى نحو ١٠٠ متر ويُرسل إلى islamicapi.com، ولا نخزّنه. ويمكنك اختيار مدينة بدلًا من مشاركة موقعك.</p>
 
 <h2>الميكروفون</h2>
-<p>ميزة التحقق من التلاوة في الحفظ تسجّل صوتك وتحلّله على الجهاز بالكامل، ولا يُرفع الصوت ولا يُحفظ.</p>
+<p>لا يُستخدم الميكروفون إلا عندما تطلب ذلك: للتحقق من تلاوتك في الحفظ، أو لمعرفة القارئ والآية التي تسمعها. يُحلَّل التسجيل على الجهاز، ولا يُرفع، ولا يُحفظ بعد انتهاء التحقق.</p>
+<p>على أندرويد، وأثناء هذا الاستماع، يشغّل التطبيق خدمة أمامية للميكروفون ويعرض إشعارًا حتى لا ينقطع التسجيل إذا غادرت التطبيق. تتوقف الخدمة عند ظهور النتيجة أو عند الإلغاء. لا تبدأ من تلقاء نفسها، ولا تبقي الميكروفون مفتوحًا بعد ذلك.</p>
+
+<h2>الكاميرا</h2>
+<p>تُستخدم الكاميرا فقط لعرض القبلة بالواقع المعزّز، لترى الاتجاه فوق ما حولك. تبقى الصورة على الشاشة، ولا تُحفظ ولا تُرفع.</p>
+
+<h2>التشغيل</h2>
+<p>أثناء تلاوة، قد يعرض أندرويد إشعارًا حتى يستمر الصوت إذا غادرت التطبيق، ولتتمكن من الإيقاف من شاشة القفل. هذا صوت قرآن محمّل، وليس صوت ميكروفونك.</p>
 
 <h2>المحتوى عبر الإنترنت</h2>
-<p>تُنزَّل التلاوات والتفاسير والترجمات والأدعية وغيرها من الخدمات التالية: api.alquran.cloud وapi.quran.com وcdn.islamic.network وmp3quran.net وhisnmuslim.com وislamicapi.com وcdn.aladhan.com وislamcan.com وhuggingface.co. وكأي موقع إلكتروني، ترى هذه الخدمات عنوان IP الخاص بك عند التنزيل. وتُحفظ التنزيلات على الجهاز.</p>
+<p>تُنزَّل التلاوات والتفاسير والترجمات والأدعية وغيرها من الخدمات التالية: api.alquran.cloud وapi.quran.com وcdn.islamic.network وeveryayah.com وmp3quran.net وhisnmuslim.com وislamicapi.com وcdn.aladhan.com وislamcan.com وhuggingface.co. وكأي موقع إلكتروني، ترى هذه الخدمات عنوان IP الخاص بك عند التنزيل. وتُحفظ التنزيلات على الجهاز.</p>
+
+<h2>تقارير الأعطال</h2>
+<p>إذا توقف التطبيق أو حدث خطأ، يُرسل تقرير إلى Sentry‏ (sentry.io): نص الخطأ، وتتبع المكدس، وإصدار التطبيق، ونوع الجهاز. لا يتضمن اسمك ولا موقعك ولا سجل صلواتك ولا صوت الميكروفون ولا ما تكتبه.</p>
+
+<h2>الاستخدام</h2>
+<p>يسجّل التطبيق الميزة التي تفتحها، مع جلسات الاستخدام، عبر Mixpanel‏ (mixpanel.com). يتضمن الحدث اسم الميزة وإصدار التطبيق واللغة ونوع النسخة. لا يتضمن اسمك ولا موقعك ولا سجل صلواتك ولا صوت الميكروفون ولا ما تكتبه. يعرفك Mixpanel برقم عشوائي محفوظ على هذا الجهاز.</p>
 
 <h2>الإشعارات والودجات</h2>
 <p>تُجدول التذكيرات محليًا على جهازك، وتقرأ ودجات الشاشة الرئيسية بيانات حفظها التطبيق على الجهاز، ولا يُرسل شيء إلى أي مكان.</p>
